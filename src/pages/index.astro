@@ -1,16 +1,12 @@
 ---
-
+import Baz from "../layouts/Baz.astro"
+const pageTitle = "INDEX"
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>kenan.fyi | droppings from my second brain</title>
-	</head>
-	<body>
-		<h1>kenan.fyi</h1>
-	</body>
-</html>
+<Baz pageTitle={pageTitle}>
+ <h1>kenan.fyi</h1>
+</Baz>
+
+<style>
+
+</style>

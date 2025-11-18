@@ -1,0 +1,14 @@
+html  {
+}
+
+body {
+  width: 88ch;
+  margin: 20px;
+  font-family: "Inria Sans", sans;
+}
+
+p, h1, h2, h3{
+  padding: 0px;
+  margin: 0px;
+}
+

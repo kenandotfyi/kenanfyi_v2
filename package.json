@@ -9,6 +9,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/mdx": "^4.3.11",
+    "@fontsource/inria-sans": "^5.2.8",
     "astro": "^5.15.9"
   }
 }
