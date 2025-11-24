@@ -1,26 +1,28 @@
 ---
-import Navigation from '../components/Navigation.astro';
-import Banner from '../components/Banner.astro';
-import '../styles/global.css';
-import '@fontsource/inria-sans';
+import Navigation from "../components/Navigation.astro";
+import Banner from "../components/Banner.astro";
+import "../styles/global.css";
+import "@fontsource/inria-sans";
+import "@fontsource/iosevka";
 
 const { pageTitle } = Astro.props;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
-    <title>kenan.fyi / {pageTitle}</title>
-  </head>
-  <body>
-    <header>
-      <Navigation />
-      <Banner/>
-    </header>
-    <slot/>
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="generator" content={Astro.generator} />
+        <title>kenan.fyi / {pageTitle}</title>
+    </head>
+    <body>
+        <header>
+            <Navigation />
+        </header>
+        <slot />
+    </body>
 </html>
+
+<style></style>

@@ -1,9 +1,29 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 
-import mdx from '@astrojs/mdx';
+import expressiveCode from "astro-expressive-code";
+import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
+import mdx from "@astrojs/mdx";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [mdx()]
+  scopedStyleStrategy: "class",
+  integrations: [
+    expressiveCode({
+      plugins: [pluginLineNumbers()],
+      themes: ["one-light"],
+      styleOverrides: {
+        borderRadius: "0",
+        codeFontFamily: "Iosevka",
+        codeFontSize: "15px",
+        frames: {
+          frameBoxShadowCssValue: "none",
+        },
+        textMarkers: {
+          markBackground: "gainsboro",
+        },
+      },
+    }),
+    mdx(),
+  ],
 });

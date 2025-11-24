@@ -1,12 +1,19 @@
 ---
-import Baz from "../layouts/Baz.astro"
-const pageTitle = "INDEX"
+import Baz from "../layouts/Baz.astro";
+const pageTitle = "INDEX";
 ---
 
 <Baz pageTitle={pageTitle}>
- <h1>kenan.fyi</h1>
+    <main>
+        <h3>ARTICLES</h3>
+    </main>
 </Baz>
 
 <style>
-
+    main {
+        padding-left: 10px;
+        border-width: 0px 1px 1px 1px;
+        border-color: var(--main-border);
+        border-style: solid;
+    }
 </style>

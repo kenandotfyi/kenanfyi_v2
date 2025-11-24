@@ -1,31 +1,25 @@
 ---
+import Banner from "../components/Banner.astro";
 import Baz from "./Baz.astro";
 const { frontmatter } = Astro.props;
 ---
 
 <Baz pageTitle={frontmatter.title}>
-  <main>
-    <h1>{frontmatter.title}</h1>
-    <p>{frontmatter.published.toString().slice(0,10)}</p>
-    <p><em>{frontmatter.description}</em></p>
-    <slot />
-  </main>
+    <Banner metadata={frontmatter} />
+    <article>
+        <slot />
+    </article>
 </Baz>
 
-
 <style>
+    article {
+        border-width: 0px 1px 1px 1px;
+        border-color: var(--main-border);
+        border-style: solid;
+        padding: 10px;
+    }
 
-
-main {
-  border-width: 0px 1px 1px 1px;
-  border-color: slategray;
-  border-style: solid;
-
-
-  & h1 {
-    color: red;
-  }
-}
-
-
+    article :global(p) {
+        margin-bottom: 10px;
+    }
 </style>

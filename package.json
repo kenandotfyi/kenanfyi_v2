@@ -3,14 +3,17 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.11",
+    "@expressive-code/plugin-line-numbers": "^0.41.3",
     "@fontsource/inria-sans": "^5.2.8",
-    "astro": "^5.15.9"
+    "@fontsource/iosevka": "^5.2.5",
+    "astro": "^5.15.9",
+    "astro-expressive-code": "^0.41.3"
   }
 }

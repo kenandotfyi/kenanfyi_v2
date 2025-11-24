@@ -2,18 +2,19 @@
 import { getCollection } from "astro:content";
 import Baz from "../layouts/Baz.astro";
 
-
-
 const allBits = await getCollection("bits");
-const pageTitle = "bits"
+const pageTitle = "bits";
 ---
 
 <Baz pageTitle={pageTitle}>
-  <p>All bits</p>
-  {
-      allBits.map((post) => (
-      <a href={`${post.id}`}>{post.data.title}</a>
-      ))
-    }
+    <p>All bits</p>
+    <ul>
+        {
+            allBits.map((post) => (
+                <li>
+                    <a href={`${post.id}`}>{post.data.title}</a>
+                </li>
+            ))
+        }
+    </ul>
 </Baz>
-

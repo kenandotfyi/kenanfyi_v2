@@ -1,14 +1,36 @@
-html  {
+@import url("reset.css");
+@import url("colors.css");
+
+html {
+    box-sizing: border-box;
+    background-color: var(--main-bg);
+    color: #44403b;
 }
 
 body {
-  width: 88ch;
-  margin: 20px;
-  font-family: "Inria Sans", sans;
+    width: 75ch;
+    margin: 20px;
+    font-family: "Inria Sans", sans;
 }
 
-p, h1, h2, h3{
-  padding: 0px;
-  margin: 0px;
+/*p,
+h1,
+h2,
+h3 {
+    padding: 0px;
+    margin: 0px;
+}*/
+
+.expressive-code {
+    margin-bottom: 10px;
 }
 
+.expressive-code pre > code {
+    border-top: 1px solid var(--ec-brdCol) !important;
+    padding: 0 !important;
+}
+
+.expressive-code figure.is-terminal pre > code {
+    border-top: 0px !important;
+    padding: 0 !important;
+}

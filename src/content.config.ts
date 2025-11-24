@@ -6,11 +6,15 @@ const bits = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    published: z.string(),
-    // published: z.coerce.date(),
-  })
+    published: z.date().transform((date) => {
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }),
+    excerpt: z.string().optional().default("No excerpt"),
+  }),
 });
-
 
 const articles = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/articles" }),
@@ -18,7 +22,7 @@ const articles = defineCollection({
     title: z.string(),
     description: z.string(),
     published: z.coerce.date(),
-  })
+  }),
 });
 
 const books = defineCollection({
@@ -27,7 +31,7 @@ const books = defineCollection({
     title: z.string(),
     description: z.string(),
     published: z.coerce.date(),
-  })
+  }),
 });
 
-export const collections = { bits, articles, books }
+export const collections = { bits, articles, books };

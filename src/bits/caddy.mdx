@@ -1,0 +1,59 @@
+---
+title: "Caddyfile for MediaWiki"
+description: "Caddyfile for MediaWiki"
+published: 2024-09-07
+---
+
+
+I was trying to run a MediaWiki instance on my dummy server and wanted to serve it using the Caddy
+this time. Apache and Nginx configurations are fairly straightforward and easy to find, but Caddy
+-since it's fairly new- could be difficult if you are trying to do some non-standard stuff. As I
+have successfully executed it with the desired configuration, I wanted to document my observations.
+
+Configuration has two parts, one being the standard **Caddyfile** which I really like to work with,
+and the other one being **LocalSettings.php**. This file is generally in the root folder of your mediawikiwhich is the default setup file for MediaWiki
+instances.
+
+Serving a PHP application through Caddy is straightforward, but I wanted to configure my
+installation with the so-called ShortURLs. This requires some setup in the Caddyfile:
+
+
+
+```nginx title="my-test-file.js" {4, 7}
+your.domain{
+    @title {
+        not file {
+            try_files {path} {path}/
+            split_path .php
+        }
+        path_regexp title ^/(.*)$
+    }
+    rewrite @title /index.php?title={re.title.1}&{query}
+    root * /var/www/html/mw #this might be mediawiki for you
+    php_fastcgi unix//var/run/php/php-fpm.sock # serving php
+    file_server
+}
+```
+
+
+This configuration redirects the ugly MediaWiki URLs to a more structured **/wiki/Main_page** type.
+Further explanations are [here](https://www.mediawiki.org/wiki/Manual:Short_URL).
+
+After that you need to edit the LocalSettings.php too:
+
+```php title="LocalSettings.php"
+$wgScriptPath = "";
+$wgArticlePath = "/wiki/$1"; #for redirecting to /wiki/
+$wgUsePathInfo = true;
+```
+
+
+Reload the Caddy config:
+
+
+```bash
+caddy reload --config /etc/caddy/Caddyfile
+```
+
+
+Done.

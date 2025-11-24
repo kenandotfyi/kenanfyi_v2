@@ -1,23 +1,35 @@
 ---
+const { metadata } = Astro.props;
 ---
 
-<div>
-  <p>Header small</p>
-  <p>Header Main Title</p>
-  <p>Header metadata</p>
+<div class="banner">
+    <h3>{metadata.published}</h3>
+    <h1>{metadata.title}</h1>
+    <h2>{metadata.description}</h2>
+    <h3>{metadata.excerpt}</h3>
 </div>
 
-
 <style>
-  div {
-    border-width: 0px 1px 1px 1px;
-    border-style: solid;
-    border-color: slategray;
-    height: 240px;
-  }
+    * {
+        color: white;
+    }
+    .banner {
+        background-color: var(--banner-bg);
+        border-width: 0px 1px 1px 1px;
+        border-style: solid;
+        border-color: var(--main-border);
+        height: 200px;
+    }
 
-  p {
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
+    p {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    h1,
+    h2,
+    h3 {
+        padding: 0;
+        padding-left: 10px;
+    }
 </style>
