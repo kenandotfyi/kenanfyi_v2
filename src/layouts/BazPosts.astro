@@ -6,6 +6,7 @@ const { frontmatter } = Astro.props;
 
 <Baz pageTitle={frontmatter.title}>
     <Banner metadata={frontmatter} />
+    <div id="scrollDiv">↓ TOC: {frontmatter.title}</div>
     <article>
         <slot />
     </article>
@@ -13,13 +14,47 @@ const { frontmatter } = Astro.props;
 
 <style>
     article {
+        background-color: #f3f3f3;
         border-width: 0px 1px 1px 1px;
         border-color: var(--main-border);
         border-style: solid;
         padding: 10px;
+        box-shadow: inset 0 0 0 1px white;
+        position: relative;
     }
 
     article :global(p) {
         margin-bottom: 10px;
     }
+
+    #scrollDiv {
+        position: sticky;
+        top: 32px;
+        font-family: "Kode Mono Variable";
+        font-weight: 500;
+        font-size: 15px;
+        line-height: 1;
+        border: 1px solid var(--main-border);
+        padding: 8px;
+        color: white;
+        background-color: #9a3a1e;
+        text-transform: uppercase;
+        box-shadow: inset 0 0 0px 1px var(--orange);
+        display: hidden;
+        pointer-events: none;
+        z-index: 111;
+    }
 </style>
+
+<script>
+    const scrollDiv = document.getElementById("scrollDiv");
+    const scrollThreshold = 100; // pixels scrolled before showing
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > scrollThreshold) {
+            scrollDiv.classList.add("show");
+        } else {
+            scrollDiv.classList.remove("show");
+        }
+    });
+</script>

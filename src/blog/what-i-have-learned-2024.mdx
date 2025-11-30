@@ -1,0 +1,88 @@
+---
+draft: false
+title: What I have learned in 2024
+description: Some stuff I have learned in 2024
+published: 2024-12-29
+updated: 2025-01-12
+status: finished
+type: article
+tags: ["off-topic"]
+excerpt: "2024 comes to an end and, as many people are doing, I wanted to reflect on the things that have happened this year"
+backlinks: [""]
+---
+
+import Mn from "../../components/Mn.astro";
+import Link from "../../components/Link.astro";
+
+As 2024 comes to an end, I wanted to reflect on the things that have happened this year in my life and I decided to write down the things I have learned instead of just giving a life update.
+
+Here we go:
+
+<ol>
+<li>
+At work, I have learned a lot about resonant converters and how they work and what are the advantages and disadvantages of using them. Resources below are the ones I recommend to check out, if you are interested:
+
+<Mn id="mn-1">Sorry for the IEEE Links. They are behind a paywall of course, but you can still search and find them elsewhere.</Mn>
+
+- [Resonant Power Converters](https://www.wiley.com/en-gb/Resonant+Power+Converters%2C+2nd+Edition-p-9780470905388) by Marian K. Kazimierczuk
+- Videos of Tim McRae on [YouTube](https://www.youtube.com/watch?v=nXwhJuNmGY0&list=PLEn13xdPyAYS-OQu9ax5OgxWCQFJyTMo1&index=21)
+- A comparison of half-bridge resonant converter topologies, Steigerwald [IEEE](https://ieeexplore.ieee.org/document/4347)
+- Survey of Resonant Converter Topologies, especially the White Paper [Texas Instruments](https://www.ti.com/video/series/survey-of-resonant-converter-topologies.html)
+- Equivalent circuit models for resonant and PWM switches, V. Vorperian; R. Tymerski; F.C.Y. Lee [IEEE](https://ieeexplore.ieee.org/document/24905)
+- Design of a Bidirectional CL3C Full-Bridge Resonant Converter for Battery Energy Storage Systems, Y. Yan, Y. Chang, Z. Peng [MDPI](https://www.mdpi.com/1996-1073/15/2/412?type=check_update&version=2)
+
+</li>
+
+<li>
+  Learned advanced topics on PCB production capabilities of the current technology. About the vias, terminating via ends like tenting or plugging, layer thicknesses, prepreg types and how all these
+  options affect the price. I am planning to create another section related to electronics in my blog in 2025 so that I can post related stuff there.
+</li>
+
+<li>
+  Learned a ton about Astro and the features it uses, such as Content Collections, prefetching, image optimizations, MDX integration, RSS formatting and a lot of small stuff. I am quite comfortable
+  with Astro at the moment and I will stay with it for the time being. RSS was the most annoying part, but I have figured out how to push the rendered MDX content to my RSS feed, including images and
+  so on. You can check my configuration [here](https://github.com/kenandotfyi/kenanfyi/blob/master/src/pages/rss.xml.ts).
+</li>
+
+<li>
+  I have dabbled a little with self-hosting and have been successfully hosting a couple of small services and some small servers I have spinned up. As a matter of fact, this blog still runs on Netlify
+  since I barely scratch the surface of free tier limit. Nevertheless, I will go forward by moving everything to my server in the upcoming months. I have learned a ton about Caddy and already hosting
+  a MediaWiki instance and a statically generated site there. For this blog though, I will go with Coolify so that I can keep using my commits over Github for automatic deployment.
+</li>
+
+<li>
+  I have learned quite a bit about the systems programming while I was learning
+  Rust. I have written some small programs for things which are actually not
+  necessary, but valuable for learning. Not being related completely to Rust, I
+  learned about Virtual Memory, Dynamic Memory Mapping, Stack, Heap, Y86-64 ISA,
+  and much more. These are relatively advanced stuff I want to invest more time
+  in 2025 and want to post more notes/articles about them. Sources I am
+  currently digesting are below:
+
+- [Operating Systems: Three Easy Pieces](http://pages.cs.wisc.edu/~remzi/OSTEP/)
+- [Computer Systems: A Programmer's Perspective](http://csapp.cs.cmu.edu/3e/home.html)
+- [The Rust Programming Language, Cognitive Engineering Lab, Brown University](https://rust-book.cs.brown.edu)
+
+</li>
+
+<li>
+  Learned about [IndieWeb](https://indieweb.org), personal blogs and why everyone should have a space on this vast interconnectedness we call the World Wide Web. In fact, I have also
+  <Link type="article" href="junited-2024">participated</Link> in an [IndieWeb Carnival](https://indieweb.org/IndieWeb_Carnival) which took place in June. I wanted to do more of that but could not find the time and
+  inspiration to post on the topics for the rest of the year. Hopefully this changes in 2025.
+</li>
+
+<li>
+  Coffee is something I consume a lot more than I should. I love drinking pour overs during the day and having an occasional shot of espresso after meals. Especially when I'm in Italy, coffee is one
+  of the things that I enjoy the most about the vacation. Therefore, I wanted to invest some time in coffee-making and improve my skills. I bought a professional, but entry level espresso machine from
+  Lelit (Anna w/ PID) and have been learning to dial in the best shots. In 2025 I will invest more in my coffee setup.
+</li>
+
+<li>
+  Learned a lot about internet privacy and things that individuals could do to reduce their digital footprints and block tracking. I believe this is also something you should do. In this manner, I
+  stopped using Google services including Gmail, Google Search, Photos, Keep, Docs, Sheets; stopped using Twitter completely and blocked it on my search results; stopped using Instagram and started
+  moving my photos to this website. Unfortunately, there are still some services I use almost daily, such as YouTube and Google Maps. I hope to replace them with better alternatives in the future. If
+  you have some suggestions, feel free to e-mail me.
+</li>
+
+</ol>
+For 2025 I aim to learn much more on systems programming and details of how computers really work, improve my writing here on this blog, write more, go double down on magnetics and magnetics design, and generally improve my professional knowledge in power electronics. I guess these are my resolutions for 2025 too.

@@ -16,6 +16,8 @@ export default defineConfig({
         borderRadius: "0",
         codeFontFamily: "Iosevka",
         codeFontSize: "15px",
+        uiFontFamily: "Kode Mono Variable",
+        uiFontSize: "13px",
         frames: {
           frameBoxShadowCssValue: "none",
         },

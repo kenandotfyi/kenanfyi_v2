@@ -1,0 +1,38 @@
+---
+draft: false
+title: "Rust"
+description: "Trying Rust for the first time"
+excerpt: "The time has come. Yes, I am jumping on that train too. I'm learning Rust. It's been a while since I last learned a new programming language, aside from some Lua programming related to my Neovim setup"
+status: wip
+type: article
+tags: ["dev-stuff"]
+published: 2024-04-03
+updated: 2024-04-03
+backlinks: ["tools-i-use", "why-i-blog"]
+---
+
+_The time has come. Yes, I am jumping on that train too. I'm learning [Rust](https://www.rust-lang.org)._
+
+It's been a while since I last learned a new programming language, aside from some [Lua](https://www.lua.org) programming related to my [Neovim](https://neovim.io) setup (which I eventually abandoned), but other than that, it's been a while. More interestingly, I've been primarily focused on web development for a good number of years. Although it has nothing to do with my professional life as an electronics engineer, the web, as the medium I am trying to work with, has always amazed me.
+
+The web is quick for prototyping an idea; it is quick to share with others most importantly. No compiling, no IDE configuration, no hardware to connect to the PC and talk with... I'm not a software engineer per se, but I have done my share of professional software development (mostly embedded) using very old languages like C, Delphi, and some Basic in the past. After all these times, keeping the capabilities aside, learning web development was a breeze because of the aspects I have shared above. But, as every good thing has, it has some quirks in this fast-paced world where you need to keep up with the things that interest you. On a monthly basis. I don't see it as a big issue personally, but my concern is how fast things are changing in this environment. I mean, C is always C; I see C code at work almost daily, and it's the same C that [Dennis Ritchie](https://www.wikiwand.com/en/Dennis_Ritchie) created. Well, more or less, but you get the idea. You learn it once in a painful way, and it keeps being the same C as when you learned it.
+
+In 2014, I was learning React to build an application for displaying some technical measurement data on a web page with a map interface. I used Google Maps API and React, and although it was a bumpy road, I managed to do it in a fair amount of time. However, the measurement data kept growing for around two years, and the code I had written at the beginning was not the same as the code I had by the end of this period. Many paradigms had changed, and to stay updated, I had to update my code, and even my mental model at times, to keep up with the system I had been using. It wasn't a big deal since it was a relatively basic application, but I can't imagine how painful it would be for a larger team to make these changes in such a short period. I just checked remnants of the code I could find, and it has almost nothing to do with the React code I would write today. Yes, JavaScript has changed significantly during this time, and the web has evolved into something else, something big. But what I'm saying is, that the C code I wrote in 2008 to program my PIC microcontroller would still work today. It's that clear; these two different worlds are changing at drastically different tempos.
+
+# Enter, Rust
+
+Okay, but what does that have to do with Rust? Well, I believe Rust sits somewhere in between. It has been evolving for eight years, but from what I understand, the pace of development is slow and careful. That, for me, is a significant advantage when considering investing valuable time in a new technology. For many years, I've heard about Rust and its ecosystem, how developer-friendly it is, how safe it can be, how there is no need to trace the garbage collector, and how good the documentation is, among other things. You know, the hype. However, I've always been hesitant because of the challenges associated with learning a new language and paradigms, uncertainty about its applicability to my work, and the context switching required from web development to something else.
+
+Until now.
+
+Recently, I've been searching for software to streamline my engineering calculations smoothly and minimally. The details aren't important, but there are already well-established solutions out there that have been solving this problem for years. However, they do so in a very crude and ugly manner in my opinion. Many aspects of the engineering world, especially electronics, are light years away from the aesthetics of the web world. I'm not referring to shiny, visually appealing, electron-based, pixel-perfect software. I appreciate old-fashioned, functional, straightforward designs when it comes to engineering. But in this case, the existing solutions for my problem feel chaotic and mentally distant, making it challenging for me to use them.
+
+Therefore, I wanted to try building my own solution for this problem, and I was contemplating what kind of platform I could use. I could opt for C (or rather C# or C++), which would be fine, but I wanted to challenge myself a little bit more and try something new. And Rust was waiting there like this:
+
+![ferris](../../assets/ferris-clap.gif)
+
+I couldn't resist any longer. At the moment, I have almost no idea except that it's possible to achieve what I'm trying to do. Probably, Rust is not the optimum solution in this case since its UI frameworks are still relatively young compared to other languages. But I will give it a try, and in the end, even if I fail, I'll have another programming language in my toolkit. Plus, I have some other ideas for this blog, such as automating many tasks using a CLI tool, which I could also develop in Rust.
+
+The positive aspects of Rust over other languages are currently not my main focus, but it's good to know that some paradigms are different than, for example, C. It will help me stretch my brain a little to understand, especially since it's been a long time since I've programmed something on a system level.
+
+As the main purpose of this blog, I will log my progress here at very irregular intervals. Perhaps it will even encourage me to write more frequently; we'll see.

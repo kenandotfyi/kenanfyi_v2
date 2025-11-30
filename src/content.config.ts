@@ -16,12 +16,20 @@ const bits = defineCollection({
   }),
 });
 
-const articles = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/articles" }),
+const blogs = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/blog" }),
   schema: z.object({
+    draft: z.boolean(),
     title: z.string(),
     description: z.string(),
-    published: z.coerce.date(),
+    published: z.date().transform((date) => {
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }),
+    updated: z.coerce.date(),
+    status: z.string(),
   }),
 });
 
@@ -34,4 +42,4 @@ const books = defineCollection({
   }),
 });
 
-export const collections = { bits, articles, books };
+export const collections = { bits, blogs, books };

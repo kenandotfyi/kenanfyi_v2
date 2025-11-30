@@ -1,8 +1,11 @@
 ---
+import type { GetStaticPaths } from "astro";
 import Navigation from "../components/Navigation.astro";
 import Banner from "../components/Banner.astro";
 import "../styles/global.css";
 import "@fontsource/inria-sans";
+import "@fontsource-variable/kode-mono";
+import "@fontsource/vt323";
 import "@fontsource/iosevka";
 
 const { pageTitle } = Astro.props;
@@ -13,8 +16,8 @@ const { pageTitle } = Astro.props;
     <head>
         <meta charset="utf-8" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="generator" content={Astro.generator} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>kenan.fyi / {pageTitle}</title>
     </head>
     <body>
@@ -25,4 +28,10 @@ const { pageTitle } = Astro.props;
     </body>
 </html>
 
-<style></style>
+<style>
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+</style>

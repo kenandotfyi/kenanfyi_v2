@@ -1,0 +1,20 @@
+---
+import { getCollection } from "astro:content";
+import Baz from "../layouts/Baz.astro";
+
+const allBits = await getCollection("blogs");
+const pageTitle = "blogs";
+---
+
+<Baz pageTitle={pageTitle}>
+    <p>All blogs</p>
+    <ul>
+        {
+            allBits.map((post) => (
+                <li>
+                    <a href={`${post.id}`}>{post.data.title}</a>
+                </li>
+            ))
+        }
+    </ul>
+</Baz>

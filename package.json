@@ -11,6 +11,7 @@
   "dependencies": {
     "@astrojs/mdx": "^4.3.11",
     "@expressive-code/plugin-line-numbers": "^0.41.3",
+    "@fontsource-variable/kode-mono": "^5.2.8",
     "@fontsource/inria-sans": "^5.2.8",
     "@fontsource/iosevka": "^5.2.5",
     "astro": "^5.15.9",

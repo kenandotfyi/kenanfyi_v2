@@ -24,10 +24,13 @@
   --code-bg: #ececec;*/
     --main-bg: #eeefe9;
     --main-border: #010101;
-    --banner-bg: #1d1d1d;
+    /*--banner-bg: #1d1d1d;*/
+    --banner-bg: #1b1b1b;
     --red: #c5441f;
-    --orange: #f25b03;
+    --orange: #fa380c;
+    /*--orange: #f25b03;*/
     --green: #0d703f;
+    --blue: #0a122a;
     --yellow: #f1b73a;
     --beige: #d9cab8;
     --gray: #8b8178;
