@@ -10,11 +10,15 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.11",
+    "@astrojs/svelte": "^7.2.2",
     "@expressive-code/plugin-line-numbers": "^0.41.3",
     "@fontsource-variable/kode-mono": "^5.2.8",
     "@fontsource/inria-sans": "^5.2.8",
     "@fontsource/iosevka": "^5.2.5",
+    "@fontsource/vt323": "^5.2.7",
     "astro": "^5.15.9",
-    "astro-expressive-code": "^0.41.3"
+    "astro-expressive-code": "^0.41.3",
+    "svelte": "^5.45.6",
+    "typescript": "^5.9.3"
   }
 }

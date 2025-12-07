@@ -3,7 +3,7 @@ const { metadata } = Astro.props;
 ---
 
 <div class="banner">
-    <h3>{metadata.published}</h3>
+    <h3 id="pubDate">{metadata.published}</h3>
     <h1>{metadata.title}</h1>
     <h2>{metadata.description}</h2>
 </div>
@@ -21,6 +21,14 @@ const { metadata } = Astro.props;
         border-color: var(--main-border);
         height: 200px;
         padding-top: 16px;
+        background:
+            linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.8)),
+            url("/banner-bg/banner-bg.png");
+        background-size: cover; /* Ensures the image covers the div */
+        background-position: center; /* Centers the image */
+        background-repeat: no-repeat; /* Prevents tiling */
+
+        overflow: hidden;
     }
 
     h1,

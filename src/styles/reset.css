@@ -48,6 +48,10 @@ h6 {
     overflow-wrap: break-word;
 }
 
+p {
+    margin-bottom: 10px;
+}
+
 /* 9. Improve line wrapping */
 h1,
 h2,

@@ -1,7 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro";
 import Navigation from "../components/Navigation.astro";
-import Banner from "../components/Banner.astro";
 import "../styles/global.css";
 import "@fontsource/inria-sans";
 import "@fontsource-variable/kode-mono";
@@ -31,7 +30,8 @@ const { pageTitle } = Astro.props;
 <style>
     header {
         position: sticky;
-        top: 0;
+        top: 0px;
         z-index: 1000;
+        background-color: var(--main-bg);
     }
 </style>

@@ -1,33 +1,13 @@
 :root {
-    /*--bg: #fdfdfc;
-  --body-bg: #f6f6f6;
-  --text: #000;
-  --dim-text: #ccc;
-  --active-link: #fefefe;
-  --metadata: #6f6e69;
-  --links: #000;
-  --black: #000;
-  --red: #af2e1b;
-  --orange: #e66e4c;
-  --green: #736b1e;
-  --yellow: #f1b73a;
-  --orange05: rgba(230, 110, 76, 0.5);
-  --teal: #3c4b59;
-  --selection: #d1d1cf;
-  --table-bg: #eee;
-  --border: #bbb;
-  --boxsh: #ddd;
-  --shadow: rgba(0, 0, 0, 0.4);
-  --menubg: #ddd;
-  --block-bg: #f4f4f5;
-  --block-border: #cfcfbb;
-  --code-bg: #ececec;*/
-    --main-bg: #eeefe9;
+    --main-bg: #f6f8f7;
     --main-border: #010101;
+    --nav-bg: #e4e3df;
     /*--banner-bg: #1d1d1d;*/
     --banner-bg: #1b1b1b;
+    --text: #44403b;
     --red: #c5441f;
     --orange: #fa380c;
+    --accent: #9a3a1e;
     /*--orange: #f25b03;*/
     --green: #0d703f;
     --blue: #0a122a;
