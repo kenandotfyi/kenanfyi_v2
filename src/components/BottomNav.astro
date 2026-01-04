@@ -1,0 +1,149 @@
+---
+const currentPath = Astro.url.pathname;
+
+const isActive = (href: string) => {
+    if (href === "/") {
+        return currentPath === "/";
+    }
+    return currentPath.startsWith(href);
+};
+---
+
+<nav class="bottom-nav" id="bottom-nav">
+    <a href="/" class:list={[{ active: isActive("/") }]}>index</a>
+    <a href="/thoughts/" class:list={[{ active: isActive("/thoughts/") }]}
+        >thoughts</a
+    >
+    <a href="/electronics/" class:list={[{ active: isActive("/electronics/") }]}
+        >electronics</a
+    >
+    <a href="/bits/" class:list={[{ active: isActive("/bits/") }]}>bits</a>
+    <a href="/library/" class:list={[{ active: isActive("/library/") }]}
+        >library</a
+    >
+</nav>
+
+<script>
+    let isHidden = false;
+    let lastScroll = 0;
+    const nav = document.getElementById("bottom-nav");
+    const isMobile = () => window.innerWidth <= 768;
+
+    window.addEventListener("scroll", () => {
+        const currentScroll = window.scrollY;
+        const scrollingDown = currentScroll > lastScroll;
+        const scrollingUp = currentScroll < lastScroll;
+
+        if (isMobile()) {
+            // Mobile: always show on scroll up, always hide on scroll down
+            if (scrollingDown) {
+                nav?.classList.add("hidden");
+                nav?.classList.remove("revealed");
+            } else if (scrollingUp) {
+                nav?.classList.add("revealed");
+            }
+        } else {
+            // Desktop: hide when scrolled, reveal on hover
+            if (currentScroll > 100 && !isHidden) {
+                nav?.classList.add("hidden");
+                isHidden = true;
+            } else if (currentScroll <= 100 && isHidden) {
+                nav?.classList.remove("hidden");
+                nav?.classList.remove("revealed");
+                isHidden = false;
+            }
+        }
+
+        lastScroll = currentScroll;
+    });
+
+    // Desktop: reveal on hover
+    window.addEventListener("mousemove", (e) => {
+        if (!isHidden || !nav || isMobile()) return;
+
+        const navRect = nav.getBoundingClientRect();
+        const mouseY = e.clientY;
+        const navTop = navRect.top;
+
+        // Reveal if mouse is near or below the navbar
+        if (mouseY >= navTop - 50) {
+            nav.classList.add("revealed");
+        } else {
+            // Hide if mouse is above the navbar
+            nav.classList.remove("revealed");
+        }
+    });
+</script>
+
+<style>
+    .bottom-nav {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 6px;
+        background: white;
+        border: 2px solid var(--main-border);
+        border-radius: 8px;
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.12),
+            0 2px 4px rgba(0, 0, 0, 0.08);
+        z-index: 1000;
+        font-size: 12px;
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Hidden state - peeking from bottom */
+    .bottom-nav.hidden {
+        bottom: -36px;
+    }
+
+    .bottom-nav.hidden.revealed {
+        bottom: 20px;
+    }
+
+    a {
+        display: flex;
+        align-items: center;
+        padding: 8px 14px;
+        text-decoration: none;
+        color: var(--text);
+        border-radius: 4px;
+        transition: all 0.15s ease;
+        position: relative;
+        text-transform: lowercase;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+        font-weight: 500;
+    }
+
+    a:hover {
+        opacity: 1;
+        background: var(--blue);
+        color: white;
+    }
+
+    a.active {
+        opacity: 1;
+        background: var(--red);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .bottom-nav {
+            bottom: 12px;
+            font-size: 11px;
+        }
+
+        .bottom-nav.collapsed {
+            left: 12px;
+        }
+
+        a {
+            padding: 5px 10px;
+        }
+    }
+</style>

@@ -4,9 +4,8 @@
     let panels = [];
     let maxZIndex = 100;
     const STACK_OFFSET = 19;
-    let containerElement;
     let isEnabled = true;
-    const MOBILE_BREAKPOINT = 768;
+    const MOBILE_BREAKPOINT = 1140;
     const STORAGE_KEY = "stacked-panels-state";
 
     onMount(() => {
@@ -35,9 +34,9 @@
         const wasEnabled = isEnabled;
         isEnabled = window.innerWidth >= MOBILE_BREAKPOINT;
 
-        if (wasEnabled && !isEnabled) {
-            panels = [];
-        }
+        // if (wasEnabled && !isEnabled) {
+        //     panels = [];
+        // }
 
         if (!wasEnabled && isEnabled) {
             document.addEventListener("click", handleLinkClick);
@@ -74,7 +73,12 @@
             if (stored) {
                 const panelState = JSON.parse(stored);
 
-                panels = [...(panelState.panels || [])];
+                const currentPath = window.location.pathname;
+                const filteredPanels = (panelState.panels || []).filter(
+                    (p) => p.url !== currentPath,
+                );
+
+                panels = [...filteredPanels];
                 maxZIndex = panelState.maxZIndex || 100;
             }
         } catch (error) {
@@ -110,13 +114,19 @@
             return;
         }
 
-        if (pathname === "/blog" || pathname === "/blog/") {
+        if (
+            pathname === "/thoughts" ||
+            pathname === "/thoughts/" ||
+            pathname === "/bits" ||
+            pathname === "/bits/"
+        ) {
             return;
         }
 
-        const isBlogLink = pathname.startsWith("/blog/");
+        const isPanelLink =
+            pathname.startsWith("/thoughts/") || pathname.startsWith("/bits/");
 
-        if (isBlogLink && resolvedUrl.origin === window.location.origin) {
+        if (isPanelLink && resolvedUrl.origin === window.location.origin) {
             e.preventDefault();
             loadAndStackPanel(pathname);
         }
@@ -158,7 +168,7 @@
                 return;
             }
 
-            const titleElement = doc.querySelector("h1");
+            const titleElement = doc.querySelector("div.title");
             const title = titleElement ? titleElement.textContent : "Untitled";
 
             createPanel(url, title, pubDate, contentElement.innerHTML);
@@ -231,7 +241,6 @@
     $: sortedPanels = [...panels].sort((a, b) => a.zIndex - b.zIndex);
 </script>
 
-<div class="spacer"></div>
 <div class="stacked-panel-container" class:disabled={!isEnabled}>
     {#if isEnabled}
         {#each sortedPanels as panel, index (panel.id)}
@@ -255,7 +264,7 @@
                         on:keydown={(e) =>
                             e.key === "Enter" && bringToFront(panel.id)}
                     >
-                        {panel.title}, {panel.pubDate}
+                        {panel.title}
                         <div class="panel-actions">
                             <a
                                 href={panel.url}
@@ -279,8 +288,7 @@
                 {:else}
                     <div class="panel-header">
                         <div>
-                            <span>{panel.title}</span>,
-                            <span class="panel-pubDate">{panel.pubDate}</span>
+                            <span>{panel.title}</span>
                         </div>
                         <div class="panel-actions">
                             <a
@@ -322,17 +330,12 @@
     .stacked-panel-container {
         position: fixed;
         top: 0;
-        left: 70ch; /* 70ch (main content width) + 20px gap */
-        width: calc(70ch - 40px);
-        margin-top: 20px;
+        left: calc(var(--left-pad-for-panels) + calc(var(--q) * 32));
+        width: min(var(--left-pad-for-panels), calc(50vw - 220px));
+        margin-top: 36px;
         height: auto;
-        transform: translate(0px, 20px, 20px, 20px);
         background-color: var(--main-bg);
-        opacity: 0.7;
-    }
-
-    .stacked-panel-container:hover {
-        opacity: 1;
+        padding-right: calc(var(--q) * 4);
     }
 
     .stacked-panel-container.disabled {
@@ -340,18 +343,19 @@
     }
 
     .stacked-panel {
-        position: absolute;
-        left: 0;
-        right: 0;
-        max-height: calc(100vh - var(--panel-top) - 40px);
-        background-color: var(--main-bg);
         display: flex;
         flex-direction: column;
-        transition: left 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+        position: absolute;
+        max-height: calc(100vh - var(--panel-top) - 240px);
+        left: 0;
+        right: 0;
+        background-color: var(--main-bg);
+        border: 1px solid var(--nav-bg);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: slideDown 0.3s ease-in;
     }
 
     .panel-header {
-        font-family: "Kode Mono Variable";
         font-weight: 500;
         font-size: 15px;
         line-height: 1;
@@ -361,17 +365,15 @@
         color: white;
         background-color: #9a3a1e;
         text-transform: uppercase;
-        box-shadow: inset 0 0 0px 1px var(--orange);
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
     .panel-header.inactive {
-        background-color: var(--nav-bg);
-        font-family: "Kode Mono Variable";
+        background-color: var(--link-bg);
         font-weight: 500;
-        font-size: 15px;
+        font-size: 12px;
         height: 20px;
         line-height: 1;
         padding: 0 8px 0;
@@ -388,11 +390,6 @@
         cursor: pointer;
     }
 
-    .panel-pubDate {
-        font-style: italic;
-        font-size: 14px;
-    }
-
     .panel-actions {
         display: flex;
         align-items: center;
@@ -401,7 +398,7 @@
 
     .open-link {
         display: flex;
-        font-size: 0.9rem;
+        font-size: 12px;
         align-items: center;
         justify-content: center;
         background: var(--banner-bg);
@@ -451,13 +448,11 @@
 
     .panel-content {
         flex: 1;
+        text-align: justify;
+        hyphens: auto;
         background-color: white;
-        border-width: 0px 1px 1px 1px;
-        border-color: var(--main-border);
-        border-style: solid;
-        box-shadow: inset 0 0 0 1px white;
         overflow-y: auto;
-        padding: 10px;
+        padding: 20px;
     }
 
     /* Style content within the panel */
@@ -478,21 +473,14 @@
         font-size: 1.1rem;
     }
 
-    .spacer {
-        height: 20px;
-    }
-
-    /* Responsive design */
-    @media (max-width: 1400px) {
-        .stacked-panel-container {
-            width: 50ch;
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
         }
-    }
-
-    @media (max-width: 768px) {
-        .stacked-panel-container {
-            width: 100%;
-            left: 0;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 </style>

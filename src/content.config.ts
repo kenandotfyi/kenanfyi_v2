@@ -16,8 +16,8 @@ const bits = defineCollection({
   }),
 });
 
-const blogs = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/blog" }),
+const thoughts = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/thoughts" }),
   schema: z.object({
     draft: z.boolean(),
     title: z.string(),
@@ -42,4 +42,4 @@ const books = defineCollection({
   }),
 });
 
-export const collections = { bits, blogs, books };
+export const collections = { bits, thoughts, books };

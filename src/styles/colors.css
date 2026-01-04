@@ -1,8 +1,8 @@
 :root {
-    --main-bg: #f6f8f7;
-    --main-border: #010101;
+    --main-bg: #faf9f5;
+    --main-border: #e4e3df;
+    --link-bg: #dde4e1;
     --nav-bg: #e4e3df;
-    /*--banner-bg: #1d1d1d;*/
     --banner-bg: #1b1b1b;
     --text: #44403b;
     --red: #c5441f;
@@ -14,4 +14,8 @@
     --yellow: #f1b73a;
     --beige: #d9cab8;
     --gray: #8b8178;
+
+    /*utilities*/
+    --border-radius: 0.25rem;
+    --q: 0.25rem;
 }

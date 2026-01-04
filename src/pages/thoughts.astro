@@ -2,8 +2,8 @@
 import { getCollection } from "astro:content";
 import Baz from "../layouts/Baz.astro";
 
-const allBits = await getCollection("blogs");
-const pageTitle = "blogs";
+const allBits = await getCollection("thoughts");
+const pageTitle = "thoughts";
 ---
 
 <Baz pageTitle={pageTitle}>

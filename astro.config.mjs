@@ -7,6 +7,8 @@ import mdx from "@astrojs/mdx";
 
 import svelte from "@astrojs/svelte";
 
+import icon from "astro-icon";
+
 // https://astro.build/config
 export default defineConfig({
   scopedStyleStrategy: "class",
@@ -18,7 +20,6 @@ export default defineConfig({
         borderRadius: "0",
         codeFontFamily: "Iosevka",
         codeFontSize: "15px",
-        uiFontFamily: "Kode Mono Variable",
         uiFontSize: "13px",
         frames: {
           frameBoxShadowCssValue: "none",
@@ -30,5 +31,6 @@ export default defineConfig({
     }),
     mdx(),
     svelte(),
+    icon(),
   ],
 });

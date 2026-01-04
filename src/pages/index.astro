@@ -1,19 +1,305 @@
 ---
 import Baz from "../layouts/Baz.astro";
+import { Image } from "astro:assets";
 const pageTitle = "INDEX";
+import { Icon } from "astro-icon/components";
 ---
 
 <Baz pageTitle={pageTitle}>
-    <main>
-        <h3>ARTICLES</h3>
-    </main>
+    <div class="banner">
+        <h1>Kenan Akinci</h1>
+        <p class="role"><i>Sr. Hardware Design Engineer</i></p>
+    </div>
+    <div class="hero">
+        <!-- <Image
+                src="/banner-bg/banner-bg-2.png"
+                width="960"
+                height="640"
+                alt="..."
+            /> -->
+        <video autoplay muted playsinline loop>
+            <source src="/effect.webm" type="video/webm" />
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="short">
+        <p>
+            I'm a senior hardware design engineer from Germany with over 10
+            years of experience in designing and developing hardware for power
+            electronics systems. Although not officially a software engineer, I
+            program in various languages for personal and professional projects.
+        </p>
+        <p>
+            Reason this website exists is that I believe everyone should have
+            their own place in web and freely express themselves the way they
+            want. This is therefore my place where I post about
+            hardware/software and other things that interest me. I write mostly
+            for myself, but maybe you find them interesting too.
+        </p>
+        <p>
+            <i>
+                P.S. This site is constantly being re-designed and re-organized,
+                because it is serving me as a playground for my dabbling as
+                well.
+            </i>
+        </p>
+    </div>
+
+    <div class="writings">
+        <h2>Writings</h2>
+    </div>
+    <div class="experience">
+        <h2>Experience</h2>
+        <div class="jobs">
+            <div>
+                <h3 class="current">
+                    <a href="https://kollmorgen.com/" target="blank"
+                        >Kollmorgen</a
+                    >, <i>Oct 2025 - current</i>
+                </h3><p>Senior Hardware Design Engineer</p>
+            </div>
+            <div>
+                <h3>
+                    <a href="https://elektroautomatik.com/" target="blank"
+                        >EA Elektro-Automatik</a
+                    >, <i>@2023, 2 years</i>
+                </h3>
+                <p>Senior Hardware Design Engineer</p>
+                <p class="expandable-text">
+                    EA Elektro-Automatik, now part of Tektronix, has been
+                    offering high voltage and high current bidirectional power
+                    supplies for various applications in automotive, industrial,
+                    aerospace and such markets for the last 50 years. As a
+                    Senior Hardware Design Engineer, I was responsible for
+                    designing: the resonant stage of the new product platform
+                    for company's next-gen bidirectional power supplies for
+                    increased power density and efficiency from power levels of
+                    12kW for the first phase; testing and evaluating SiC power
+                    MOSFETs in increased switching frequencies for reducing
+                    overall component sizes; testing and designing inductive
+                    components for resonant topologies including CLLC and
+                    variants; designing current, voltage and temperature
+                    measurement circuits for software algorithms to implement
+                    control of the system and required filter topologies;
+                    helping colleagues on traditional topics such as Flyback,
+                    Buck, Boost and such SMPS topologies; testing the
+                    functionality of designed prototypes for various scenarios
+                    in the lab for required performance criteria; writing Python
+                    scripts occasionally to fulfill design tasks; helping to
+                    maintain the Xpedition EDM toolchain by also implementing
+                    scripts for various tasks and output data integrity;
+                    layouting PCBs in Xpedition EDM from 4 to 8 Layers
+                </p>
+            </div>
+            <div>
+                <h3>
+                    <a
+                        href="https://www.bonfiglioli.com/international/en/product/axia-vert-series_inverters-servo-drives_premium-inverters"
+                        target="blank">Bonfiglioli</a
+                    >, <i>@2018, 5 years</i>
+                </h3><p>Hardware Design Engineer</p>
+                <p class="expandable-text">
+                    Working as a hardware design engineer, my responsibilities
+                    were designing converter topologies from 250 W to 132 kW
+                    including basic and advanced motor drives aimed for
+                    asynchronous, synchronous, synchronous reluctance and servo
+                    motor applications according to national and worldwide
+                    standards such as 61800-3, 61800-5-1, 61800-5-2 and similar
+                    generic standards, as well as CE conformity; testing the
+                    functional blocks as well as complete devices in different
+                    conditions to qualify short-circuit, high temperature,
+                    overload, long time running and similar behavior of
+                    frequency inverters and writing technical reports;
+                    troubleshooting error behavior in new and old designs;
+                    proposing topologies for new designs and improvements to
+                    current portfolio in terms of better thermal,
+                    electromagnetic and functional performance; using simulation
+                    software such as LTSpice for evaluating topologies and
+                    dimensioning of components; qualifying new components,
+                    mainly IGBTs and SiC MOSFETs to replace current ones or
+                    proposing second sources and supporting QM department;
+                    participating in research activities aimed to introduce new
+                    types of components such as SiC MOSFETs in company and
+                    generate new know-how based on new power semiconductor
+                    technologies, supervising and maintaining company-wide wiki
+                    for knowledge management
+                </p>
+            </div>
+            <div>
+                <h3>
+                    <a
+                        href="https://www.a-group.com.tr/en/arge/arge-merkezi-1"
+                        target="blank">A Group R&D</a
+                    >, <i>@2015, 3 years</i>
+                </h3><p>Hardware Design Engineer</p><p class="expandable-text">
+                    As a part of the hardware team, my responsibilities were to
+                    design power conversion topologies such as inverters,
+                    converters and switch-mode power supplies for various
+                    applications including Permanent Magnet Synchronous Servo
+                    Motor Drives, Elevator Drives and their internal power
+                    supplies; design analog and digital supplementary circuits
+                    for isolated current, voltage and temperature measurement
+                    circuits, PWM circuits, gate drives, fault detection
+                    circuits, DC Link pre-charging circuits, reference voltage
+                    circuits; to design PCBs and schematics of the mentioned
+                    motor drives. I was also responsible for the power,
+                    efficiency and harsh condition testing of mentioned motor
+                    drives with different kind of scenarios such as short
+                    circuit behavior, high ambient temperature testing, and
+                    overall efficiency in the qualified electronics laboratory
+                    with high performance oscilloscopes, temperature measuring
+                    devices and power analyzers. Due to my background in
+                    electromagnetics which I gained during college days, EMC
+                    testing of the drives was also part of my responsibilities.
+                    As a part of my job and my personal interest, I also did
+                    research and made purchases for electronic equipment and
+                    gave tutorials about using them to our team such as
+                    oscilloscopes, power analyzers, power supplies, thermal
+                    imaging cameras, spectrum analyzers and EMC equipment for
+                    the hardware laboratory.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="papers">
+        <h2>Papers</h2>
+    </div>
+    <div class="socials">
+        <h2>Socials</h2>
+        <p>
+            You can find me on <a href="https://mas.to/@ingenieur"
+                >Mastodon<Icon name="ph:mastodon-logo-duotone" size="16" /></a
+            >, <a href="https://github.com/kenandotfyi"
+                >GitHub<Icon name="ph:github-logo-duotone" size="16" /></a
+            > or contact me directly via <b>hey@kenan.fyi</b>. I always
+            appreciate a meaningful and friendly conversation on topics such as
+            software development, design, minimalism, electronics and
+            non-fiction books.
+        </p>
+        <p>
+            If you like to use RSS, I also have a feed which you can find <a
+                href="https://kenan.fyi/rss.xml">here</a
+            >.
+        </p>
+    </div>
 </Baz>
 
 <style>
-    main {
-        padding-left: 10px;
-        border-width: 0px 1px 1px 1px;
-        border-color: var(--main-border);
-        border-style: solid;
+    div.hero {
+        margin-top: calc(var(--q) * 8);
+    }
+    div.hero img,
+    video {
+        width: 100%;
+        transform: scale(1.1);
+        margin: 2rem 0;
+        border-radius: 8px;
+        margin-top: 24px;
+        opacity: 0.9;
+    }
+
+    div.banner {
+        margin-top: calc(var(--q) * 12);
+        margin-bottom: calc(var(--q) * 12);
+    }
+
+    div.short {
+        text-align: justify;
+        hyphens: auto;
+        margin-bottom: calc(var(--q) * 12);
+    }
+
+    div.short :global(p) {
+        margin-bottom: calc(var(--q) * 8);
+    }
+
+    div.writings {
+        margin-bottom: calc(var(--q) * 12);
+    }
+
+    div.experience {
+        margin-bottom: calc(var(--q) * 12);
+    }
+
+    div.jobs h3 {
+        margin: 0;
+    }
+
+    div.jobs a {
+        text-decoration: none;
+        color: var(--orange);
+    }
+    div.jobs a:hover {
+        filter: brightness(1.35) saturate(1.3);
+    }
+
+    div.jobs a::after {
+        content: "↗";
+        margin-left: 4px;
+    }
+
+    div.jobs h3.current {
+        color: var(--green);
+    }
+
+    div.jobs h3.current a {
+        color: var(--green);
+    }
+    div.jobs h3.current::before {
+        content: "•";
+    }
+
+    div.socials {
+        margin-bottom: calc(var(--q) * 12);
+    }
+
+    h1 {
+        margin: 0;
+    }
+    p.role {
+        font-family: "Vollkorn Variable";
+        font-size: 1.25rem;
+        margin-bottom: 12px;
+        opacity: 0.5;
     }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const expandableTexts = document.querySelectorAll(".expandable-text");
+
+        expandableTexts.forEach((element) => {
+            const text = element.textContent?.trim() || "";
+
+            if (text.length > 100) {
+                const truncated = text.substring(0, 99);
+                element.setAttribute("data-full-text", text);
+                element.setAttribute("data-truncated-text", truncated + "...");
+
+                element.textContent = truncated + "... ";
+
+                const toggleBtn = document.createElement("span");
+                toggleBtn.className = "toggle-btn";
+                toggleBtn.textContent = "Read more";
+
+                let isExpanded = false;
+
+                toggleBtn.addEventListener("click", () => {
+                    isExpanded = !isExpanded;
+
+                    if (isExpanded) {
+                        element.textContent = text + " ";
+                        toggleBtn.textContent = "Read less";
+                    } else {
+                        element.textContent = truncated + "... ";
+                        toggleBtn.textContent = "Read more";
+                    }
+
+                    element.appendChild(toggleBtn);
+                });
+
+                element.appendChild(toggleBtn);
+            }
+        });
+    });
+</script>

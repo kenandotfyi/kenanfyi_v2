@@ -1,20 +1,60 @@
 @import url("reset.css");
 @import url("colors.css");
 
+:root {
+    --left-pad-for-panels: 70ch;
+}
+
 html {
-    box-sizing: border-box;
     background-color: var(--main-bg);
+    box-sizing: border-box;
     color: var(--text);
+    position: relative;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+}
+
+html::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.05;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 body {
-    max-width: 70ch;
-    padding: 0 20px 0;
-    font-family: "Inria Sans", sans;
+    margin-left: calc(var(--q) * 24);
+    margin-right: calc(var(--q) * 24);
+    margin-top: calc(var(--q) * 24);
+    font-family: system-ui, sans-serif;
+    max-width: var(--left-pad-for-panels);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-bottom: 12px;
+    margin-top: 24px;
 }
 
 img {
     height: auto;
+}
+
+a {
+    text-decoration: underline;
+    font-weight: bold;
+    color: var(--red);
 }
 
 .expressive-code {
@@ -30,7 +70,34 @@ img {
     border-top: 0px !important;
     padding: 0 !important;
 }
-.toc-a {
-    color: white;
-    text-decoration: none;
+
+.expandable-text {
+    position: relative;
+    opacity: 0.7;
+    font-size: 0.8rem;
+}
+
+.expandable-text.collapsed {
+    max-height: 3em;
+    overflow: hidden;
+}
+
+span.toggle-btn {
+    display: inline;
+    color: var(--text);
+    cursor: pointer;
+    font-style: italic;
+    margin-left: 4px;
+    padding: 4px;
+    background-color: var(--link-bg);
+    border-radius: 4px;
+}
+
+span.toggle-btn:hover {
+    background-color: var(--link-bg);
+}
+@media (max-width: 768px) {
+    body {
+        margin: calc(var(--q) * 8);
+    }
 }
