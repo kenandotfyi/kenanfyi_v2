@@ -1,0 +1,50 @@
+:root {
+
+    /**************/
+    /*** COLORS ***/
+    /**************/
+
+    --main-bg: #EEEFE9;
+    --footer-bg: #DADCD0;
+
+    --main-border: #e4e3df;
+    --link-bg: #dde4e1;
+    --nav-bg: #e4e3df;
+    --banner-bg: #1b1b1b;
+    --text: var(--rams-black);
+    --red: #BF3922;
+    --orange: #fa380c;
+    --accent: #9a3a1e;
+    /*--orange: #f25b03;*/
+    --green: #0d703f;
+    --blue: #0a122a;
+    --charcoal-blue: #37515F;
+    --yellow: #f1b73a;
+    --beige: #d9cab8;
+    --gray: #8b8178;
+    --lichtgrau: #C5C7C4;
+
+
+    /* rams colors DR06 by chad ashley*/
+    /*--rams-yellow: #ED8008;
+    --rams-orange: #ED3F1C;
+    --rams-red: #BF1B1B;
+    --rams-green: #736B1E;
+    --rams-white: #D9D2C6;*/
+
+    /* rams colors DR07 by chad ashley*/
+    --rams-red: #ae2F25;
+    --rams-orange: #E15E3E;
+    --rams-blue: #315B7B;
+    --rams-black: #292A2E;
+    --rams-gray: #50474C;
+    --rams-bg: #DADCD0;
+
+    /**************/
+    /*** UTILS  ***/
+    /**************/
+    --q: 0.25rem;
+    --border-s: calc(var(--q) * 1);
+    --border-m: calc(var(--q) * 2);
+    --border-l: calc(var(--q) * 4);
+}

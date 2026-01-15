@@ -4,14 +4,10 @@ import { z, defineCollection } from "astro:content";
 const bits = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/bits" }),
   schema: z.object({
+    draft: z.boolean(),
     title: z.string(),
     description: z.string(),
-    published: z.date().transform((date) => {
-      const yyyy = date.getFullYear();
-      const mm = String(date.getMonth() + 1).padStart(2, "0");
-      const dd = String(date.getDate()).padStart(2, "0");
-      return `${yyyy}-${mm}-${dd}`;
-    }),
+    published: z.date(),
     excerpt: z.string().optional().default("No excerpt"),
   }),
 });
@@ -21,13 +17,9 @@ const thoughts = defineCollection({
   schema: z.object({
     draft: z.boolean(),
     title: z.string(),
+    excerpt: z.string(),
     description: z.string(),
-    published: z.date().transform((date) => {
-      const yyyy = date.getFullYear();
-      const mm = String(date.getMonth() + 1).padStart(2, "0");
-      const dd = String(date.getDate()).padStart(2, "0");
-      return `${yyyy}-${mm}-${dd}`;
-    }),
+    published: z.date(),
     updated: z.coerce.date(),
     status: z.string(),
   }),

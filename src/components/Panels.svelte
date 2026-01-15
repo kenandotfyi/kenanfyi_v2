@@ -3,7 +3,7 @@
 
     let panels = [];
     let maxZIndex = 100;
-    const STACK_OFFSET = 19;
+    const STACK_OFFSET = 32;
     let isEnabled = true;
     const MOBILE_BREAKPOINT = 1140;
     const STORAGE_KEY = "stacked-panels-state";
@@ -181,6 +181,12 @@
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = content;
 
+        // Remove elements that shouldn't appear in panels
+        const excludedElements = tempDiv.querySelectorAll(
+            ".exclude-from-panel",
+        );
+        excludedElements.forEach((el) => el.remove());
+
         const elementsWithIds = tempDiv.querySelectorAll("[id]");
         elementsWithIds.forEach((el) => {
             const id = el.getAttribute("id");
@@ -245,9 +251,13 @@
     {#if isEnabled}
         {#each sortedPanels as panel, index (panel.id)}
             {@const isTop = isTopPanel(panel)}
+            {@const isSinglePanel = sortedPanels.length === 1}
+            {@const isFirstInactive = !isTop && index === 0}
             <div
                 class="stacked-panel"
                 class:is-top={isTop}
+                class:single-panel={isSinglePanel}
+                class:first-inactive={isFirstInactive}
                 data-panel-id={panel.id}
                 style="
           top: {index * STACK_OFFSET}px;
@@ -329,10 +339,9 @@
 <style>
     .stacked-panel-container {
         position: fixed;
-        top: 0;
-        left: calc(var(--left-pad-for-panels) + calc(var(--q) * 32));
-        width: min(var(--left-pad-for-panels), calc(50vw - 220px));
-        margin-top: 36px;
+        left: calc(50% + 40ch);
+        width: min(calc(var(--left-pad-for-panels) - 20ch), calc(40vw - 240px));
+        margin-top: 42px;
         height: auto;
         background-color: var(--main-bg);
         padding-right: calc(var(--q) * 4);
@@ -350,20 +359,46 @@
         left: 0;
         right: 0;
         background-color: var(--main-bg);
-        border: 1px solid var(--nav-bg);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        animation: slideDown 0.3s ease-in;
+        overflow: hidden;
+        animation: slideDown 0.3s linear;
+        border: 1px solid var(--main-border);
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.12),
+            0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Single panel: all corners rounded */
+    .stacked-panel.single-panel {
+        border-radius: var(--border-s);
+    }
+
+    /* Multiple panels - active (top) panel: only bottom corners */
+    .stacked-panel.is-top:not(.single-panel) {
+        border-radius: 0 0 8px 8px;
+    }
+
+    /* Multiple panels - first inactive panel: only top corners */
+    .stacked-panel.first-inactive {
+        border-radius: 8px 8px 0 0;
+        border: 1px solid var(--main-border);
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.12),
+            0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Other inactive panels: no border radius */
+    .stacked-panel:not(.is-top):not(.first-inactive):not(.single-panel) {
+        border-radius: 0;
     }
 
     .panel-header {
         font-weight: 500;
         font-size: 15px;
         line-height: 1;
-        border: 1px solid var(--main-border);
         padding: 8px;
-        height: 33px;
+        height: 32px;
         color: white;
-        background-color: #9a3a1e;
+        background-color: var(--rams-red);
         text-transform: uppercase;
         display: flex;
         justify-content: space-between;
@@ -374,16 +409,16 @@
         background-color: var(--link-bg);
         font-weight: 500;
         font-size: 12px;
-        height: 20px;
+        height: 32px;
         line-height: 1;
         padding: 0 8px 0;
-        box-shadow: inset 0 0 0px 1px #ccc;
         color: var(--text);
         cursor: pointer;
     }
 
     .panel-header.inactive:hover {
-        background-color: #f3f4f6;
+        background-color: var(--rams-red);
+        color: white;
     }
 
     .panel-header.clickable {
@@ -400,18 +435,24 @@
         display: flex;
         font-size: 12px;
         align-items: center;
+        height: 20px;
         justify-content: center;
-        background: var(--banner-bg);
+        background-color: var(--rams-red);
         color: white;
-        border: none;
+        border-radius: var(--border-s);
         cursor: pointer;
         text-decoration: none;
-        padding: 2px;
+        padding: 4px;
         transition: color 0.2s;
     }
 
     .open-link:hover {
-        color: var(--yellow);
+        background-color: var(--rams-orange);
+    }
+
+    .open-link::after {
+        content: "↗";
+        margin-left: 4px;
     }
 
     .open-link.small {
@@ -426,20 +467,27 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--banner-bg);
         color: white;
+        width: 20px;
+        height: 20px;
+        margin: 4px;
+        border-radius: var(--border-s);
         border: none;
         cursor: pointer;
-        font-size: 0.9rem;
         transition: color 0.2s;
+        background-color: inherit;
+        font-size: 14px;
+        line-height: 1;
     }
 
     .close-button:hover {
-        color: var(--yellow);
+        background-color: var(--rams-orange);
     }
 
     .close-button.small {
+        font-size: 12px;
         opacity: 0.7;
+        color: var(--text);
     }
 
     .close-button.small:hover {

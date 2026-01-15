@@ -1,8 +1,10 @@
 @import url("reset.css");
-@import url("colors.css");
+@import url("vars.css");
 
 :root {
-    --left-pad-for-panels: 70ch;
+    --left-pad-for-panels: 85ch;
+    --body-width: clamp(55ch, 45vw, 85ch);
+    --panel-width: clamp(40ch, 35vw, 70ch);
 }
 
 html {
@@ -28,13 +30,12 @@ html::before {
 }
 
 body {
-    margin-left: calc(var(--q) * 24);
-    margin-right: calc(var(--q) * 24);
-    margin-top: calc(var(--q) * 24);
+    margin: calc(var(--q) * 24) auto 0;
     font-family: system-ui, sans-serif;
     max-width: var(--left-pad-for-panels);
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.5;
+    padding: 0 calc(var(--q) * 24);
 }
 
 h1,
@@ -45,6 +46,7 @@ h5,
 h6 {
     margin-bottom: 12px;
     margin-top: 24px;
+    font-family: "JetBrains Mono";
 }
 
 img {
@@ -54,19 +56,19 @@ img {
 a {
     text-decoration: underline;
     font-weight: bold;
-    color: var(--red);
+    color: var(--rams-blue);
 }
 
 .expressive-code {
     margin-bottom: 10px;
 }
 
-.expressive-code pre > code {
+.expressive-code pre>code {
     border-top: 1px solid var(--ec-brdCol) !important;
     padding: 0 !important;
 }
 
-.expressive-code figure.is-terminal pre > code {
+.expressive-code figure.is-terminal pre>code {
     border-top: 0px !important;
     padding: 0 !important;
 }
@@ -84,20 +86,23 @@ a {
 
 span.toggle-btn {
     display: inline;
-    color: var(--text);
+    color: white;
     cursor: pointer;
     font-style: italic;
     margin-left: 4px;
     padding: 4px;
-    background-color: var(--link-bg);
-    border-radius: 4px;
+    background-color: var(--rams-gray);
+    border-radius: var(--border-s);
 }
 
 span.toggle-btn:hover {
-    background-color: var(--link-bg);
+    background-color: var(--rams-blue);
+    color: white;
 }
+
 @media (max-width: 768px) {
     body {
-        margin: calc(var(--q) * 8);
+        margin: calc(var(--q) * 8) auto 0;
+        padding: 0 calc(var(--q) * 8);
     }
 }

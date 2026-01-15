@@ -2,7 +2,12 @@
 import { getCollection } from "astro:content";
 import Baz from "../layouts/Baz.astro";
 
-const allBits = await getCollection("thoughts");
+const allThoughts = await getCollection(
+    "thoughts",
+    ({ data }) => data.draft !== true,
+);
+
+allThoughts.sort((a: any, b: any) => b.data.published - a.data.published);
 const pageTitle = "thoughts";
 ---
 
@@ -10,9 +15,10 @@ const pageTitle = "thoughts";
     <p>All blogs</p>
     <ul>
         {
-            allBits.map((post) => (
+            allThoughts.map((post) => (
                 <li>
                     <a href={`${post.id}`}>{post.data.title}</a>
+                    {post.data.published.toISOString().split('T')[0]}
                 </li>
             ))
         }

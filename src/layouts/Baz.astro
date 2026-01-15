@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from "astro";
 import Navigation from "../components/Navigation.astro";
 import BottomNav from "../components/BottomNav.astro";
+import Footer from "../components/Footer.astro";
 import "../styles/global.css";
 import "@fontsource/iosevka";
 
@@ -26,47 +27,34 @@ const { pageTitle } = Astro.props;
         </div>
         <slot name="panels-outside-main" />
         <BottomNav />
-        <footer>-- footer content --</footer>
+        <Footer />
     </body>
 </html>
 
 <style>
-    header {
-        padding-top: 16px;
-        z-index: 100;
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .content {
+        flex: 1;
     }
 
     main {
-        animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: fadeInFocus 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        padding-bottom: calc(var(--q) * 12);
     }
 
-    footer {
-        width: 100vw;
-        background-color: var(--beige);
-        height: 180px;
-        margin-left: calc(var(--q) * -24);
-        margin-right: calc(var(--q) * -24);
-        padding-left: calc(var(--q) * 24);
-        padding-right: calc(var(--q) * 24);
-    }
-
-    @media (max-width: 768px) {
-        footer {
-            margin-left: calc(var(--q) * -8);
-            margin-right: calc(var(--q) * -8);
-            padding-left: calc(var(--q) * 8);
-            padding-right: calc(var(--q) * 8);
-        }
-    }
-
-    @keyframes slideDown {
+    @keyframes fadeInFocus {
         from {
             opacity: 0;
-            transform: translateY(-20px);
+            filter: blur(4px);
         }
         to {
             opacity: 1;
-            transform: translateY(0);
+            filter: blur(0);
         }
     }
 </style>

@@ -9,65 +9,75 @@ const isActive = (href: string) => {
 };
 ---
 
-<nav>
-    <span>⬛︎</span>
-    <a href="/" class:list={[{ active: isActive("/") }]}>INDEX</a>
-    <a href="/thoughts/" class:list={[{ active: isActive("/thoughts/") }]}
-        >THOUGHTS</a
-    >
-    <a href="/electronics/" class:list={[{ active: isActive("/electronics/") }]}
-        >ELECTRONICS</a
-    >
-    <a href="/bits/" class:list={[{ active: isActive("/bits/") }]}>BITS</a>
-    <a href="/library/" class:list={[{ active: isActive("/library/") }]}
-        >LIBRARY</a
-    >
-    <a href="/bookmarks/" class:list={[{ active: isActive("/bookmarks/") }]}
-        >BOOKMARKS</a
-    >
-</nav>
+<p>
+    <div>
+        <nav>
+            <span>⬛︎</span>
+            <a href="/" class:list={[{ active: isActive("/") }]}>INDEX</a>
+            <a
+                href="/thoughts/"
+                class:list={[{ active: isActive("/thoughts/") }]}>THOUGHTS</a
+            >
+            <a
+                href="/electronics/"
+                class:list={[{ active: isActive("/electronics/") }]}
+                >ELECTRONICS</a
+            >
+            <a href="/bits/" class:list={[{ active: isActive("/bits/") }]}
+                >BITS</a
+            >
+            <a href="/library/" class:list={[{ active: isActive("/library/") }]}
+                >LIBRARY</a
+            >
+            <a
+                href="/bookmarks/"
+                class:list={[{ active: isActive("/bookmarks/") }]}>BOOKMARKS</a
+            >
+        </nav>
 
-<style>
-    nav {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-transform: lowercase;
-        font-size: 16px;
-        font-family:
-            "Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052,
-            serif;
-        font-weight: bold;
-        overflow-x: auto;
-        scrollbar-width: none;
-        letter-spacing: 0.04em;
-    }
+        <style>
+            nav {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                text-transform: lowercase;
+                font-size: 16px;
+                font-family:
+                    "Iowan Old Style", "Palatino Linotype", "URW Palladio L",
+                    P052, serif;
+                font-weight: bold;
+                overflow-x: auto;
+                scrollbar-width: none;
+                letter-spacing: 0.04em;
+            }
 
-    nav::-webkit-scrollbar {
-        display: none;
-    }
+            nav::-webkit-scrollbar {
+                display: none;
+            }
 
-    a {
-        padding: 4px;
-        text-decoration: none;
-        color: var(--main-text);
-        opacity: 0.5;
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        border-radius: 4px;
-    }
+            a {
+                padding: 4px;
+                text-decoration: none;
+                color: var(--main-text);
+                opacity: 0.5;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: var(--border-s);
+            }
 
-    a:hover {
-        opacity: 1;
-        background-color: var(--link-bg);
-    }
+            a:hover {
+                opacity: 1;
+                background-color: var(--link-bg);
+            }
 
-    a.active {
-        opacity: 1;
-        color: white;
-        background-color: black;
-    }
+            a.active {
+                opacity: 1;
+                color: white;
+                background-color: black;
+            }
 
-    a.active::after {
-        transform: scaleX(1);
-    }
-</style>
+            a.active::after {
+                transform: scaleX(1);
+            }
+        </style>
+    </div>
+</p>

@@ -1,0 +1,37 @@
+---
+import { Icon } from "astro-icon/components";
+const { metadata } = Astro.props;
+---
+
+<footer>
+    <div class="footer-container">
+        <p><a href="">colophon</a></p>
+        <p><a href="">blogroll</a></p>
+        <p><a href="">rss</a></p>
+    </div>
+    <div>kenan.fyi // CC BY-NC-SA 4.0</div>
+</footer>
+
+<style>
+    footer {
+        font-family: "JetBrains Mono";
+        background-color: var(--footer-bg);
+        height: 120px;
+    }
+
+    div.footer-container {
+        display: flex;
+        flex-direction: row;
+        gap: calc(var(--q) * 2);
+        align-items: center;
+    }
+
+    @media (max-width: 768px) {
+        footer {
+            margin-left: calc(var(--q) * -8);
+            padding-left: calc(var(--q) * 8);
+            margin-right: calc(var(--q) * -8);
+            padding-right: calc(var(--q) * 8);
+        }
+    }
+</style>

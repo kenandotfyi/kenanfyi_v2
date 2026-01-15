@@ -1,25 +1,90 @@
 ---
+import { Icon } from "astro-icon/components";
 const { metadata } = Astro.props;
 ---
 
 <div class="banner">
-    <div class="title">{metadata.title}</div>
-    <div class="pubDate" id="pubDate">{metadata.published}</div>
+    <div class="header-row">
+        <button id="back-button" class="back-button exclude-from-panel">
+            <Icon name="ph:arrow-left-bold" />
+            <span class="back-text">Back</span>
+        </button>
+        <div class="title">{metadata.title}</div>
+        <div class="pubDate" id="pubDate">
+            {metadata.published.toISOString().split("T")[0]}
+        </div>
+    </div>
 </div>
+
+<script>
+    const backButton = document.getElementById("back-button");
+    backButton?.addEventListener("click", () => {
+        window.history.back();
+    });
+</script>
 
 <style>
     div.banner {
-        display: flex;
-        justify-content: space-between;
         margin-bottom: calc(var(--q) * 24);
+    }
+
+    .header-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     div.title {
         font-size: 1.25rem;
         font-weight: 700;
+        transition: margin-left 0.3s ease;
+        flex: 1;
+    }
+
+    .back-button {
+        display: flex;
+        align-items: center;
+        padding: 6px;
+        background: none;
+        border: none;
+        border-radius: var(--border-s);
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .back-button :global(svg) {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+    }
+
+    .back-text {
+        display: inline-block;
+        width: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-left: 0;
+    }
+
+    .back-button:hover .back-text {
+        width: 32px;
+        margin-left: 6px;
+    }
+
+    .back-button:hover {
+        background: var(--blue);
+        color: white;
+        border-color: var(--blue);
+        padding-right: 10px;
     }
 
     div.pubDate {
         opacity: 0.5;
+        margin-left: auto;
     }
 </style>

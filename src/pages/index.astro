@@ -1,12 +1,25 @@
 ---
+import { getCollection } from "astro:content";
 import Baz from "../layouts/Baz.astro";
 import { Image } from "astro:assets";
 const pageTitle = "INDEX";
 import { Icon } from "astro-icon/components";
+
+const allThoughts = await getCollection(
+    "thoughts",
+    ({ data }) => data.draft !== true,
+);
+
+allThoughts.sort((a: any, b: any) => b.data.published - a.data.published);
+
+const allBits = await getCollection("bits", ({ data }) => data.draft !== true);
+
+allBits.sort((a: any, b: any) => b.data.published - a.data.published);
 ---
 
 <Baz pageTitle={pageTitle}>
     <div class="banner">
+        <p>Logo</p>
         <h1>Kenan Akinci</h1>
         <p class="role"><i>Sr. Hardware Design Engineer</i></p>
     </div>
@@ -47,6 +60,48 @@ import { Icon } from "astro-icon/components";
 
     <div class="writings">
         <h2>Writings</h2>
+        <h3>thoughts</h3>
+        <ul>
+            {
+                allThoughts.map((post) => (
+                    <li>
+                        <p>{post.data.published.toISOString().split("T")[0]}</p>
+                        <a href={`/thoughts/${post.id}`}>{post.data.title}</a>
+                        <p>{post.data.excerpt}...</p>
+                    </li>
+                ))
+            }
+        </ul>
+
+        <h3>bits</h3>
+        <ul>
+            {
+                allBits.map((post) => (
+                    <li>
+                        <a href={`/bits/${post.id}`}>{post.data.title}</a>
+                        {post.data.published.toISOString().split("T")[0]}
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+    <div class="elsewhere">
+        <h2>Elsewhere</h2>
+        <p>
+            You can find me on <a href="https://mas.to/@ingenieur"
+                >Mastodon<Icon name="ph:mastodon-logo-duotone" size="16" /></a
+            >, <a href="https://github.com/kenandotfyi"
+                >GitHub<Icon name="ph:github-logo-duotone" size="16" /></a
+            > or contact me directly via <b>hey@kenan.fyi</b>. I always
+            appreciate a meaningful and friendly conversation on topics such as
+            software development, design, minimalism, electronics and
+            non-fiction books.
+        </p>
+        <p>
+            If you like to use RSS, I also have a feed which you can find <a
+                href="https://kenan.fyi/rss.xml">here</a
+            >.
+        </p>
     </div>
     <div class="experience">
         <h2>Experience</h2>
@@ -163,24 +218,21 @@ import { Icon } from "astro-icon/components";
     </div>
     <div class="papers">
         <h2>Papers</h2>
-    </div>
-    <div class="socials">
-        <h2>Socials</h2>
         <p>
-            You can find me on <a href="https://mas.to/@ingenieur"
-                >Mastodon<Icon name="ph:mastodon-logo-duotone" size="16" /></a
-            >, <a href="https://github.com/kenandotfyi"
-                >GitHub<Icon name="ph:github-logo-duotone" size="16" /></a
-            > or contact me directly via <b>hey@kenan.fyi</b>. I always
-            appreciate a meaningful and friendly conversation on topics such as
-            software development, design, minimalism, electronics and
-            non-fiction books.
+            <a
+                href="https://www.researchgate.net/publication/329277035_Life_Prediction_of_Aluminum_Electrolytic_Capacitors_Used_in_Two-Level_Inverters"
+                >Life Prediction of Aluminum Electrolytic Capacitors Used in
+                Two-Level Inverters ↗</a
+            ><br /><i>October 2018 - ICENTE</i>
         </p>
         <p>
-            If you like to use RSS, I also have a feed which you can find <a
-                href="https://kenan.fyi/rss.xml">here</a
-            >.
+            <a
+                href="http://www.isites.info/PastConferences/ISITES2015/ISITES2015/papers/A1-ISITES2015ID181.pdf"
+                >A Variable AC Power Source Based on the Arduino Platform Using
+                Finite State Machines ↗</a
+            ><br /><i>June 2015 - ISITES</i>
         </p>
+        <p></p>
     </div>
 </Baz>
 
@@ -193,7 +245,7 @@ import { Icon } from "astro-icon/components";
         width: 100%;
         transform: scale(1.1);
         margin: 2rem 0;
-        border-radius: 8px;
+        border-radius: var(--border-m);
         margin-top: 24px;
         opacity: 0.9;
     }
@@ -210,27 +262,120 @@ import { Icon } from "astro-icon/components";
     }
 
     div.short :global(p) {
-        margin-bottom: calc(var(--q) * 8);
+        margin-bottom: calc(var(--q) * 4);
     }
 
     div.writings {
         margin-bottom: calc(var(--q) * 12);
+        position: relative;
+    }
+
+    div.writings::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--rams-bg);
+        border-radius: var(--border-m);
+        transform: scaleX(1.1);
+        margin-top: -16px;
+        margin-bottom: -16px;
+        z-index: -1;
+    }
+
+    div.writings ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--q) * 2);
+    }
+
+    div.writings li {
+        padding: calc(var(--q) * 4);
+        border-radius: var(--border-m);
+        background: rgba(255, 255, 255, 0.2);
+        transition: all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    div.writings li:hover {
+        background-color: white;
+        border: 1px solid var(--rams-blue);
+    }
+
+    div.writings li:first-child p:first-child:before {
+        content: "FEATURED";
+        margin-right: 4px;
+        padding: 4px;
+        border-radius: var(--border-s);
+        background: var(--rams-orange);
+        color: white;
+        font-weight: bold;
+    }
+
+    div.writings li a {
+        text-decoration: none;
+        color: var(--text);
+        transition: all 0.2s ease;
+        font-size: 18px;
+        font-family: "JetBrains Mono";
+        display: inline-block;
+    }
+
+    div.writings li p {
+        margin: calc(var(--q) * 1) 0 0 0;
+        opacity: 0.7;
+        font-size: 0.9em;
     }
 
     div.experience {
         margin-bottom: calc(var(--q) * 12);
+        position: relative;
+    }
+
+    div.experience::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--rams-bg);
+        border-radius: var(--border-m);
+        transform: scaleX(1.1);
+        margin-top: -16px;
+        margin-bottom: -16px;
+        z-index: -1;
     }
 
     div.jobs h3 {
         margin: 0;
     }
 
-    div.jobs a {
+    div.jobs a,
+    div.papers a {
         text-decoration: none;
-        color: var(--orange);
+        color: var(--text);
+        position: relative;
     }
-    div.jobs a:hover {
-        filter: brightness(1.35) saturate(1.3);
+
+    div.jobs a::before {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: currentColor;
+        transition: width 0.3s ease;
+    }
+
+    div.jobs a:hover::before {
+        width: 100%;
     }
 
     div.jobs a::after {
@@ -239,17 +384,17 @@ import { Icon } from "astro-icon/components";
     }
 
     div.jobs h3.current {
-        color: var(--green);
+        color: var(--rams-blue);
     }
 
     div.jobs h3.current a {
-        color: var(--green);
+        color: var(--rams-blue);
     }
     div.jobs h3.current::before {
         content: "•";
     }
 
-    div.socials {
+    div.elsewhere {
         margin-bottom: calc(var(--q) * 12);
     }
 
@@ -257,7 +402,6 @@ import { Icon } from "astro-icon/components";
         margin: 0;
     }
     p.role {
-        font-family: "Vollkorn Variable";
         font-size: 1.25rem;
         margin-bottom: 12px;
         opacity: 0.5;
@@ -280,7 +424,7 @@ import { Icon } from "astro-icon/components";
 
                 const toggleBtn = document.createElement("span");
                 toggleBtn.className = "toggle-btn";
-                toggleBtn.textContent = "Read more";
+                toggleBtn.textContent = "more";
 
                 let isExpanded = false;
 
@@ -289,10 +433,10 @@ import { Icon } from "astro-icon/components";
 
                     if (isExpanded) {
                         element.textContent = text + " ";
-                        toggleBtn.textContent = "Read less";
+                        toggleBtn.textContent = "less";
                     } else {
                         element.textContent = truncated + "... ";
-                        toggleBtn.textContent = "Read more";
+                        toggleBtn.textContent = "more";
                     }
 
                     element.appendChild(toggleBtn);

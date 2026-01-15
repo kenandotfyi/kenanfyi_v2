@@ -10,6 +10,7 @@ const { frontmatter } = Astro.props;
     <article>
         <Banner metadata={frontmatter} />
         <slot />
+        <p class="dot">▨</p>
     </article>
 
     <Panels client:load slot="panels-outside-main" />
