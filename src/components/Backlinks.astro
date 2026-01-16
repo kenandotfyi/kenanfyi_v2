@@ -1,0 +1,53 @@
+---
+import { getBacklinks } from "../lib/backlinks.ts";
+
+interface Props {
+    id: string;
+}
+
+const { id } = Astro.props;
+const backlinks = await getBacklinks(id);
+---
+
+{
+    backlinks.length > 0 && (
+        <div class="backlinks">
+            <h2>Linked from</h2>
+            <ul>
+                {backlinks.map((post) => (
+                    <li>
+                        <a href={`/${post.collection}/${post.id}`}>
+                            {post.data.title}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    )
+}
+
+<style>
+    .backlinks {
+    }
+
+    .backlinks h2 {
+        font-size: 1rem;
+        margin-block-end: 1rem;
+    }
+
+    .backlinks ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .backlinks li {
+        margin-block-end: 0.5rem;
+    }
+
+    .collection-tag {
+        font-size: 0.75rem;
+        color: var(--text-muted, #666);
+        margin-inline-start: 0.5rem;
+    }
+</style>

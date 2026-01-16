@@ -14,6 +14,6 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<BazPosts frontmatter={post.data}>
+<BazPosts frontmatter={post}>
     <Content />
 </BazPosts>

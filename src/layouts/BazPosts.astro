@@ -1,16 +1,18 @@
 ---
 import Banner from "../components/Banner.astro";
 import Baz from "./Baz.astro";
+import Backlinks from "../components/Backlinks.astro";
 import Panels from "../components/Panels.svelte";
 import "../styles/global.css";
 const { frontmatter } = Astro.props;
 ---
 
-<Baz pageTitle={frontmatter.title}>
+<Baz pageTitle={frontmatter.data.title}>
     <article>
-        <Banner metadata={frontmatter} />
+        <Banner metadata={frontmatter.data} />
         <slot />
         <p class="dot">▨</p>
+        <Backlinks id={frontmatter.id} />
     </article>
 
     <Panels client:load slot="panels-outside-main" />
