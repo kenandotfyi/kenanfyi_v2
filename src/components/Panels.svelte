@@ -5,10 +5,15 @@
     let maxZIndex = 100;
     const STACK_OFFSET = 32;
     let isEnabled = true;
-    const MOBILE_BREAKPOINT = 1140;
+    let userEnabled = true;
+    const MOBILE_BREAKPOINT = 1100;
     const STORAGE_KEY = "stacked-panels-state";
+    const PANELS_ENABLED_KEY = "panels-enabled";
 
     onMount(() => {
+        const stored = localStorage.getItem(PANELS_ENABLED_KEY);
+        userEnabled = stored !== "false"; // default to true
+
         checkScreenSize();
 
         if (isEnabled) {
@@ -21,25 +26,30 @@
             document.addEventListener("click", handleLinkClick);
         }
 
+        window.addEventListener("panels-toggle", handlePanelsToggle);
         window.addEventListener("beforeunload", savePanelsToStorage);
 
         return () => {
             window.removeEventListener("resize", checkScreenSize);
             window.removeEventListener("click", handleLinkClick);
+            window.removeEventListener("panels-toggle", handlePanelsToggle);
             window.removeEventListener("beforeunload", savePanelsToStorage);
         };
     });
 
+    function handlePanelsToggle(event) {
+        userEnabled = event.detail.enabled;
+        checkScreenSize();
+    }
+
     function checkScreenSize() {
         const wasEnabled = isEnabled;
-        isEnabled = window.innerWidth >= MOBILE_BREAKPOINT;
-
-        // if (wasEnabled && !isEnabled) {
-        //     panels = [];
-        // }
+        const screenSizeOk = window.innerWidth >= MOBILE_BREAKPOINT;
+        isEnabled = screenSizeOk && userEnabled;
 
         if (!wasEnabled && isEnabled) {
             document.addEventListener("click", handleLinkClick);
+            restorePanelsFromStorage();
         } else if (wasEnabled && !isEnabled) {
             document.removeEventListener("click", handleLinkClick);
         }
@@ -168,7 +178,7 @@
                 return;
             }
 
-            const titleElement = doc.querySelector("div.title");
+            const titleElement = doc.querySelector("h1.displayTitle");
             const title = titleElement ? titleElement.textContent : "Untitled";
 
             createPanel(url, title, pubDate, contentElement.innerHTML);
@@ -283,7 +293,7 @@
                                 aria-label="Open in full page"
                                 on:click|stopPropagation
                             >
-                                go to page
+                                Go to page
                             </a>
                             <button
                                 class="close-button small"
@@ -308,7 +318,7 @@
                                 aria-label="Open in full page"
                                 on:click|stopPropagation
                             >
-                                go to page
+                                Go to page
                             </a>
                             <button
                                 class="close-button"
@@ -339,12 +349,23 @@
 <style>
     .stacked-panel-container {
         position: fixed;
-        left: calc(50% + 40ch);
-        width: min(calc(var(--left-pad-for-panels) - 20ch), calc(40vw - 240px));
-        margin-top: 42px;
+        left: calc(50% + 30ch + 1rem);
+        width: min(50ch, calc(100vw - (50% + 30ch + 3rem) - 1rem));
         height: auto;
-        background-color: var(--main-bg);
-        padding-right: calc(var(--q) * 4);
+        margin-right: calc(var(--q) * 24);
+        opacity: 0.6;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    .stacked-panel-container:hover {
+        opacity: 1;
+    }
+
+    @media (max-width: 1600px) {
+        .stacked-panel-container {
+            left: calc(60ch + 1rem);
+            width: min(35%, calc(100vw - 60ch - 5rem));
+        }
     }
 
     .stacked-panel-container.disabled {
@@ -353,18 +374,17 @@
 
     .stacked-panel {
         display: flex;
+        font-size: 1rem;
         flex-direction: column;
         position: absolute;
-        max-height: calc(100vh - var(--panel-top) - 240px);
+        max-height: calc(100vh - var(--panel-top) - 140px);
         left: 0;
         right: 0;
-        background-color: var(--main-bg);
         overflow: hidden;
         animation: slideDown 0.3s linear;
-        border: 1px solid var(--main-border);
-        box-shadow:
-            0 4px 16px rgba(0, 0, 0, 0.12),
-            0 2px 4px rgba(0, 0, 0, 0.08);
+        border-left: 1px solid var(--lichtgrau);
+        border-right: 1px solid var(--lichtgrau);
+        border-bottom: 1px solid var(--lichtgrau);
     }
 
     /* Single panel: all corners rounded */
@@ -380,10 +400,7 @@
     /* Multiple panels - first inactive panel: only top corners */
     .stacked-panel.first-inactive {
         border-radius: 8px 8px 0 0;
-        border: 1px solid var(--main-border);
-        box-shadow:
-            0 4px 16px rgba(0, 0, 0, 0.12),
-            0 2px 4px rgba(0, 0, 0, 0.08);
+        border-top: 1px solid var(--lichtgrau);
     }
 
     /* Other inactive panels: no border radius */
@@ -392,23 +409,19 @@
     }
 
     .panel-header {
-        font-weight: 500;
-        font-size: 15px;
         line-height: 1;
         padding: 8px;
         height: 32px;
         color: white;
-        background-color: var(--rams-red);
-        text-transform: uppercase;
+        background-color: var(--rams-black);
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
     .panel-header.inactive {
-        background-color: var(--link-bg);
-        font-weight: 500;
-        font-size: 12px;
+        background-color: var(--rams-grey);
+        font-size: 14px;
         height: 32px;
         line-height: 1;
         padding: 0 8px 0;
@@ -424,6 +437,23 @@
     .panel-header.clickable {
         cursor: pointer;
     }
+    .panel-content {
+        flex: 1;
+        text-align: justify;
+        background-color: #efefef;
+        hyphens: auto;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    /* Style content within the panel */
+    .panel-content :global(a) {
+        text-decoration: none;
+    }
+
+    .panel-content :global(a:hover) {
+        text-decoration: underline;
+    }
 
     .panel-actions {
         display: flex;
@@ -434,6 +464,7 @@
     .open-link {
         display: flex;
         font-size: 12px;
+        font-family: system-ui;
         align-items: center;
         height: 20px;
         justify-content: center;
@@ -494,31 +525,12 @@
         opacity: 1;
     }
 
-    .panel-content {
-        flex: 1;
-        text-align: justify;
-        hyphens: auto;
-        background-color: white;
-        overflow-y: auto;
-        padding: 20px;
-    }
-
-    /* Style content within the panel */
-    .panel-content :global(a) {
-        text-decoration: none;
-    }
-
-    .panel-content :global(a:hover) {
-        text-decoration: underline;
-    }
-
     .empty-state {
         display: flex;
         align-items: center;
         justify-content: center;
         height: 100%;
         color: #9ca3af;
-        font-size: 1.1rem;
     }
 
     @keyframes slideDown {

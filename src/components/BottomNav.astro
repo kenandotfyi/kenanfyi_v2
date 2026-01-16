@@ -12,33 +12,55 @@ const isActive = (href: string) => {
 ---
 
 <nav class="bottom-nav" id="bottom-nav">
-    <a href="/" class:list={[{ active: isActive("/") }]} title="Index">
-        <Icon name="ph:house-bold" />
-    </a>
-    <a
-        href="/thoughts/"
-        class:list={[{ active: isActive("/thoughts/") }]}
-        title="Thoughts"
-    >
-        <Icon name="ph:asterisk-bold" />
-    </a>
-    <a
-        href="/electronics/"
-        class:list={[{ active: isActive("/electronics/") }]}
-        title="Electronics"
-    >
-        <Icon name="ph:lightning-bold" />
-    </a>
-    <a href="/bits/" class:list={[{ active: isActive("/bits/") }]} title="Bits">
-        <Icon name="ph:code-bold" />
-    </a>
-    <a
-        href="/library/"
-        class:list={[{ active: isActive("/library/") }]}
-        title="Library"
-    >
-        <Icon name="ph:books-bold" />
-    </a>
+    <div class="nav-links">
+        <a href="/" class:list={[{ active: isActive("/") }]} title="Index">
+            <Icon name="ph:house-bold" />
+            <span class="link-label">Index</span>
+        </a>
+        <a
+            href="/thoughts/"
+            class:list={[{ active: isActive("/thoughts/") }]}
+            title="Thoughts"
+        >
+            <Icon name="ph:asterisk-bold" />
+            <span class="link-label">Thoughts</span>
+        </a>
+        <a
+            href="/electronics/"
+            class:list={[{ active: isActive("/electronics/") }]}
+            title="Electronics"
+        >
+            <Icon name="ph:lightning-bold" />
+            <span class="link-label">Electronics</span>
+        </a>
+        <a
+            href="/bits/"
+            class:list={[{ active: isActive("/bits/") }]}
+            title="Bits"
+        >
+            <Icon name="ph:code-bold" />
+            <span class="link-label">Bits</span>
+        </a>
+        <a
+            href="/library/"
+            class:list={[{ active: isActive("/library/") }]}
+            title="Library"
+        >
+            <Icon name="ph:books-bold" />
+            <span class="link-label">Library</span>
+        </a>
+    </div>
+    <div class="nav-separator"></div>
+    <div class="nav-functions">
+        <button
+            id="panels-toggle"
+            class="panels-toggle function-button"
+            aria-label="Toggle Panels"
+        >
+            <Icon name="ph:stack-bold" />
+            <span class="function-label">Panels</span>
+        </button>
+    </div>
 </nav>
 
 <script>
@@ -47,10 +69,40 @@ const isActive = (href: string) => {
     const nav = document.getElementById("bottom-nav");
     const isMobile = () => window.innerWidth <= 768;
 
+    // Panels toggle functionality
+    const PANELS_STORAGE_KEY = "panels-enabled";
+    const panelsToggle = document.getElementById("panels-toggle");
+
+    function getPanelsEnabled() {
+        const stored = localStorage.getItem(PANELS_STORAGE_KEY);
+        return stored !== "false"; // default to true
+    }
+
+    function updatePanelsToggle() {
+        const isEnabled = getPanelsEnabled();
+        if (panelsToggle) {
+            panelsToggle.classList.toggle("disabled", !isEnabled);
+        }
+        // Dispatch event for Panels component to listen to
+        window.dispatchEvent(
+            new CustomEvent("panels-toggle", {
+                detail: { enabled: isEnabled },
+            }),
+        );
+    }
+
+    panelsToggle?.addEventListener("click", (e) => {
+        e.preventDefault();
+        const currentState = getPanelsEnabled();
+        localStorage.setItem(PANELS_STORAGE_KEY, (!currentState).toString());
+        updatePanelsToggle();
+    });
+
+    // Initialize toggle state
+    updatePanelsToggle();
+
     window.addEventListener("scroll", () => {
         const currentScroll = window.scrollY;
-        const scrollingDown = currentScroll > lastScroll;
-        const scrollingUp = currentScroll < lastScroll;
 
         if (isMobile()) {
             // always show on mobile
@@ -94,11 +146,10 @@ const isActive = (href: string) => {
         letter-spacing: 0.04em;
         position: fixed;
         bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
+        left: calc(50% - 22.5ch);
         display: flex;
         align-items: center;
-        gap: 2px;
+        gap: 8px;
         padding: 6px;
         background: white;
         border: 1px solid var(--main-border);
@@ -108,7 +159,27 @@ const isActive = (href: string) => {
             0 2px 4px rgba(0, 0, 0, 0.08);
         z-index: 1000;
         font-size: 14px;
-        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition:
+            bottom 1s cubic-bezier(0.34, 1.56, 0.64, 1),
+            opacity 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .nav-separator {
+        width: 1px;
+        height: 24px;
+        background: var(--main-border);
+    }
+
+    .nav-functions {
+        display: flex;
+        align-items: center;
+        gap: 2px;
     }
 
     /* Mobile: centered */
@@ -135,43 +206,125 @@ const isActive = (href: string) => {
     a {
         display: flex;
         align-items: center;
-        justify-content: center;
+        gap: 6px;
         padding: 10px;
         text-decoration: none;
         color: var(--text);
         border-radius: var(--border-s);
-        transition: all 0.15s ease;
+        transition:
+            background 0.6s ease,
+            color 0.6s ease;
         position: relative;
     }
 
     a :global(svg) {
         width: 20px;
         height: 20px;
+        flex-shrink: 0;
+    }
+
+    .link-label {
+        font-size: 12px;
+        white-space: nowrap;
+        max-width: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition:
+            max-width 0.6s ease,
+            opacity 0.6s ease;
+    }
+
+    /* Show label on hover for all links */
+    a:hover .link-label {
+        max-width: 100px;
+        opacity: 1;
+    }
+
+    /* Always show label for active link */
+    a.active .link-label {
+        max-width: 100px;
+        opacity: 1;
     }
 
     a:hover {
         opacity: 1;
-        background: var(--blue);
+        background: var(--rams-red);
         color: white;
     }
 
     a.active {
         opacity: 1;
-        background: var(--red);
+        background: var(--rams-black);
         color: white;
+    }
+
+    .function-button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px;
+        background: none;
+        border: none;
+        color: var(--text);
+        border-radius: var(--border-s);
+
+        cursor: pointer;
+        position: relative;
+    }
+
+    .function-button :global(svg) {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+
+    .function-label {
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 1;
+    }
+
+    .function-button:hover {
+        opacity: 1;
+        background: var(--rams-red);
+        color: white;
+    }
+
+    .function-button.disabled {
+        opacity: 0.3;
+    }
+
+    .function-button.disabled:hover {
+        background: var(--rams-grey);
+        color: var(--text);
+    }
+
+    /* Hide function buttons on screens where they don't work */
+    @media (max-width: 1100px) {
+        .nav-separator,
+        .nav-functions {
+            display: none;
+        }
     }
 
     @media (max-width: 768px) {
         .bottom-nav {
             bottom: 12px;
             font-size: 11px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .bottom-nav.collapsed {
             left: 12px;
+            transform: none;
         }
 
         a {
+            padding: 5px 10px;
+        }
+
+        .function-button {
             padding: 5px 10px;
         }
     }
