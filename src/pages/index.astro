@@ -108,14 +108,14 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
         <div class="jobs">
             <div>
                 <h3 class="current">
-                    <a href="https://kollmorgen.com/" target="blank"
+                    <a href="https://kollmorgen.com/" target="_blank"
                         >Kollmorgen</a
                     >, <i>Oct 2025 - current</i>
                 </h3><p>Senior Hardware Design Engineer</p>
             </div>
             <div>
                 <h3>
-                    <a href="https://elektroautomatik.com/" target="blank"
+                    <a href="https://elektroautomatik.com/" target="_blank"
                         >EA Elektro-Automatik</a
                     >, <i>@2023, 2 years</i>
                 </h3>
@@ -150,7 +150,7 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
                 <h3>
                     <a
                         href="https://www.bonfiglioli.com/international/en/product/axia-vert-series_inverters-servo-drives_premium-inverters"
-                        target="blank">Bonfiglioli</a
+                        target="_blank">Bonfiglioli</a
                     >, <i>@2018, 5 years</i>
                 </h3><p>Hardware Design Engineer</p>
                 <p class="expandable-text">
@@ -184,7 +184,7 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
                 <h3>
                     <a
                         href="https://www.a-group.com.tr/en/arge/arge-merkezi-1"
-                        target="blank">A Group R&D</a
+                        target="_blank">A Group R&D</a
                     >, <i>@2015, 3 years</i>
                 </h3><p>Hardware Design Engineer</p><p class="expandable-text">
                     As a part of the hardware team, my responsibilities were to
@@ -221,6 +221,7 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
         <p>
             <a
                 href="https://www.researchgate.net/publication/329277035_Life_Prediction_of_Aluminum_Electrolytic_Capacitors_Used_in_Two-Level_Inverters"
+                target="_blank"
                 >Life Prediction of Aluminum Electrolytic Capacitors Used in
                 Two-Level Inverters ↗</a
             ><br /><i>October 2018 - ICENTE</i>
@@ -228,6 +229,7 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
         <p>
             <a
                 href="http://www.isites.info/PastConferences/ISITES2015/ISITES2015/papers/A1-ISITES2015ID181.pdf"
+                target="_blank"
                 >A Variable AC Power Source Based on the Arduino Platform Using
                 Finite State Machines ↗</a
             ><br /><i>June 2015 - ISITES</i>
@@ -250,9 +252,20 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
         opacity: 0.9;
     }
 
+    @media (max-width: 768px) {
+        div.hero img,
+        video {
+            transform: unset;
+        }
+    }
+
     div.banner {
         margin-top: calc(var(--q) * 12);
         margin-bottom: calc(var(--q) * 12);
+    }
+
+    div.banner h1 {
+        font-size: 2rem;
     }
 
     div.short {
@@ -268,21 +281,6 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
     div.writings {
         margin-bottom: calc(var(--q) * 12);
         position: relative;
-    }
-
-    div.writings::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: var(--rams-bg);
-        border-radius: var(--border-m);
-        transform: scaleX(1.1);
-        margin-top: -16px;
-        margin-bottom: -16px;
-        z-index: -1;
     }
 
     div.writings ul {
@@ -307,12 +305,12 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
         border: 1px solid var(--rams-blue);
     }
 
-    div.writings li:first-child p:first-child:before {
-        content: "FEATURED";
-        margin-right: 4px;
+    div.writings li:first-child p:first-child:after {
+        content: " FEATURED";
+        margin-left: 4px;
         padding: 4px;
         border-radius: var(--border-s);
-        background: var(--rams-orange);
+        background: var(--rams-red);
         color: white;
         font-weight: bold;
     }
@@ -328,7 +326,6 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
 
     div.writings li p {
         margin: calc(var(--q) * 1) 0 0 0;
-        opacity: 0.7;
         font-size: 0.9em;
     }
 
@@ -416,7 +413,7 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
             const text = element.textContent?.trim() || "";
 
             if (text.length > 100) {
-                const truncated = text.substring(0, 99);
+                const truncated = text.substring(0, 112);
                 element.setAttribute("data-full-text", text);
                 element.setAttribute("data-truncated-text", truncated + "...");
 
