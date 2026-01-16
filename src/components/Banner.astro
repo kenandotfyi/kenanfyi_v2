@@ -4,16 +4,19 @@ const { metadata } = Astro.props;
 ---
 
 <div class="banner">
+    <button id="back-button" class="back-button exclude-from-panel">
+        <Icon name="ph:arrow-left-bold" />
+        <span class="back-text">Back</span>
+    </button>
     <div class="header-row">
-        <button id="back-button" class="back-button exclude-from-panel">
-            <Icon name="ph:arrow-left-bold" />
-            <span class="back-text">Back</span>
-        </button>
-        <div class="title">{metadata.title}</div>
+        <div>
+            <h1 class="displayTitle exclude-from-panel">{metadata.title}</h1>
+        </div>
         <div class="pubDate" id="pubDate">
             {metadata.published.toISOString().split("T")[0]}
         </div>
     </div>
+    <div><h3 class="exclude-from-panel">{metadata.excerpt}</h3></div>
 </div>
 
 <script>
@@ -25,13 +28,21 @@ const { metadata } = Astro.props;
 
 <style>
     div.banner {
-        margin-bottom: calc(var(--q) * 24);
+        padding-bottom: calc(var(--q) * 24);
+        border-bottom: 2px solid var(--main-border);
+        margin-bottom: calc(var(--q) * 2);
     }
 
     .header-row {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         gap: 8px;
+    }
+
+    h1.displayTitle {
+        font-size: 3rem;
+        transition: margin-left 0.3s ease;
+        flex: 1;
     }
 
     div.title {
@@ -50,7 +61,8 @@ const { metadata } = Astro.props;
         border-radius: var(--border-s);
         color: var(--text);
         font-size: 12px;
-        font-weight: 500;
+        font-weight: bold;
+        font-family: system-ui;
         cursor: pointer;
         transition: all 0.3s ease;
         overflow: hidden;
@@ -77,9 +89,8 @@ const { metadata } = Astro.props;
     }
 
     .back-button:hover {
-        background: var(--blue);
+        background: var(--rams-red);
         color: white;
-        border-color: var(--blue);
         padding-right: 10px;
     }
 
