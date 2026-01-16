@@ -16,7 +16,7 @@ body {
     /* 4. Add accessible line-height */
     line-height: 1.4;
     /* 5. Improve text rendering */
-    -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: auto;
 }
 
 /* 6. Improve media defaults */
@@ -48,21 +48,12 @@ h6 {
 }
 
 p {
-    margin-bottom: 10px;
+    margin-bottom: 16px;
 }
 
-/* 9. Improve line wrapping */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    text-wrap: balance;
-}
 
 /*
-  10. Create a root stacking context
+  9. Create a root stacking context
 */
 #root,
 #__next {
