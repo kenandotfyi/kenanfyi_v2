@@ -15,14 +15,21 @@ export default defineConfig({
   integrations: [
     expressiveCode({
       plugins: [pluginLineNumbers()],
+      frames: {
+        showCopyToClipboardButton: false,
+      },
       themes: ["one-light"],
       styleOverrides: {
-        borderRadius: "0",
-        codeFontFamily: "Iosevka",
-        codeFontSize: "15px",
+        borderRadius: "0.25rem",
+        codeFontFamily: "JetBrains Mono",
+        uiFontFamily: "JetBrains Mono",
+        codeFontSize: "14px",
         uiFontSize: "13px",
+        uiFontWeight: "bold",
         frames: {
           frameBoxShadowCssValue: "none",
+          editorTabBarBackground: "#FAFAFA",
+
         },
         textMarkers: {
           markBackground: "gainsboro",
