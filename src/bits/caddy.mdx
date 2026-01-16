@@ -12,7 +12,7 @@ this time. Apache and Nginx configurations are fairly straightforward and easy t
 have successfully executed it with the desired configuration, I wanted to document my observations.
 
 Configuration has two parts, one being the standard **Caddyfile** which I really like to work with,
-and the other one being **LocalSettings.php**. This file is generally in the root folder of your mediawikiwhich is the default setup file for MediaWiki
+and the other one being **LocalSettings.php**. This file is generally in the root folder of your mediawiki which is the default setup file for MediaWiki
 instances.
 
 Serving a PHP application through Caddy is straightforward, but I wanted to configure my
@@ -37,7 +37,7 @@ your.domain{
 ```
 
 
-This configuration redirects the ugly MediaWiki URLs to a more structured **/wiki/Main_page** type.
+This configuration redirects the ugly MediaWiki URLs to a more structured and readable **/wiki/Main_page** type.
 Further explanations are [here](https://www.mediawiki.org/wiki/Manual:Short_URL).
 
 After that you need to edit the LocalSettings.php too:
@@ -52,7 +52,7 @@ $wgUsePathInfo = true;
 Reload the Caddy config:
 
 
-```bash
+```bash 
 caddy reload --config /etc/caddy/Caddyfile
 ```
 
