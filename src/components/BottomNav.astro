@@ -57,8 +57,14 @@ const isActive = (href: string) => {
             class="panels-toggle function-button"
             aria-label="Toggle Panels"
         >
-            <Icon name="ph:stack-bold" />
-            <span class="function-label">Panels</span>
+            <span id="panels-icon-container">
+                <Icon
+                    name="ph:square-split-horizontal-bold"
+                    class="panels-icon-enabled"
+                />
+                <Icon name="ph:square-half-bold" class="panels-icon-disabled" />
+                <span class="function-label">Panels</span>
+            </span>
         </button>
     </div>
 </nav>
@@ -82,6 +88,24 @@ const isActive = (href: string) => {
         const isEnabled = getPanelsEnabled();
         if (panelsToggle) {
             panelsToggle.classList.toggle("disabled", !isEnabled);
+
+            // Update icon visibility
+            const enabledIcon = panelsToggle.querySelector(
+                ".panels-icon-enabled",
+            ) as HTMLElement;
+            const disabledIcon = panelsToggle.querySelector(
+                ".panels-icon-disabled",
+            ) as HTMLElement;
+
+            if (enabledIcon && disabledIcon) {
+                if (isEnabled) {
+                    enabledIcon.style.display = "block";
+                    disabledIcon.style.display = "none";
+                } else {
+                    enabledIcon.style.display = "none";
+                    disabledIcon.style.display = "block";
+                }
+            }
         }
         // Dispatch event for Panels component to listen to
         window.dispatchEvent(
@@ -160,8 +184,8 @@ const isActive = (href: string) => {
         z-index: 1000;
         font-size: 14px;
         transition:
-            bottom 1s cubic-bezier(0.34, 1.56, 0.64, 1),
-            opacity 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+            bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+            opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .nav-links {
@@ -225,7 +249,7 @@ const isActive = (href: string) => {
 
     .link-label {
         font-size: 12px;
-        white-space: nowrap;
+        padding-top: 2px;
         max-width: 0;
         overflow: hidden;
         opacity: 0;
@@ -275,13 +299,22 @@ const isActive = (href: string) => {
     .function-button :global(svg) {
         width: 20px;
         height: 20px;
-        flex-shrink: 0;
+    }
+
+    #panels-icon-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .function-button :global(.panels-icon-disabled) {
+        display: none;
     }
 
     .function-label {
         font-size: 12px;
-        white-space: nowrap;
         opacity: 1;
+        padding-top: 2px;
     }
 
     .function-button:hover {
