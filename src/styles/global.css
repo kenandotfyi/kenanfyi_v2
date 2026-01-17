@@ -4,7 +4,7 @@
 :root {
     --left-pad-for-panels: 85ch;
     --body-width: clamp(55ch, 45vw, 85ch);
-    --panel-width: clamp(40ch, 35vw, 70ch);
+    --panel-width: clamp(35ch, 35vw, 45ch);
 }
 
 ::selection {
@@ -35,9 +35,11 @@ body {
     margin: 0 auto;
     margin-top: calc(var(--q) * 8);
 
-    transition: padding 0.3s;
+}
 
-
+body.panels-active {
+    margin-left: calc(50% - 30ch - var(--panel-width) / 2 - 0.5rem);
+    margin-right: auto;
 }
 
 
@@ -51,7 +53,8 @@ h6 {
     font-size: 1.25rem;
     margin-bottom: 12px;
     margin-top: 24px;
-    font-family: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;
+    /*font-family: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;*/
+    font-family: "Source Serif Pro";
 }
 
 img {
@@ -114,11 +117,12 @@ span.toggle-btn:hover {
     color: white;
 }
 
-@media (max-width: 1600px) {
+/*@media (max-width: 1600px) {
     body {
         margin: calc(var(--q) * 8);
         padding: 0 calc(var(--q) * 8);
     }
+
 }
 
 
@@ -127,4 +131,4 @@ span.toggle-btn:hover {
         margin: 0 auto;
         margin-top: calc(var(--q) * 8);
     }
-}
+}*/

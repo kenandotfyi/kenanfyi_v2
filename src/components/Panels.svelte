@@ -255,6 +255,17 @@
     }
 
     $: sortedPanels = [...panels].sort((a, b) => a.zIndex - b.zIndex);
+
+    // update body width and margin when panels are opened/closed
+    $: {
+        if (typeof document !== "undefined") {
+            if (isEnabled && panels.length > 0) {
+                document.body.classList.add("panels-active");
+            } else {
+                document.body.classList.remove("panels-active");
+            }
+        }
+    }
 </script>
 
 <div class="stacked-panel-container" class:disabled={!isEnabled}>
@@ -349,23 +360,14 @@
 <style>
     .stacked-panel-container {
         position: fixed;
-        left: calc(50% + 30ch + 1rem);
-        width: min(50ch, calc(100vw - (50% + 30ch + 3rem) - 1rem));
+        left: calc(50% + 30ch + 1rem - var(--panel-width) / 2);
+        width: var(--panel-width);
         height: auto;
-        margin-right: calc(var(--q) * 24);
         opacity: 0.6;
-        transition: opacity 0.5s ease-in-out;
     }
 
     .stacked-panel-container:hover {
         opacity: 1;
-    }
-
-    @media (max-width: 1600px) {
-        .stacked-panel-container {
-            left: calc(60ch + 1rem);
-            width: min(35%, calc(100vw - 60ch - 5rem));
-        }
     }
 
     .stacked-panel-container.disabled {
