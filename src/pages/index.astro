@@ -20,9 +20,9 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
 <Baz pageTitle={pageTitle}>
     <div class="banner">
         <p>Logo</p>
-        <h1>Kenan Akinci</h1>
-        <p class="role"><i>Sr. Hardware Design Engineer</i></p>
+        <h1><i>Hey! I'm Kenan</i></h1>
     </div>
+    <div class="wide"></div>
     <div class="hero">
         <!-- <Image
                 src="/banner-bg/banner-bg-2.png"
@@ -59,34 +59,58 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
     </div>
 
     <div class="writings">
-        <h2>Writings</h2>
-        <h3>thoughts</h3>
-        <ul>
-            {
-                allThoughts.map((post) => (
-                    <li>
-                        <p>{post.data.published.toISOString().split("T")[0]}</p>
-                        <a href={`/thoughts/${post.id}`}>{post.data.title}</a>
-                        <p>{post.data.excerpt}...</p>
-                    </li>
-                ))
-            }
-        </ul>
+        <div class="writing-section">
+            <h3 class="section-label">Thoughts</h3>
+            <div class="posts-list">
+                {
+                    allThoughts.map((post) => (
+                        <article class="post-item">
+                            <div class="post-header">
+                                <a
+                                    href={`/thoughts/${post.id}`}
+                                    class="post-title"
+                                >
+                                    {post.data.title}
+                                </a>
+                                <time class="post-date">
+                                    {
+                                        post.data.published
+                                            .toISOString()
+                                            .split("T")[0]
+                                    }
+                                </time>
+                            </div>
+                            <p class="post-excerpt">{post.data.excerpt}</p>
+                        </article>
+                    ))
+                }
+            </div>
+        </div>
 
-        <h3>bits</h3>
-        <ul>
-            {
-                allBits.map((post) => (
-                    <li>
-                        <a href={`/bits/${post.id}`}>{post.data.title}</a>
-                        {post.data.published.toISOString().split("T")[0]}
-                    </li>
-                ))
-            }
-        </ul>
+        <div class="writing-section">
+            <h3 class="section-label">Bits</h3>
+            <div class="posts-list bits-list">
+                {
+                    allBits.map((post) => (
+                        <article class="post-item bits-item">
+                            <a href={`/bits/${post.id}`} class="post-title">
+                                {post.data.title}
+                            </a>
+                            <time class="post-date">
+                                {
+                                    post.data.published
+                                        .toISOString()
+                                        .split("T")[0]
+                                }
+                            </time>
+                        </article>
+                    ))
+                }
+            </div>
+        </div>
     </div>
     <div class="elsewhere">
-        <h2>Elsewhere</h2>
+        <h3 class="section-label">Elsewhere</h3>
         <p>
             You can find me on <a href="https://mas.to/@ingenieur"
                 >Mastodon<Icon name="ph:mastodon-logo-duotone" size="16" /></a
@@ -104,7 +128,7 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
         </p>
     </div>
     <div class="experience">
-        <h2>Experience</h2>
+        <h3 class="section-label">Experience</h3>
         <div class="jobs">
             <div>
                 <h3 class="current">
@@ -239,6 +263,22 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
 </Baz>
 
 <style>
+    div.wide {
+        width: 80vw;
+        height: 400px;
+        background-color: red;
+        margin-inline: calc(50% - 40vw);
+    }
+
+    @media (max-width: 1600px) {
+        div.wide {
+            width: 100%;
+            height: 200px;
+            background-color: blue;
+            margin-inline: unset;
+        }
+    }
+
     div.hero {
         margin-top: calc(var(--q) * 8);
     }
@@ -280,53 +320,107 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
 
     div.writings {
         margin-bottom: calc(var(--q) * 12);
+    }
+
+    div.writings h2 {
+        margin-bottom: calc(var(--q) * 8);
+    }
+
+    .writing-section {
+        margin-bottom: calc(var(--q) * 10);
+    }
+
+    .section-label {
+        font-size: 1.4rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text);
+        margin-bottom: calc(var(--q) * 4);
+        padding-bottom: calc(var(--q) * 2);
+        border-bottom: 1px solid var(--main-border);
+    }
+
+    .posts-list {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--q) * 6);
+    }
+
+    .post-item {
+        display: flex;
+        flex-direction: column;
+        transition: all 0.3s ease;
+    }
+
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: calc(var(--q) * 4);
+    }
+
+    .post-title {
+        font-size: 1.25rem;
+        font-family: "Source Serif Pro", serif;
+        font-weight: bold;
+        font-style: italic;
+        flex: 1;
         position: relative;
     }
 
-    div.writings ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: calc(var(--q) * 2);
-    }
-
-    div.writings li {
-        padding: calc(var(--q) * 4);
-        border-radius: var(--border-m);
-        background: rgba(255, 255, 255, 0.2);
-        transition: all 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    div.writings li:hover {
-        background-color: white;
-        border: 1px solid var(--rams-blue);
-    }
-
-    div.writings li:first-child p:first-child:after {
-        content: " FEATURED";
-        margin-left: 4px;
-        padding: 4px;
-        border-radius: var(--border-s);
-        background: var(--rams-red);
-        color: white;
-        font-weight: bold;
-    }
-
-    div.writings li a {
-        text-decoration: none;
+    .post-date {
+        font-size: 0.875rem;
+        font-family: "JetBrains Mono", monospace;
         color: var(--text);
-        transition: all 0.2s ease;
-        font-size: 18px;
-        font-family: "JetBrains Mono";
-        display: inline-block;
+        opacity: 0.5;
+        white-space: nowrap;
+        font-weight: 400;
     }
 
-    div.writings li p {
-        margin: calc(var(--q) * 1) 0 0 0;
-        font-size: 0.9em;
+    .post-excerpt {
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        color: var(--text);
+        opacity: 0.7;
+        margin: 0;
+        text-align: justify;
+        hyphens: auto;
+    }
+
+    /* Bits - more compact style */
+    .bits-list {
+        gap: calc(var(--q) * 3);
+    }
+
+    .bits-item {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: calc(var(--q) * 4);
+        padding: calc(var(--q) * 2) 0;
+    }
+
+    .bits-item .post-title {
+        font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .post-header {
+            flex-direction: column;
+            gap: calc(var(--q) * 1);
+            align-items: flex-start;
+        }
+
+        .bits-item {
+            flex-direction: column;
+            gap: calc(var(--q) * 1);
+            align-items: flex-start;
+        }
+
+        .post-date {
+            font-size: 0.8125rem;
+        }
     }
 
     div.experience {
