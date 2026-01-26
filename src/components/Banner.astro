@@ -1,6 +1,14 @@
 ---
 import { Icon } from "astro-icon/components";
-const { metadata } = Astro.props;
+const { metadata, minutes } = Astro.props;
+
+const formatDate = (date: Date) => {
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
+};
 ---
 
 <div class="banner">
@@ -9,11 +17,15 @@ const { metadata } = Astro.props;
         <span class="back-text">Back</span>
     </button>
     <div class="header-row">
+        <div class="pubDate" id="pubDate">
+            <span>
+                {formatDate(metadata.published)} ✴︎
+            </span>
+            <span>{minutes} ✴︎ </span>
+            <span>{metadata.tags.join(", ")}</span>
+        </div>
         <div>
             <h1 class="displayTitle exclude-from-panel">{metadata.title}</h1>
-        </div>
-        <div class="pubDate" id="pubDate">
-            {metadata.published.toISOString().split("T")[0]}
         </div>
     </div>
     <div><h3 class="exclude-from-panel">{metadata.excerpt}</h3></div>
@@ -35,14 +47,13 @@ const { metadata } = Astro.props;
 
     .header-row {
         display: flex;
-        align-items: baseline;
-        gap: 8px;
+        flex-direction: column;
     }
 
     h1.displayTitle {
-        font-size: 3rem;
+        font-size: 4rem;
         transition: margin-left 0.3s ease;
-        flex: 1;
+        text-wrap: balance;
     }
 
     div.title {
@@ -96,6 +107,7 @@ const { metadata } = Astro.props;
 
     div.pubDate {
         opacity: 0.5;
-        margin-left: auto;
+        font-size: 15px;
+        margin-top: 12px;
     }
 </style>

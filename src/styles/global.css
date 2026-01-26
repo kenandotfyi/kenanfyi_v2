@@ -4,7 +4,7 @@
 :root {
     --left-pad-for-panels: 85ch;
     --body-width: clamp(55ch, 45vw, 85ch);
-    --panel-width: clamp(35ch, 35vw, 45ch);
+    --panel-width: clamp(35ch, 35vw, 55ch);
 }
 
 ::selection {
@@ -117,18 +117,15 @@ span.toggle-btn:hover {
     color: white;
 }
 
-/*@media (max-width: 1600px) {
-    body {
-        margin: calc(var(--q) * 8);
-        padding: 0 calc(var(--q) * 8);
-    }
-
+mark.hl {
+    background-color: var(--rams-black);
+    color: white;
 }
 
 
 @media (max-width: 768px) {
     body {
-        margin: 0 auto;
+        margin: calc(var(--q) * 4);
         margin-top: calc(var(--q) * 8);
     }
-}*/
+}

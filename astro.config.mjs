@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import { remarkReadingTime } from "./src/lib/remark-readtime.mjs";
 
 import expressiveCode from "astro-expressive-code";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
@@ -40,4 +41,7 @@ export default defineConfig({
     svelte(),
     icon(),
   ],
+  markdown: {
+    remarkPlugins: [remarkReadingTime],
+  }
 });

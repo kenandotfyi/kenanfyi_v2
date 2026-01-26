@@ -15,14 +15,22 @@ allThoughts.sort((a: any, b: any) => b.data.published - a.data.published);
 const allBits = await getCollection("bits", ({ data }) => data.draft !== true);
 
 allBits.sort((a: any, b: any) => b.data.published - a.data.published);
+
+const formatDate = (date: Date) => {
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
+};
 ---
 
 <Baz pageTitle={pageTitle}>
-    <div class="banner">
-        <p>Logo</p>
-        <h1><i>Hey! I'm Kenan</i></h1>
+    <div class="bannerIndex">
+        <h1>Kenan Akinci</h1>
+        <p class="role"><i>Sr. Hardware Design Engineer</i></p>
     </div>
-    <div class="wide"></div>
+    <!-- <div class="wide"></div> -->
     <div class="hero">
         <!-- <Image
                 src="/banner-bg/banner-bg-2.png"
@@ -73,11 +81,7 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
                                     {post.data.title}
                                 </a>
                                 <time class="post-date">
-                                    {
-                                        post.data.published
-                                            .toISOString()
-                                            .split("T")[0]
-                                    }
+                                    {formatDate(post.data.published)}
                                 </time>
                             </div>
                             <p class="post-excerpt">{post.data.excerpt}</p>
@@ -299,12 +303,7 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
         }
     }
 
-    div.banner {
-        margin-top: calc(var(--q) * 12);
-        margin-bottom: calc(var(--q) * 12);
-    }
-
-    div.banner h1 {
+    div.bannerIndex h1 {
         font-size: 2rem;
     }
 
@@ -339,6 +338,7 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
         margin-bottom: calc(var(--q) * 4);
         padding-bottom: calc(var(--q) * 2);
         border-bottom: 1px solid var(--main-border);
+        text-align: center;
     }
 
     .posts-list {
@@ -447,40 +447,13 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
         margin: 0;
     }
 
-    div.jobs a,
-    div.papers a {
-        text-decoration: none;
-        color: var(--text);
-        position: relative;
-    }
-
-    div.jobs a::before {
-        content: "";
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        width: 0;
-        height: 1px;
-        background-color: currentColor;
-        transition: width 0.3s ease;
-    }
-
-    div.jobs a:hover::before {
-        width: 100%;
-    }
-
     div.jobs a::after {
         content: "↗";
+        font-family: system-ui;
+        font-weight: 400;
         margin-left: 4px;
     }
 
-    div.jobs h3.current {
-        color: var(--rams-blue);
-    }
-
-    div.jobs h3.current a {
-        color: var(--rams-blue);
-    }
     div.jobs h3.current::before {
         content: "•";
     }

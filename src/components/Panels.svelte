@@ -26,6 +26,7 @@
             document.addEventListener("click", handleLinkClick);
         }
 
+        // use the custom event panels-toggle define ind BottomNav.astro
         window.addEventListener("panels-toggle", handlePanelsToggle);
         window.addEventListener("beforeunload", savePanelsToStorage);
 
@@ -441,7 +442,6 @@
     }
     .panel-content {
         flex: 1;
-        text-align: justify;
         background-color: #efefef;
         hyphens: auto;
         overflow-y: auto;
@@ -449,13 +449,6 @@
     }
 
     /* Style content within the panel */
-    .panel-content :global(a) {
-        text-decoration: none;
-    }
-
-    .panel-content :global(a:hover) {
-        text-decoration: underline;
-    }
 
     .panel-actions {
         display: flex;

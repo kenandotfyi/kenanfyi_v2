@@ -18,11 +18,9 @@ const { pageTitle } = Astro.props;
         <title>kenan.fyi / {pageTitle}</title>
     </head>
     <body>
-        <div class="content">
-            <main>
-                <slot />
-            </main>
-        </div>
+        <main>
+            <slot />
+        </main>
         <slot name="panels-outside-main" />
         <BottomNav />
         <Footer />
@@ -41,6 +39,7 @@ const { pageTitle } = Astro.props;
     }
 
     main {
+        margin-top: calc(var(--q) * 24);
         animation: fadeInFocus 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
         padding-bottom: calc(var(--q) * 12);
     }

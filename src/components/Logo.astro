@@ -1,0 +1,34 @@
+---
+
+---
+
+<div class="logo" id="logo">
+    <a href="/">
+        <img src="/logo.svg" width="46" height="46" alt="" />
+    </a>
+</div>
+
+<script>
+    const logo = document.getElementById("logo");
+    const nav = document.getElementById("bottom-nav");
+
+    logo?.addEventListener("mouseenter", () => {
+        nav?.classList.add("logo-hovered");
+    });
+
+    logo?.addEventListener("mouseleave", () => {
+        nav?.classList.remove("logo-hovered");
+    });
+</script>
+
+<style>
+    div.logo {
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        z-index: 2000;
+        transition:
+            left 0.3s ease,
+            transform 0.3s ease;
+    }
+</style>

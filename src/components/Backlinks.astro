@@ -9,10 +9,9 @@ const { id } = Astro.props;
 const backlinks = await getBacklinks(id);
 ---
 
-{
-    backlinks.length > 0 && (
-        <div class="backlinks">
-            <h2>Linked from</h2>
+<div class="backlinks">
+    {
+        backlinks.length > 0 ? (
             <ul>
                 {backlinks.map((post) => (
                     <li>
@@ -22,9 +21,11 @@ const backlinks = await getBacklinks(id);
                     </li>
                 ))}
             </ul>
-        </div>
-    )
-}
+        ) : (
+            <p>No backlinks!</p>
+        )
+    }
+</div>
 
 <style>
     .backlinks {

@@ -18,6 +18,8 @@
     "astro": "^5.15.9",
     "astro-expressive-code": "^0.41.3",
     "astro-icon": "^1.1.5",
+    "mdast-util-to-string": "^4.0.0",
+    "remark-reading-time": "^2.0.2",
     "svelte": "^5.45.6",
     "typescript": "^5.9.3"
   },
