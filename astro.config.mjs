@@ -15,13 +15,15 @@ export default defineConfig({
   scopedStyleStrategy: "class",
   integrations: [
     expressiveCode({
-      plugins: [pluginLineNumbers()],
+      plugins: [],
       frames: {
         showCopyToClipboardButton: false,
       },
-      themes: ["one-light"],
+      shiki: {
+      },
+      themes: ["vesper"],
       styleOverrides: {
-        borderRadius: "0.25rem",
+        borderRadius: "0.1rem",
         codeFontFamily: "JetBrains Mono",
         uiFontFamily: "JetBrains Mono",
         codeFontSize: "14px",
@@ -29,7 +31,6 @@ export default defineConfig({
         uiFontWeight: "bold",
         frames: {
           frameBoxShadowCssValue: "none",
-          editorTabBarBackground: "#FAFAFA",
 
         },
         textMarkers: {
