@@ -1,0 +1,132 @@
+---
+draft: false
+title: "Extracting EXIF with Rust"
+description: "Extracting EXIF data from images using the rexiv2 library with Rust"
+tags: rust
+published: 2024-10-21
+updated: 2024-10-21
+---
+
+> Disclaimer: This is probably an overkill for such a task, but I'm currently learning Rust and wanted
+> to write a small program to do the job.
+
+I was coding my [photo gallery](/photos) this weekend and I had to extract EXIF data somehow
+programatically and include them in the individual photo pages. As in the other parts of my website,
+I also wanted to use the
+[Astro Content Collections](https://docs.astro.build/en/guides/content-collections/), so there is a
+route for every photo with detailed information as the EXIF and possibly some comments and other
+stuff.
+
+<u>**Problem Description**:</u>
+Creating a bunch of MDX files with the same names as the images/photographs and put the EXIF, metadata and content inside them automatically in a directory.
+
+So, I have a lot of photos and I need an .mdx file for every one of them in a directory. The photos
+are already processed -resized and converted to .webp- and being hosted on my server. Therefore I am
+not processing them using the Astro's image processing features. I could do it and push everything
+in my Astro deploy process, but I am hosting my photos on my own server and this website is still on
+the Netlify's free plan. Soon I will migrate it to my server too when I have time.
+
+Anyway, below is the code where I use the [rexiv2](https://docs.rs/rexiv2/latest/rexiv2) crate to
+generate the necessary files with the required EXIF data inside them in a formatted manner.
+
+```rust
+use chrono::NaiveDateTime; //for formatting time and date
+use rexiv2::Metadata;
+use std::fs::{self, File};
+use std::io::Write;
+
+fn main() -> std::io::Result<()> {
+
+    let folder_path = "./photos";
+    // using MDX in Astro, so the files should be .mdx
+    let markdown_extension = ".mdx";
+
+    // initialize Rexiv2 crate
+    let _ = rexiv2::initialize();
+
+    // read the photos directory
+    for entry in fs::read_dir(folder_path)? {
+        let entry = entry?;
+        let path = entry.path();
+
+        // check if the entry is a file
+        if path.is_file() {
+            if let Some(file_stem) = path.file_stem() {
+                let file_stem = file_stem.to_string_lossy().trim().to_lowercase();
+
+                let markdown_file_path =
+                    format!("{}/{}{}", folder_path, file_stem, markdown_extension);
+
+                // extract EXIF data if non-existent -> default is an empty string
+                let mut date_taken = "".to_string();
+                let mut camera_model = "".to_string();
+                let mut camera_make = "".to_string();
+
+                // content of the files to match my Astro component structure
+                let md_content = r#"
+
+import { Picture } from "astro:assets";
+
+<picture>
+  <source srcset={`https://img.kenan.fyi/photos/originals/${frontmatter.title}_1920px.webp`} type="image/webp" />
+  <img src={`https://img.kenan.fyi/photos/originals/${frontmatter.title}_1920px.jpg`} alt="" width="2880" height="1200" loading="lazy" decoding="async" />
+</picture>
+"#;
+
+                // load the metadata using rexiv2
+                if let Ok(metadata) = Metadata::new_from_path(&path) {
+                    // get the date
+                    if let Ok(value) = metadata.get_tag_string("Exif.Image.DateTime") {
+                        // parse the date from YYYY:MM:DD HH:MM:SS to YYYY-MM-DD
+                        if let Ok(parsed_date) = NaiveDateTime::parse_from_str(&value, "%Y:%m:%d %H:%M:%S")
+                        {
+                            date_taken = parsed_date.format("%Y-%m-%d").to_string();
+                        }
+                    }
+
+                    // get the camera
+                    if let Ok(value) = metadata.get_tag_string("Exif.Image.Make") {
+                        camera_make = value;
+                    }
+
+                    // get the camera model
+                    if let Ok(value) = metadata.get_tag_string("Exif.Image.Model") {
+                        camera_model = value;
+                    }
+                }
+
+                // create the markdown file and write to it
+                let mut file = File::create(&markdown_file_path)?;
+                writeln!(file, "---")?;
+                writeln!(file, "draft: false")?;
+                writeln!(file, "title: \"{}\"", file_stem)?; // Title
+                writeln!(file, "shotDate: {}", date_taken)?; // EXIF date taken
+                writeln!(file, "camera: \"{} {}\"", camera_make, camera_model)?; // EXIF camera model
+                writeln!(file, "---\n")?;
+                writeln!(file, "{}", md_content)?;
+
+                println!("Created: {}", markdown_file_path);
+            }
+        }
+    }
+    Ok(())
+
+}
+
+```
+
+
+So, what it does basically is the following:
+
+1. Check the folder for files
+2. Assign empty strings to the exif data variables if the photo does not have any
+3. Extract the metadata
+4. Create the file
+5. Write the metadata to the file with writeln! macro
+6. Write the boilerplate content for the .mdx file afterwards
+
+It is a one-time solution for a specific problem, but as I said, it is a small practice in Rust and an easy way to create multiple files I needed with specific data in them.
+I would probably implement a better program (maybe a CLI tool?) to streamline the whole process, because this just solves the .mdx creation problem of a photo. The resizing, processing and upload of them are another sections of the whole process, which I have not mentioned.
+
+Maybe I will post about them later too.
+Cheers.
