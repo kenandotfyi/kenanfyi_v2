@@ -1,48 +1,32 @@
 :root {
 
-    /**************/
-    /*** COLORS ***/
-    /**************/
+    /* Core */
+    /*--text: #fafaf8;*/
+    --text: #E6E4D5;
+    --bg: #1f1f1f;
+    --text-muted: #6b6b6b;
+    --border: #e0e0dc;
+    --panel-border: #333333;
 
-    /*--main-bg: #EEEFE9;*/
-    --main-bg: #F6F5F1;
-    --footer-bg: #DADCD0;
+    /* Accent */
+    --accent: #c05d3e;
+    --accent-hover: #a34d32;
 
-    --main-border: #e4e3df;
-    --link-bg: #dde4e1;
-    --nav-bg: #e4e3df;
-    --banner-bg: #1b1b1b;
-    --text: var(--rams-black);
-    --red: #BF3922;
-    --orange: #fa380c;
-    --accent: #9a3a1e;
-    /*--orange: #f25b03;*/
-    --green: #0d703f;
-    --blue: #0a122a;
-    --charcoal-blue: #37515F;
-    --yellow: #f1b73a;
-    --beige: #d9cab8;
-    --gray: #8b8178;
-    --lichtgrau: #C5C7C4;
+    /* Surfaces */
+    --surface: #f0efeb;
+    --surface-hover: #e8e7e2;
 
-
-    /* rams colors DR06 by chad ashley*/
-    --rams-yellow: #ED8008;
-    --rams-green: #736B1E;
-
-    /* rams colors DR07 by chad ashley*/
-    --rams-red: #ae2F25;
-    --rams-orange: #E15E3E;
-    --rams-blue: #315B7B;
-    --rams-black: #111;
-    --rams-gray: #50474C;
-    --rams-bg: #DADCD0;
-
-    /**************/
-    /*** UTILS  ***/
-    /**************/
+    /* Spacing */
     --q: 0.25rem;
-    --border-s: calc(var(--q) * 1);
-    --border-m: calc(var(--q) * 2);
-    --border-l: calc(var(--q) * 4);
+    --border-s: 0.25rem;
+    --border-m: 0.5rem;
+    --border-l: 1rem;
+
+    /* Panels.svelte compatibility */
+    --lichtgrau: #d0d0cc;
+    --rams-black: #1a1a1a;
+    --rams-gray: #6b6b6b;
+    --rams-red: var(--accent);
+    --rams-orange: var(--accent-hover);
+    --rams-bg: var(--surface);
 }

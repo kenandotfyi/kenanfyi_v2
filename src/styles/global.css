@@ -8,15 +8,12 @@
 }
 
 ::selection {
-    background: black;
-    /* selection background */
+    background: blue;
     color: white;
-    /* selected text color */
 }
 
-
 html {
-    background-color: var(--main-bg);
+    background-color: var(--bg);
     box-sizing: border-box;
     color: var(--text);
     position: relative;
@@ -25,23 +22,18 @@ html {
 }
 
 body {
-    /*font-family: system-ui, sans-serif;*/
-
     font-family: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
-    font-size: 18px;
-    line-height: 1.50;
-
+    font-size: 17px;
+    line-height: 1.6;
     max-width: 60ch;
     margin: 0 auto;
-    margin-top: calc(var(--q) * 8);
-
+    padding-top: 76px;
 }
 
 body.panels-active {
     margin-left: calc(50% - 30ch - var(--panel-width) / 2 - 0.5rem);
     margin-right: auto;
 }
-
 
 h1,
 h2,
@@ -53,8 +45,7 @@ h6 {
     font-size: 1.25rem;
     margin-bottom: 12px;
     margin-top: 24px;
-    /*font-family: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;*/
-    font-family: "Source Serif Pro";
+    font-family: "Source Serif Pro", serif;
 }
 
 img {
@@ -62,19 +53,17 @@ img {
 }
 
 a {
-    text-decoration-line: underline;
-    text-decoration-style: solid;
-    text-decoration-color: var(--rams-gray);
-    text-decoration-thickness: 2px;
-    text-underline-offset: 2px;
     color: var(--text);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: #777;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease;
 }
 
 a:hover {
-    text-decoration: none;
-    background-color: black;
-    color: white;
-    transition: all 0.3s;
+    color: var(--accent);
 }
 
 .expressive-code {
@@ -108,24 +97,22 @@ span.toggle-btn {
     font-style: italic;
     margin-left: 4px;
     padding: 4px;
-    background-color: var(--rams-gray);
+    background-color: var(--text-muted);
     border-radius: var(--border-s);
 }
 
 span.toggle-btn:hover {
-    background-color: var(--rams-blue);
+    background-color: var(--accent);
     color: white;
 }
 
 mark.hl {
-    background-color: var(--rams-black);
+    background-color: var(--accent);
     color: white;
 }
-
 
 @media (max-width: 768px) {
     body {
         margin: calc(var(--q) * 4);
-        margin-top: calc(var(--q) * 8);
     }
 }
