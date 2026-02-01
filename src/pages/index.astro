@@ -1,120 +1,143 @@
 ---
 import { getCollection } from "astro:content";
 import Baz from "../layouts/Baz.astro";
-import { Image } from "astro:assets";
-const pageTitle = "INDEX";
 import { Icon } from "astro-icon/components";
+
+const pageTitle = "index";
 
 const allThoughts = await getCollection(
     "thoughts",
     ({ data }) => data.draft !== true,
 );
-
 allThoughts.sort((a: any, b: any) => b.data.published - a.data.published);
 
 const allBits = await getCollection("bits", ({ data }) => data.draft !== true);
-
 allBits.sort((a: any, b: any) => b.data.published - a.data.published);
 
-const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
+const RDAPIKEY = import.meta.env.RDAPIKEY;
+const collectionId = import.meta.env.RDCOLLECTIONID;
+
+
+
+// get the latest 10 raindrop links
+var bearer = "Bearer " + RDAPIKEY;
+var rdUrl = `https://api.raindrop.io/rest/v1/raindrops/${collectionId}?perpage=10`;
+
+async function fetchLinks() {
+    const resp = await fetch(rdUrl, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            Authorization: bearer,
+            "Content-Type": "application/json",
+        },
     });
-};
+    const data = await resp.json();
+    return data;
+}
+
+interface RaindropItem {
+    link: string;
+    title: string;
+    note: string;
+    excerpt: string;
+    created: string;
+}
+
+const links = await fetchLinks();
 ---
 
 <Baz pageTitle={pageTitle}>
-    <div class="bannerIndex">
-        <h1>Kenan Akinci</h1>
-        <p class="role"><i>Sr. Hardware Design Engineer</i></p>
-    </div>
-    <!-- <div class="wide"></div> -->
     <div class="hero">
-        <!-- <Image
-                src="/banner-bg/banner-bg-2.png"
-                width="960"
-                height="640"
-                alt="..."
-            /> -->
         <video autoplay muted playsinline loop>
             <source src="/effect.webm" type="video/webm" />
             Your browser does not support the video tag.
         </video>
     </div>
-    <div class="short">
+    <header class="intro">
+        <h1>Kenan Akinci</h1>
+        <p class="role">Sr. Hardware Design Engineer</p>
+    </header>
+
+    <section class="bio">
         <p>
             I'm a senior hardware design engineer from Germany with over 10
             years of experience in designing and developing hardware for power
             electronics systems. Although not officially a software engineer, I
-            program in various languages for personal and professional projects.
+            program in various languages for personal and professional projects
+            too.
         </p>
         <p>
-            Reason this website exists is that I believe everyone should have
+            I dabble here at this website and I believe everyone should have
             their own place in web and freely express themselves the way they
             want. This is therefore my place where I post about
             hardware/software and other things that interest me. I write mostly
             for myself, but maybe you find them interesting too.
         </p>
         <p>
-            <i>
-                P.S. This site is constantly being re-designed and re-organized,
-                because it is serving me as a playground for my dabbling as
-                well.
-            </i>
+            Check out my <a href="/about">about</a> page for further details on my
+            professional career.
         </p>
-    </div>
+        <p class="muted">
+            P.S. This site is constantly being re-designed and re-organized,
+            since it is serving me as a playground for my dabbling as well.
+        </p>
+    </section>
 
-    <div class="writings">
-        <div class="writing-section">
-            <h3 class="section-label">Thoughts</h3>
-            <div class="posts-list">
-                {
-                    allThoughts.map((post) => (
-                        <article class="post-item">
-                            <div class="post-header">
+    <section class="writings">
+        <div class="columns">
+            <div class="column">
+                <h2 class="section-heading">Thoughts</h2>
+                <div class="posts-list">
+                    {
+                        allThoughts.map((post) => (
+                            <article class="post-item">
                                 <a
                                     href={`/thoughts/${post.id}`}
                                     class="post-title"
                                 >
-                                    {post.data.title}
+                                    <Icon name="ph:feather-duotone" size="20" />{post.data.title}
                                 </a>
-                                <time class="post-date">
-                                    {formatDate(post.data.published)}
-                                </time>
-                            </div>
-                            <p class="post-excerpt">{post.data.excerpt}</p>
-                        </article>
-                    ))
-                }
+                            </article>
+                        ))
+                    }
+                </div>
+            </div>
+            <div class="column">
+                <h2 class="section-heading">Bits</h2>
+                <div class="posts-list">
+                    {
+                        allBits.map((post) => (
+                            <article class="post-item">
+                                <a href={`/bits/${post.id}`} class="post-title">
+                                    <Icon name="ph:asterisk-fill" size="20" />{post.data.title}
+                                </a>
+                            </article>
+                        ))
+                    }
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="writing-section">
-            <h3 class="section-label">Bits</h3>
-            <div class="posts-list bits-list">
-                {
-                    allBits.map((post) => (
-                        <article class="post-item bits-item">
-                            <a href={`/bits/${post.id}`} class="post-title">
-                                {post.data.title}
-                            </a>
-                            <time class="post-date">
-                                {
-                                    post.data.published
-                                        .toISOString()
-                                        .split("T")[0]
-                                }
-                            </time>
-                        </article>
-                    ))
-                }
-            </div>
+    <section class="bookmarks">
+        <h2 class="section-heading">Latest bookmarks</h2>
+        <div class="posts-list">
+          {
+            links.items.map((item: RaindropItem) => (
+            <article class="post-item">
+                <a href=`${item.link}` target="_blank" class="post-title">
+                    <Icon name="ph:bookmark-duotone" size="20"/>{item.title}
+                </a>
+            </article>
+            ))
+          }
+          <a href="/bookmarks">see more</a>
         </div>
-    </div>
-    <div class="elsewhere">
-        <h3 class="section-label">Elsewhere</h3>
+    </section>
+
+    <section class="elsewhere">
+        <h2 class="section-heading">Elsewhere</h2>
         <p>
             You can find me on <a href="https://mas.to/@ingenieur"
                 >Mastodon<Icon name="ph:mastodon-logo-duotone" size="16" /></a
@@ -130,384 +153,153 @@ const formatDate = (date: Date) => {
                 href="https://kenan.fyi/rss.xml">here</a
             >.
         </p>
-    </div>
-    <div class="experience">
-        <h3 class="section-label">Experience</h3>
-        <div class="jobs">
-            <div>
-                <h3 class="current">
-                    <a href="https://kollmorgen.com/" target="_blank"
-                        >Kollmorgen</a
-                    >, <i>Oct 2025 - current</i>
-                </h3><p>Senior Hardware Design Engineer</p>
-            </div>
-            <div>
-                <h3>
-                    <a href="https://elektroautomatik.com/" target="_blank"
-                        >EA Elektro-Automatik</a
-                    >, <i>@2023, 2 years</i>
-                </h3>
-                <p>Senior Hardware Design Engineer</p>
-                <p class="expandable-text">
-                    EA Elektro-Automatik, now part of Tektronix, has been
-                    offering high voltage and high current bidirectional power
-                    supplies for various applications in automotive, industrial,
-                    aerospace and such markets for the last 50 years. As a
-                    Senior Hardware Design Engineer, I was responsible for
-                    designing: the resonant stage of the new product platform
-                    for company's next-gen bidirectional power supplies for
-                    increased power density and efficiency from power levels of
-                    12kW for the first phase; testing and evaluating SiC power
-                    MOSFETs in increased switching frequencies for reducing
-                    overall component sizes; testing and designing inductive
-                    components for resonant topologies including CLLC and
-                    variants; designing current, voltage and temperature
-                    measurement circuits for software algorithms to implement
-                    control of the system and required filter topologies;
-                    helping colleagues on traditional topics such as Flyback,
-                    Buck, Boost and such SMPS topologies; testing the
-                    functionality of designed prototypes for various scenarios
-                    in the lab for required performance criteria; writing Python
-                    scripts occasionally to fulfill design tasks; helping to
-                    maintain the Xpedition EDM toolchain by also implementing
-                    scripts for various tasks and output data integrity;
-                    layouting PCBs in Xpedition EDM from 4 to 8 Layers
-                </p>
-            </div>
-            <div>
-                <h3>
-                    <a
-                        href="https://www.bonfiglioli.com/international/en/product/axia-vert-series_inverters-servo-drives_premium-inverters"
-                        target="_blank">Bonfiglioli</a
-                    >, <i>@2018, 5 years</i>
-                </h3><p>Hardware Design Engineer</p>
-                <p class="expandable-text">
-                    Working as a hardware design engineer, my responsibilities
-                    were designing converter topologies from 250 W to 132 kW
-                    including basic and advanced motor drives aimed for
-                    asynchronous, synchronous, synchronous reluctance and servo
-                    motor applications according to national and worldwide
-                    standards such as 61800-3, 61800-5-1, 61800-5-2 and similar
-                    generic standards, as well as CE conformity; testing the
-                    functional blocks as well as complete devices in different
-                    conditions to qualify short-circuit, high temperature,
-                    overload, long time running and similar behavior of
-                    frequency inverters and writing technical reports;
-                    troubleshooting error behavior in new and old designs;
-                    proposing topologies for new designs and improvements to
-                    current portfolio in terms of better thermal,
-                    electromagnetic and functional performance; using simulation
-                    software such as LTSpice for evaluating topologies and
-                    dimensioning of components; qualifying new components,
-                    mainly IGBTs and SiC MOSFETs to replace current ones or
-                    proposing second sources and supporting QM department;
-                    participating in research activities aimed to introduce new
-                    types of components such as SiC MOSFETs in company and
-                    generate new know-how based on new power semiconductor
-                    technologies, supervising and maintaining company-wide wiki
-                    for knowledge management
-                </p>
-            </div>
-            <div>
-                <h3>
-                    <a
-                        href="https://www.a-group.com.tr/en/arge/arge-merkezi-1"
-                        target="_blank">A Group R&D</a
-                    >, <i>@2015, 3 years</i>
-                </h3><p>Hardware Design Engineer</p><p class="expandable-text">
-                    As a part of the hardware team, my responsibilities were to
-                    design power conversion topologies such as inverters,
-                    converters and switch-mode power supplies for various
-                    applications including Permanent Magnet Synchronous Servo
-                    Motor Drives, Elevator Drives and their internal power
-                    supplies; design analog and digital supplementary circuits
-                    for isolated current, voltage and temperature measurement
-                    circuits, PWM circuits, gate drives, fault detection
-                    circuits, DC Link pre-charging circuits, reference voltage
-                    circuits; to design PCBs and schematics of the mentioned
-                    motor drives. I was also responsible for the power,
-                    efficiency and harsh condition testing of mentioned motor
-                    drives with different kind of scenarios such as short
-                    circuit behavior, high ambient temperature testing, and
-                    overall efficiency in the qualified electronics laboratory
-                    with high performance oscilloscopes, temperature measuring
-                    devices and power analyzers. Due to my background in
-                    electromagnetics which I gained during college days, EMC
-                    testing of the drives was also part of my responsibilities.
-                    As a part of my job and my personal interest, I also did
-                    research and made purchases for electronic equipment and
-                    gave tutorials about using them to our team such as
-                    oscilloscopes, power analyzers, power supplies, thermal
-                    imaging cameras, spectrum analyzers and EMC equipment for
-                    the hardware laboratory.
-                </p>
-            </div>
-        </div>
-    </div>
-    <div class="papers">
-        <h2>Papers</h2>
-        <p>
-            <a
-                href="https://www.researchgate.net/publication/329277035_Life_Prediction_of_Aluminum_Electrolytic_Capacitors_Used_in_Two-Level_Inverters"
-                target="_blank"
-                >Life Prediction of Aluminum Electrolytic Capacitors Used in
-                Two-Level Inverters ↗</a
-            ><br /><i>October 2018 - ICENTE</i>
-        </p>
-        <p>
-            <a
-                href="http://www.isites.info/PastConferences/ISITES2015/ISITES2015/papers/A1-ISITES2015ID181.pdf"
-                target="_blank"
-                >A Variable AC Power Source Based on the Arduino Platform Using
-                Finite State Machines ↗</a
-            ><br /><i>June 2015 - ISITES</i>
-        </p>
-        <p></p>
-    </div>
+    </section>
 </Baz>
 
 <style>
-    div.wide {
-        width: 80vw;
-        height: 400px;
-        background-color: red;
-        margin-inline: calc(50% - 40vw);
+    :global(body) {
+        max-width: 70ch;
     }
 
-    @media (max-width: 1600px) {
-        div.wide {
-            width: 100%;
-            height: 200px;
-            background-color: blue;
-            margin-inline: unset;
-        }
+    .intro {
+        margin-bottom: calc(var(--q) * 4);
     }
 
-    div.hero {
-        margin-top: calc(var(--q) * 8);
-    }
-    div.hero img,
-    video {
-        width: 100%;
-        transform: scale(1.1);
-        margin: 2rem 0;
-        border-radius: var(--border-m);
-        margin-top: 24px;
-        opacity: 0.9;
-    }
-
-    @media (max-width: 768px) {
-        div.hero img,
-        video {
-            transform: unset;
-        }
-    }
-
-    div.bannerIndex h1 {
+    .intro h1 {
         font-size: 2rem;
+        margin: 0;
     }
 
-    div.short {
+    .role {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .hero {
+        margin-bottom: calc(var(--q) * 8);
+        margin-inline: clamp(-5%, calc(-50vw + 50% + 1rem), 0px);
+    }
+
+    .hero video {
+        width: 100%;
+        border-radius: var(--border-m);
+    }
+
+    .bio {
+        margin-bottom: calc(var(--q) * 12);
         text-align: justify;
         hyphens: auto;
-        margin-bottom: calc(var(--q) * 12);
     }
 
-    div.short :global(p) {
+    .bio p {
         margin-bottom: calc(var(--q) * 4);
     }
 
-    div.writings {
+    .bio .muted {
+        font-style: italic;
+        color: var(--text-muted);
+    }
+
+    /* Two-column writings */
+    .writings {
         margin-bottom: calc(var(--q) * 12);
     }
 
-    div.writings h2 {
-        margin-bottom: calc(var(--q) * 8);
+    .columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: calc(var(--q) * 4);
     }
 
-    .writing-section {
-        margin-bottom: calc(var(--q) * 10);
-    }
-
-    .section-label {
-        font-size: 1.4rem;
-        font-weight: 600;
+    .section-heading {
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--text);
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        margin-top: 0;
         margin-bottom: calc(var(--q) * 4);
         padding-bottom: calc(var(--q) * 2);
-        border-bottom: 1px solid var(--main-border);
-        text-align: center;
+        border-bottom: 1px solid var(--panel-border);
     }
 
     .posts-list {
         display: flex;
         flex-direction: column;
-        gap: calc(var(--q) * 6);
     }
 
     .post-item {
         display: flex;
-        flex-direction: column;
-        transition: all 0.3s ease;
-    }
-
-    .post-header {
-        display: flex;
-        justify-content: space-between;
         align-items: baseline;
-        gap: calc(var(--q) * 4);
-    }
-
-    .post-title {
-        font-size: 1.25rem;
-        font-family: "Source Serif Pro", serif;
-        font-weight: bold;
-        font-style: italic;
-        flex: 1;
-        position: relative;
-    }
-
-    .post-date {
-        font-size: 0.875rem;
-        font-family: "JetBrains Mono", monospace;
-        color: var(--text);
-        opacity: 0.5;
-        white-space: nowrap;
-        font-weight: 400;
-    }
-
-    .post-excerpt {
-        font-size: 0.9375rem;
-        line-height: 1.6;
-        color: var(--text);
-        opacity: 0.7;
-        margin: 0;
-        text-align: justify;
-        hyphens: auto;
-    }
-
-    /* Bits - more compact style */
-    .bits-list {
         gap: calc(var(--q) * 3);
     }
 
-    .bits-item {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: baseline;
-        gap: calc(var(--q) * 4);
-        padding: calc(var(--q) * 2) 0;
+    .post-title {
+        font-size: 18px;
+        flex: 1;
     }
 
-    .bits-item .post-title {
-        font-size: 1rem;
+    .post-title :global(svg) {
+        vertical-align: middle;
+        opacity: 0.5;
+        margin-right: 2px;
+        position: relative;
+        top: -1px;
+    }
+
+    /* Elsewhere */
+    .elsewhere {
+        margin-bottom: calc(var(--q) * 12);
+    }
+
+    /* Experience */
+    .experience {
+        margin-bottom: calc(var(--q) * 12);
+    }
+
+    .jobs {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--q) * 6);
+    }
+
+    .job {
+        padding: calc(var(--q) * 4);
+        border: 1px solid var(--panel-border);
+        border-radius: var(--border-m);
+    }
+
+    .job h3 {
+        margin: 0;
+    }
+
+    .job > p:first-of-type {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    .tenure {
+        font-style: italic;
+        color: var(--text-muted);
+        font-size: 0.9em;
+    }
+
+    .current-marker::before {
+        content: "\25CF";
+        color: var(--accent);
+        margin-right: 6px;
+        font-size: 0.7em;
+    }
+
+    /* Papers */
+    .papers {
+        margin-bottom: calc(var(--q) * 12);
     }
 
     @media (max-width: 768px) {
-        .post-header {
-            flex-direction: column;
-            gap: calc(var(--q) * 1);
-            align-items: flex-start;
+        .columns {
+            grid-template-columns: 1fr;
+            gap: calc(var(--q) * 8);
         }
-
-        .bits-item {
-            flex-direction: column;
-            gap: calc(var(--q) * 1);
-            align-items: flex-start;
-        }
-
-        .post-date {
-            font-size: 0.8125rem;
-        }
-    }
-
-    div.experience {
-        margin-bottom: calc(var(--q) * 12);
-        position: relative;
-    }
-
-    div.experience::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: var(--rams-bg);
-        border-radius: var(--border-m);
-        transform: scaleX(1.1);
-        margin-top: -16px;
-        margin-bottom: -16px;
-        z-index: -1;
-    }
-
-    div.jobs h3 {
-        margin: 0;
-    }
-
-    div.jobs a::after {
-        content: "↗";
-        font-family: system-ui;
-        font-weight: 400;
-        margin-left: 4px;
-    }
-
-    div.jobs h3.current::before {
-        content: "•";
-    }
-
-    div.elsewhere {
-        margin-bottom: calc(var(--q) * 12);
-    }
-
-    h1 {
-        margin: 0;
-    }
-    p.role {
-        font-size: 1.25rem;
-        margin-bottom: 12px;
-        opacity: 0.5;
     }
 </style>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const expandableTexts = document.querySelectorAll(".expandable-text");
-
-        expandableTexts.forEach((element) => {
-            const text = element.textContent?.trim() || "";
-
-            if (text.length > 100) {
-                const truncated = text.substring(0, 112);
-                element.setAttribute("data-full-text", text);
-                element.setAttribute("data-truncated-text", truncated + "...");
-
-                element.textContent = truncated + "... ";
-
-                const toggleBtn = document.createElement("span");
-                toggleBtn.className = "toggle-btn";
-                toggleBtn.textContent = "more";
-
-                let isExpanded = false;
-
-                toggleBtn.addEventListener("click", () => {
-                    isExpanded = !isExpanded;
-
-                    if (isExpanded) {
-                        element.textContent = text + " ";
-                        toggleBtn.textContent = "less";
-                    } else {
-                        element.textContent = truncated + "... ";
-                        toggleBtn.textContent = "more";
-                    }
-
-                    element.appendChild(toggleBtn);
-                });
-
-                element.appendChild(toggleBtn);
-            }
-        });
-    });
-</script>
