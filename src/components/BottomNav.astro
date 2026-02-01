@@ -1,6 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
-
 const currentPath = Astro.url.pathname;
 
 const isActive = (href: string) => {
@@ -11,55 +9,57 @@ const isActive = (href: string) => {
 };
 ---
 
-<nav class="bottom-nav">
-    <div class="nav-links">
-        <a
-            href="/thoughts/"
-            class:list={["nav-link", { active: isActive("/thoughts/") }]}
-            title="Thoughts"
-        >
-            Thoughts
-        </a>
-        <a
-            href="/electronics/"
-            class:list={["nav-link", { active: isActive("/electronics/") }]}
-            title="Electronics"
-        >
-            Electronics
-        </a>
-        <a
-            href="/bits/"
-            class:list={["nav-link", { active: isActive("/bits/") }]}
-            title="Bits"
-        >
-            Bits
-        </a>
-        <a
-            href="/library/"
-            class:list={["nav-link", { active: isActive("/library/") }]}
-            title="Library"
-        >
-            Library
-        </a>
-        <a
-            href="/blogroll/"
-            class:list={["nav-link", { active: isActive("/blogroll/") }]}
-            title="Blogroll"
-        >
-            Blogroll
-        </a>
-    </div>
-
-    <a href="/" class="logo-link">
-        <img src="/logo.svg" width="64" height="64" alt="" />
-    </a>
-    <button
-        id="panels-toggle"
-        class="panels-toggle function-button"
-        aria-label="Toggle Panels"
+<nav class="top-nav">
+    <a href="/" class="site-name"
+        ><img src="/logo.svg" width="48" height="48" alt="kenan.fyi" /></a
     >
-        Panels
-    </button>
+    <div class="nav-right">
+        <div class="nav-links">
+            <a
+                href="/thoughts/"
+                class:list={["nav-link", { active: isActive("/thoughts/") }]}
+            >
+                Thoughts
+            </a>
+            <a
+                href="/electronics/"
+                class:list={["nav-link", { active: isActive("/electronics/") }]}
+            >
+                Electronics
+            </a>
+            <a
+                href="/bits/"
+                class:list={["nav-link", { active: isActive("/bits/") }]}
+            >
+                Bits
+            </a>
+            <a
+                href="/library/"
+                class:list={["nav-link", { active: isActive("/library/") }]}
+            >
+                Library
+            </a>
+            <a
+                href="/blogroll/"
+                class:list={["nav-link", { active: isActive("/blogroll/") }]}
+            >
+                Blogroll
+            </a>
+            <a
+                href="/about/"
+                class:list={["nav-link", { active: isActive("/about/") }]}
+            >
+                About
+            </a>
+        </div>
+        <button
+            id="panels-toggle"
+            class="panels-toggle"
+            aria-label="Toggle Panels"
+        >
+            Panels
+        </button>
+    </div>
 </nav>
 
 <script>
@@ -94,97 +94,109 @@ const isActive = (href: string) => {
 </script>
 
 <style>
-    .bottom-nav {
+    .top-nav {
         position: fixed;
-        bottom: 24px;
-        left: 24px;
+        top: 0;
+        left: 0;
+        right: 0;
         z-index: 1500;
         display: flex;
-        flex-direction: column;
-        align-items: start;
-        gap: 4px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 24px;
+        background: transparent;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(12px);
     }
 
-    .nav-links {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .logo-link {
+    .site-name {
         display: block;
         line-height: 0;
         text-decoration: none;
     }
 
-    .logo-link:hover {
-        background: transparent;
+    .site-name:hover {
+        background: none;
     }
 
-    .logo-link img {
+    .site-name img {
         display: block;
     }
 
-    .nav-link {
+    .nav-right {
         display: flex;
         align-items: center;
-        padding: 2px;
+        gap: 8px;
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .nav-link {
+        padding: 4px 10px;
         text-decoration: none;
-        color: var(--text);
-        background: none;
+        color: var(--text-muted);
+        font-size: 1rem;
         border-radius: var(--border-s);
-        white-space: nowrap;
-        font-size: 14px;
+        transition: color 0.2s ease;
     }
 
     .nav-link:hover {
-        color: var(--rams-red);
-        background: none;
+        color: var(--accent);
     }
 
     .nav-link.active {
-        color: var(--rams-black);
-        background: none;
-        font-weight: bold;
-        text-decoration: underline;
+        color: var(--accent);
+        font-weight: 600;
     }
 
-    .function-button {
-        display: flex;
-        align-items: center;
-        padding: 2px;
+    .panels-toggle {
+        padding: 4px 10px;
         background: none;
-        border: none;
-        color: var(--text);
+        border: 1px solid var(--panel-border);
+        color: var(--text-muted);
         border-radius: var(--border-s);
         cursor: pointer;
-        white-space: nowrap;
-        font-size: 14px;
+        font-size: 0.85rem;
+        font-family: inherit;
+        transition: all 0.2s ease;
     }
 
-    .function-button:hover {
-        color: var(--rams-red);
+    .panels-toggle:hover {
+        border-color: var(--accent);
+        color: var(--accent);
     }
 
-    .function-button.disabled {
-        opacity: 0.3;
+    .panels-toggle.disabled {
+        opacity: 0.4;
         text-decoration: line-through;
     }
 
-    .function-button.disabled:hover {
-        color: var(--text);
-    }
-
     @media (max-width: 1100px) {
-        .function-button {
+        .panels-toggle {
             display: none;
         }
     }
 
     @media (max-width: 768px) {
-        .bottom-nav {
-            left: 50%;
-            transform: translateX(-50%);
+        .top-nav {
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px 16px;
+        }
+
+        .nav-links {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .nav-link {
+            font-size: 0.85rem;
+            padding: 4px 8px;
         }
     }
 </style>

@@ -8,22 +8,28 @@ const { frontmatter, minutes } = Astro.props;
 ---
 
 <Baz pageTitle={frontmatter.data.title}>
-    <Banner metadata={frontmatter.data} minutes={minutes} />
+    <Banner
+        metadata={frontmatter.data}
+        minutes={minutes}
+        collection={frontmatter.collection}
+    />
     <slot />
-    <p class="dot">▨</p>
-
-    <h3 class="backlinks">Backlinks</h3>
     <Backlinks id={frontmatter.id} />
-
     <Panels client:load slot="panels-outside-main" />
 </Baz>
 <style>
     article {
-        margin-top: calc(var(--q) * 12);
+        margin-top: calc(var(--q) * 8);
     }
 
     article :global(p) {
         text-align: justify;
         hyphens: auto;
+    }
+
+    .dot {
+        text-align: center;
+        color: var(--text-muted);
+        margin: calc(var(--q) * 8) 0;
     }
 </style>

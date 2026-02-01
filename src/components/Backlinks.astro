@@ -10,6 +10,7 @@ const backlinks = await getBacklinks(id);
 ---
 
 <div class="backlinks">
+    <h3 class="backlinks-heading">Backlinks</h3>
     {
         backlinks.length > 0 ? (
             <ul>
@@ -50,5 +51,12 @@ const backlinks = await getBacklinks(id);
         font-size: 0.75rem;
         color: var(--text-muted, #666);
         margin-inline-start: 0.5rem;
+    }
+
+    .backlinks-heading {
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
     }
 </style>

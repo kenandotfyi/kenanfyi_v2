@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-const { metadata, minutes } = Astro.props;
+const { metadata, minutes, collection } = Astro.props;
 
 const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-US", {
@@ -12,36 +12,35 @@ const formatDate = (date: Date) => {
 ---
 
 <div class="banner">
-    <button id="back-button" class="back-button exclude-from-panel">
+    <a href={`/${collection}/`} class="back-button exclude-from-panel">
         <Icon name="ph:arrow-left-bold" />
         <span class="back-text">Back</span>
-    </button>
+    </a>
     <div class="header-row">
         <div class="pubDate" id="pubDate">
-            <span>
-                {formatDate(metadata.published)} ✴︎
-            </span>
-            <span>{minutes} ✴︎ </span>
+            <span>{formatDate(metadata.published)}</span>
+            <span class="sep">/</span>
+            <span>{minutes}</span>
+            <span class="sep">/</span>
             <span>{metadata.tags.join(", ")}</span>
         </div>
         <div>
             <h1 class="displayTitle exclude-from-panel">{metadata.title}</h1>
         </div>
     </div>
-    <div><h3 class="exclude-from-panel">{metadata.excerpt}</h3></div>
+    {
+        metadata.excerpt && (
+            <div>
+                <h3 class="excerpt exclude-from-panel">{metadata.excerpt}</h3>
+            </div>
+        )
+    }
 </div>
-
-<script>
-    const backButton = document.getElementById("back-button");
-    backButton?.addEventListener("click", () => {
-        window.history.back();
-    });
-</script>
 
 <style>
     div.banner {
-        padding-bottom: calc(var(--q) * 24);
-        border-bottom: 2px solid var(--main-border);
+        padding-bottom: calc(var(--q) * 16);
+        border-bottom: 1px solid var(--panel-border);
         margin-bottom: calc(var(--q) * 2);
     }
 
@@ -51,31 +50,29 @@ const formatDate = (date: Date) => {
     }
 
     h1.displayTitle {
-        font-size: 4rem;
-        transition: margin-left 0.3s ease;
+        font-size: 3rem;
         text-wrap: balance;
+        line-height: 1.15;
     }
 
-    div.title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        transition: margin-left 0.3s ease;
-        flex: 1;
+    .excerpt {
+        color: var(--text-muted);
+        font-weight: 400;
+        font-size: 1.1rem;
     }
 
     .back-button {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         padding: 6px;
         background: none;
         border: none;
         border-radius: var(--border-s);
-        color: var(--text);
+        color: var(--text-muted);
         font-size: 12px;
         font-weight: bold;
-        font-family: system-ui;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        text-decoration: none;
+        transition: all 0.2s ease;
         overflow: hidden;
         white-space: nowrap;
     }
@@ -90,7 +87,7 @@ const formatDate = (date: Date) => {
         display: inline-block;
         width: 0;
         overflow: hidden;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         margin-left: 0;
     }
 
@@ -100,14 +97,19 @@ const formatDate = (date: Date) => {
     }
 
     .back-button:hover {
-        background: var(--rams-red);
+        background: var(--accent);
         color: white;
         padding-right: 10px;
     }
 
     div.pubDate {
-        opacity: 0.5;
-        font-size: 15px;
+        color: var(--text-muted);
+        font-size: 0.85rem;
         margin-top: 12px;
+    }
+
+    .sep {
+        margin: 0 6px;
+        opacity: 0.4;
     }
 </style>

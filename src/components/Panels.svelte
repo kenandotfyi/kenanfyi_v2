@@ -361,6 +361,7 @@
 <style>
     .stacked-panel-container {
         position: fixed;
+        margin-top: calc(var(--q) * 8);
         left: calc(50% + 30ch + 1rem - var(--panel-width) / 2);
         width: var(--panel-width);
         height: auto;
@@ -385,9 +386,10 @@
         right: 0;
         overflow: hidden;
         animation: slideDown 0.3s linear;
-        border-left: 1px solid var(--lichtgrau);
-        border-right: 1px solid var(--lichtgrau);
-        border-bottom: 1px solid var(--lichtgrau);
+        border-left: 1px solid var(--panel-border);
+        border-right: 1px solid var(--panel-border);
+        border-bottom: 1px solid var(--panel-border);
+        border-top: 1px solid var(--panel-border);
     }
 
     /* Single panel: all corners rounded */
@@ -403,7 +405,7 @@
     /* Multiple panels - first inactive panel: only top corners */
     .stacked-panel.first-inactive {
         border-radius: 8px 8px 0 0;
-        border-top: 1px solid var(--lichtgrau);
+        border-top: 1px solid var(--panel-border);
     }
 
     /* Other inactive panels: no border radius */
@@ -423,7 +425,7 @@
     }
 
     .panel-header.inactive {
-        background-color: var(--rams-grey);
+        background-color: var(--bg);
         font-size: 14px;
         height: 32px;
         line-height: 1;
@@ -442,7 +444,6 @@
     }
     .panel-content {
         flex: 1;
-        background-color: #efefef;
         hyphens: auto;
         overflow-y: auto;
         padding: 20px;
