@@ -29,9 +29,11 @@ const formatDate = (date: Date) => {
         </div>
     </div>
     {
-        metadata.excerpt && (
+        metadata.description && (
             <div>
-                <h3 class="excerpt exclude-from-panel">{metadata.excerpt}</h3>
+                <h3 class="excerpt exclude-from-panel">
+                    {metadata.description}
+                </h3>
             </div>
         )
     }
