@@ -17,8 +17,6 @@ allBits.sort((a: any, b: any) => b.data.published - a.data.published);
 const RDAPIKEY = import.meta.env.RDAPIKEY;
 const collectionId = import.meta.env.RDCOLLECTIONID;
 
-
-
 // get the latest 10 raindrop links
 var bearer = "Bearer " + RDAPIKEY;
 var rdUrl = `https://api.raindrop.io/rest/v1/raindrops/${collectionId}?perpage=10`;
@@ -96,8 +94,7 @@ const links = await fetchLinks();
                                     href={`/thoughts/${post.id}`}
                                     class="post-title"
                                 >
-                                    <Icon name="ph:feather-duotone" size="20" />{post.data.title}
-                                </a>
+                                    <Icon name="ph:feather-duotone" size="20" />{post.data.title}                                </a>
                             </article>
                         ))
                     }
@@ -127,12 +124,14 @@ const links = await fetchLinks();
             links.items.map((item: RaindropItem) => (
             <article class="post-item">
                 <a href=`${item.link}` target="_blank" class="post-title">
-                    <Icon name="ph:bookmark-duotone" size="20"/>{item.title}
+                    <Icon name="ph:bookmark-duotone" size="20"/>{item.title}<span class="external-link-icon">°</span>
                 </a>
             </article>
             ))
           }
-          <a href="/bookmarks">see more</a>
+          <p>
+            <a href="/bookmarks"><i>see more</i></a>
+          </p>
         </div>
     </section>
 
@@ -163,6 +162,7 @@ const links = await fetchLinks();
 
     .intro {
         margin-bottom: calc(var(--q) * 4);
+        color: var(--accent);
     }
 
     .intro h1 {
@@ -202,8 +202,22 @@ const links = await fetchLinks();
     }
 
     /* Two-column writings */
-    .writings {
+    .writings, .bookmarks {
         margin-bottom: calc(var(--q) * 12);
+    }
+
+    .bookmarks {
+        p {
+            text-align: right;
+        }
+
+        & a {
+            color: var(--text-muted);
+        }
+
+    }
+    .bookmarks a:hover {
+        color: var(--accent-hover);
     }
 
     .columns {
@@ -211,6 +225,8 @@ const links = await fetchLinks();
         grid-template-columns: 1fr 1fr;
         gap: calc(var(--q) * 4);
     }
+
+
 
     .section-heading {
         text-transform: uppercase;
@@ -244,6 +260,10 @@ const links = await fetchLinks();
         margin-right: 2px;
         position: relative;
         top: -1px;
+    }
+
+    .external-link-icon {
+        font-family: monospace;
     }
 
     /* Elsewhere */

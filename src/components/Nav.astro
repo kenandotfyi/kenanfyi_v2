@@ -10,9 +10,16 @@ const isActive = (href: string) => {
 ---
 
 <nav class="top-nav">
-    <a href="/" class="site-name"
-        ><img src="/logo.svg" width="48" height="48" alt="kenan.fyi" /></a
-    >
+    <div class="nav-left">
+        <a href="/" class="site-name"
+            ><img src="/logo.svg" width="48" height="48" alt="kenan.fyi" />
+        </a>
+    </div>
+    <button id="hamburger" class="hamburger" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
     <div class="nav-right">
         <div class="nav-links">
             <a
@@ -65,6 +72,8 @@ const isActive = (href: string) => {
 <script>
     const PANELS_STORAGE_KEY = "panels-enabled";
     const panelsToggle = document.getElementById("panels-toggle");
+    const hamburger = document.getElementById("hamburger");
+    const navRight = document.querySelector(".nav-right");
 
     function getPanelsEnabled() {
         const stored = localStorage.getItem(PANELS_STORAGE_KEY);
@@ -88,6 +97,19 @@ const isActive = (href: string) => {
         const currentState = getPanelsEnabled();
         localStorage.setItem(PANELS_STORAGE_KEY, (!currentState).toString());
         updatePanelsToggle();
+    });
+
+    hamburger?.addEventListener("click", () => {
+        hamburger.classList.toggle("active");
+        navRight?.classList.toggle("active");
+    });
+
+    // Close menu when clicking a link
+    document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", () => {
+            hamburger?.classList.remove("active");
+            navRight?.classList.remove("active");
+        });
     });
 
     updatePanelsToggle();
@@ -127,6 +149,17 @@ const isActive = (href: string) => {
         display: flex;
         align-items: center;
         gap: 8px;
+    }
+
+    .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        & span {
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
     }
 
     .nav-links {
@@ -175,6 +208,37 @@ const isActive = (href: string) => {
         text-decoration: line-through;
     }
 
+    .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 4px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        z-index: 1501;
+    }
+
+    .hamburger span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--text);
+        transition: all 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+        transform: rotate(-45deg) translate(0px, 0px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+        transform: rotate(-45deg) translate(0px, 0px);
+    }
+
+    .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(0px, 0px);
+    }
+
     @media (max-width: 1100px) {
         .panels-toggle {
             display: none;
@@ -183,20 +247,49 @@ const isActive = (href: string) => {
 
     @media (max-width: 768px) {
         .top-nav {
-            flex-direction: column;
-            gap: 8px;
-            padding: 10px 16px;
+            padding: 4px 10px;
+            background: transparent;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .hamburger {
+            display: flex;
+        }
+
+        .nav-right {
+            position: fixed;
+            top: 64px;
+            right: 16px;
+            width: auto;
+            min-width: fit-content;
+            background: var(--bg);
+            transform: translateY(-100%);
+            opacity: 0;
+            padding: 0;
+            transition:
+                transform 0.2s ease-out,
+                opacity 0.3s ease;
+            pointer-events: none;
+            border: 1px solid var(--panel-border);
+            border-radius: var(--border-s);
+        }
+
+        .nav-right.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .nav-links {
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 2px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 4px;
         }
 
         .nav-link {
-            font-size: 0.85rem;
-            padding: 4px 8px;
+            font-size: 1rem;
+            padding: 2px 10px;
         }
     }
 </style>

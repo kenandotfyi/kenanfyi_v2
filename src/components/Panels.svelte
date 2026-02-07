@@ -474,7 +474,7 @@
     }
 
     .open-link:hover {
-        background-color: var(--rams-orange);
+        background-color: var(--accent);
     }
 
     .open-link::after {
