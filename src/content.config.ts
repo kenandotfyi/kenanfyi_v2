@@ -21,7 +21,6 @@ const thoughts = defineCollection({
   schema: z.object({
     draft: z.boolean(),
     title: z.string(),
-    excerpt: z.string(),
     description: z.string(),
     tags: z.union([
       z.array(z.string()),
