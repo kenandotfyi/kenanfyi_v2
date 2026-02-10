@@ -1,9 +1,11 @@
 ---
 import Baz from "../layouts/Baz.astro";
 import { Icon } from "astro-icon/components";
+
+const pageTitle = "about";
 ---
 
-<Baz>
+<Baz pageTitle={pageTitle}>
     <div class="hero-section">
         <div class="hero-image"></div>
         <h1 class="hero-text">ABOUT</h1>
@@ -82,7 +84,10 @@ import { Icon } from "astro-icon/components";
 
     <section class="disclaimer">
         <Icon name="ph:warning-duotone" size="20" />
-        <p>The views and opinions expressed on this website are my own and do not represent those of my employer in any way.</p>
+        <p>
+            The views and opinions expressed on this website are my own and do
+            not represent those of my employer in any way.
+        </p>
     </section>
 </Baz>
 
