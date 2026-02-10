@@ -1,11 +1,405 @@
 ---
-import { getCollection } from "astro:content";
 import Baz from "../layouts/Baz.astro";
+import { Icon } from "astro-icon/components";
 
-const allBits = await getCollection("thoughts");
+const Hardcover = import.meta.env.Hardcover;
+
+var bearer = "Bearer " + Hardcover;
+
+const query = `
+{
+  me {
+    user_books(order_by: {status_id: asc}) {
+      rating
+      review_raw
+      status_id
+      book {
+        id
+        title
+        slug
+        pages
+        release_year
+        cached_contributors
+        image {
+          url
+          height
+          width
+        }
+      }
+    }
+  }
+}`;
+
+interface BookItem {
+    rating: number;
+    review_raw: string;
+    status_id: number;
+    book: {
+        id: number;
+        title: string;
+        slug: string;
+        pages: number;
+        release_year: number;
+        cached_contributors: { author: { name: string } }[];
+        image: {
+            url: string;
+            height: number;
+            width: number;
+        };
+    };
+}
+
+const statusLabels: Record<number, string> = {
+    1: "Want to read",
+    2: "Reading",
+    3: "Read",
+    5: "Did not finish",
+};
+
+const response = await fetch("https://api.hardcover.app/v1/graphql", {
+    method: "POST",
+    headers: {
+        Authorization: bearer,
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query }),
+});
+
+const d = await response.json();
+const books = d.data.me[0];
+
+const booksByStatus = books.user_books.reduce(
+    (acc: Record<number, BookItem[]>, item: BookItem) => {
+        if (!acc[item.status_id]) acc[item.status_id] = [];
+        acc[item.status_id].push(item);
+        return acc;
+    },
+    {},
+);
+const statusOrder = [2, 1, 3, 5]; // Reading, Want to read, Read, DNF
+const statuses = statusOrder.filter((s) => booksByStatus[s]);
+
 const pageTitle = "library";
 ---
 
 <Baz pageTitle={pageTitle}>
-    <p>Library</p>
+    <div id="preview" class="preview">
+        <img id="preview-img" src="" alt="" />
+    </div>
+
+    <div class="hero-section">
+        <div class="hero-image"></div>
+        <h1 class="hero-text">LIBRARY</h1>
+    </div>
+    <div class="books-grid">
+        {
+            statuses.map((statusId) => (
+                <div class="status-group" data-status={statusId}>
+                    <div class="status-header">{statusLabels[statusId]}</div>
+                    {booksByStatus[statusId].map((item: BookItem) => (
+                        <a
+                            href={`https://hardcover.app/books/${item.book.slug}`}
+                            target="_blank"
+                            class="book-item"
+                            data-cover={item.book.image?.url || ""}
+                            style={
+                                item.book.image?.url
+                                    ? `--cover: url('${item.book.image.url}')`
+                                    : ""
+                            }
+                        >
+                            {item.book.image?.url && <div class="book-bg" />}
+                            {item.rating && (
+                                <div class="book-meta">
+                                    <span class="book-rating">
+                                        {Array.from({
+                                            length: item.rating,
+                                        }).map(() => (
+                                            <Icon
+                                                name="ph:star-duotone"
+                                                size="18"
+                                            />
+                                        ))}
+                                    </span>
+                                </div>
+                            )}
+                            <div class="book-content">
+                                <span class="book-title">
+                                    {item.book.title}
+                                </span>
+                                <span class="book-author">
+                                    {item.book.cached_contributors?.[0]?.author
+                                        ?.name || ""}
+                                    {item.book.release_year && (
+                                        <span class="book-year">
+                                            {item.book.release_year}
+                                        </span>
+                                    )}
+                                </span>
+                                {item.review_raw && (
+                                    <span class="book-review">
+                                        {item.review_raw}
+                                    </span>
+                                )}
+                            </div>
+                        </a>
+                    ))}
+                </div>
+            ))
+        }
+    </div>
 </Baz>
+
+<script>
+    const preview = document.getElementById("preview") as HTMLElement;
+    const previewImg = document.getElementById(
+        "preview-img",
+    ) as HTMLImageElement;
+
+    const isMobile = () => window.innerWidth <= 768;
+
+    document.querySelectorAll<HTMLElement>(".book-item").forEach((item) => {
+        item.addEventListener("mouseenter", () => {
+            if (isMobile()) return;
+            const cover = item.dataset.cover;
+            if (!cover) return;
+            previewImg.src = cover;
+            previewImg.onload = () => preview.classList.add("visible");
+            previewImg.onerror = () => preview.classList.remove("visible");
+        });
+
+        item.addEventListener("mouseleave", () => {
+            preview.classList.remove("visible");
+        });
+
+        item.addEventListener("mousemove", (e) => {
+            const offset = 20;
+            const x = e.clientX + offset;
+            const y = e.clientY + offset;
+            const pw = preview.offsetWidth;
+            const ph = preview.offsetHeight;
+            preview.style.left =
+                (x + pw > window.innerWidth ? e.clientX - pw - offset : x) +
+                "px";
+            preview.style.top =
+                (y + ph > window.innerHeight ? e.clientY - ph - offset : y) +
+                "px";
+        });
+    });
+</script>
+
+<style>
+    .preview {
+        position: fixed;
+        width: 200px;
+        aspect-ratio: 2 / 3;
+        border: 1px solid var(--panel-border);
+        border-radius: var(--border-s);
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 0;
+        z-index: 9999;
+        transition: opacity 0.15s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .preview.visible {
+        opacity: 1;
+    }
+
+    .preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-section {
+        position: relative;
+        height: 40vh;
+        margin-top: -40px;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        overflow: hidden;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        background-color: var(--rams-black);
+        background-image: url("/banner-bg/banner-bg-16.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.6;
+    }
+
+    .hero-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 6rem;
+        font-weight: 400;
+        margin: 0;
+        z-index: 10;
+    }
+
+    .books-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        border-top: 1px solid var(--panel-border);
+    }
+
+    .status-group {
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--panel-border);
+    }
+
+    .status-group[data-status="3"] .status-header {
+        color: var(--rams-red);
+        opacity: 0.8;
+        background: color-mix(in srgb, var(--rams-red) 20%, transparent);
+    }
+
+    .status-group:nth-child(even) {
+        border-right: none;
+    }
+
+    .book-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        padding: 1rem 2vw;
+        border-bottom: 1px solid var(--panel-border);
+        text-decoration: none;
+        transition: background 0.15s ease;
+        overflow: hidden;
+    }
+
+    .book-item:hover {
+        background: color-mix(in srgb, var(--accent) 5%, transparent);
+    }
+
+    .book-bg {
+        position: absolute;
+        inset: 0;
+        background-image: var(--cover);
+        background-size: cover;
+        background-position: center;
+        opacity: 0.55;
+        mask-image: linear-gradient(to left, black, transparent 60%);
+        -webkit-mask-image: linear-gradient(to left, black, transparent 60%);
+        z-index: 0;
+    }
+
+    .status-header {
+        padding: 0.5rem 2vw;
+        font-family: "JetBrains Mono";
+        font-size: clamp(1.1rem, 2vw, 2rem);
+        color: var(--text-muted);
+        opacity: 0.5;
+        letter-spacing: 0.15em;
+        border-bottom: 1px solid var(--panel-border);
+        background: color-mix(in srgb, var(--text) 3%, transparent);
+        text-transform: uppercase;
+    }
+
+    .book-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        flex-shrink: 0;
+        width: calc(5 * 18px + 4 * 1px);
+        position: relative;
+        z-index: 1;
+    }
+
+    .book-rating {
+        display: flex;
+        align-items: center;
+        gap: 1px;
+        color: var(--accent);
+        opacity: 0.85;
+    }
+
+    .book-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        flex: 1;
+        position: relative;
+        z-index: 1;
+    }
+
+    .book-title {
+        font-family: "Gentium Book Plus", serif;
+        font-size: clamp(1rem, 2vw, 1.6rem);
+        color: var(--text);
+        line-height: 1.2;
+    }
+
+    .book-item:hover .book-title {
+        color: var(--accent);
+    }
+
+    .book-author {
+        font-size: 0.85rem;
+        font-family: "JetBrains Mono";
+        color: var(--text);
+        opacity: 0.8;
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .book-year {
+        opacity: 0.5;
+    }
+
+    .book-review {
+        font-size: 0.8rem;
+        font-family: "JetBrains Mono";
+        font-style: italic;
+        color: var(--text);
+        background: color-mix(in srgb, var(--accent) 20%, transparent);
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--border-s);
+        margin-top: 0.15rem;
+    }
+
+    @media (max-width: 768px) {
+        .hero-text {
+            font-size: 2.5rem;
+        }
+
+        .hero-section {
+            height: 30vh;
+            margin-top: -10px;
+            min-height: 300px;
+        }
+
+        .books-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .status-group {
+            border-right: none;
+        }
+
+        .book-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .book-meta {
+            min-width: unset;
+        }
+    }
+</style>
