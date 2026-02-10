@@ -1,20 +1,203 @@
 ---
 import { getCollection } from "astro:content";
 import Baz from "../layouts/Baz.astro";
+import { Icon } from "astro-icon/components";
 
-const allBits = await getCollection("bits");
+const allBits = await getCollection("bits", ({ data }) => data.draft !== true);
+allBits.sort((a: any, b: any) => b.data.published - a.data.published);
 const pageTitle = "bits";
+
+const postsByYear = allBits.reduce(
+    (acc: Record<string, typeof allBits>, post) => {
+        const year = post.data.published.getFullYear().toString();
+        if (!acc[year]) acc[year] = [];
+        acc[year].push(post);
+        return acc;
+    },
+    {},
+);
+const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 ---
 
 <Baz pageTitle={pageTitle}>
-    <p>All bits</p>
-    <ul>
-        {
-            allBits.map((post) => (
-                <li>
-                    <a href={`${post.id}`}>{post.data.title}</a>
-                </li>
-            ))
-        }
-    </ul>
+    <div class="hero-section">
+        <div class="hero-image">
+            <!-- Image will go here -->
+        </div>
+        <h1 class="hero-text">BITS</h1>
+    </div>
+
+    <div class="content-section">
+        <div class="posts-list">
+            {
+                years.map((year) => (
+                    <>
+                        <div class="year-header">{year}</div>
+                        {postsByYear[year].map((post) => (
+                            <a href={`${post.id}`} class="post-item">
+                                <time class="post-date">
+                                    {post.data.published.toLocaleDateString(
+                                        "en-US",
+                                        { day: "2-digit", month: "short" },
+                                    )}
+                                </time>
+                                <div class="post-content">
+                                    <span class="title-text">
+                                        <span class="title-icon">
+                                            <Icon
+                                                name="ph:asterisk-fill"
+                                                size="20"
+                                            />
+                                        </span>
+                                        {post.data.title}
+                                    </span>
+                                    <div class="post-description">
+                                        {post.data.description}
+                                    </div>
+                                </div>
+                            </a>
+                        ))}
+                    </>
+                ))
+            }
+        </div>
+    </div>
 </Baz>
+
+<style>
+    .hero-section {
+        position: relative;
+        height: 40vh;
+        margin-top: -40px;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        overflow: hidden;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        background-color: var(--rams-black);
+        background-image: url("/banner-bg/banner-bg-13.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.6;
+    }
+
+    .hero-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 6rem;
+        font-weight: 400;
+        margin: 0;
+        z-index: 10;
+    }
+
+    .content-section {
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+    }
+
+    .posts-list {
+        display: flex;
+        flex-direction: column;
+        border-top: 1px solid var(--panel-border);
+    }
+
+    .year-header {
+        padding: 0.5rem 4vw;
+        font-family: "JetBrains Mono";
+        font-size: clamp(1.1rem, 2vw, 2rem);
+        color: var(--text-muted);
+        opacity: 0.5;
+        letter-spacing: 0.15em;
+        border-bottom: 1px solid var(--panel-border);
+        background: color-mix(in srgb, var(--text) 3%, transparent);
+    }
+
+    .post-item {
+        display: flex;
+        align-items: baseline;
+        gap: 2rem;
+        padding: 1rem 4vw;
+        border-bottom: 1px solid var(--panel-border);
+        transition: background 0.15s ease;
+        text-decoration: none;
+    }
+
+    .post-item:hover {
+        background: color-mix(in srgb, var(--accent) 5%, transparent);
+    }
+
+    .post-date {
+        color: var(--text-muted);
+        opacity: 0.5;
+        font-size: 0.8rem;
+        font-family: "JetBrains Mono";
+        flex-shrink: 0;
+        min-width: 8ch;
+    }
+
+    .post-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        flex: 1;
+    }
+
+    .title-text {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text);
+        font-size: clamp(1.1rem, 2vw, 2rem);
+        font-family: "Gentium Book Plus", serif;
+        line-height: 1.2;
+    }
+
+    .title-icon {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        opacity: 0.5;
+    }
+
+    .post-item:hover .title-icon {
+        opacity: 1;
+    }
+
+    .post-item:hover .title-text {
+        color: var(--accent);
+    }
+
+    .post-description {
+        display: flex;
+        gap: 0.75rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        opacity: 0.6;
+        font-family: "JetBrains Mono";
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    @media (max-width: 768px) {
+        .hero-text {
+            font-size: 2.5rem;
+        }
+
+        .hero-section {
+            height: 30vh;
+            min-height: 300px;
+        }
+
+        .post-item {
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+        }
+    }
+</style>
