@@ -14,7 +14,7 @@ const formatDate = (date: Date) => {
 <div class="banner">
     <a href={`/${collection}/`} class="back-button exclude-from-panel">
         <Icon name="ph:arrow-left-bold" />
-        <span class="back-text">Back</span>
+        <span class="back-text">Back to {collection}</span>
     </a>
     <div class="header-row">
         <div class="pubDate" id="pubDate">
@@ -91,10 +91,11 @@ const formatDate = (date: Date) => {
         overflow: hidden;
         transition: all 0.2s ease;
         margin-left: 0;
+        font-weight: 400;
     }
 
     .back-button:hover .back-text {
-        width: 32px;
+        width: fit-content;
         margin-left: 6px;
     }
 

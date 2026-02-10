@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.11",
+    "@astrojs/rss": "^4.0.15",
     "@astrojs/svelte": "^7.2.2",
     "@expressive-code/plugin-line-numbers": "^0.41.3",
     "@fontsource/gentium-book-plus": "^5.2.7",
@@ -20,6 +21,8 @@
     "astro-expressive-code": "^0.41.3",
     "astro-icon": "^1.1.5",
     "mdast-util-to-string": "^4.0.0",
+    "rehype-external-links": "^3.0.0",
+    "rehype-katex": "^7.0.1",
     "remark-reading-time": "^2.0.2",
     "svelte": "^5.45.6",
     "typescript": "^5.9.3"

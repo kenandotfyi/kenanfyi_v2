@@ -381,7 +381,7 @@
         font-size: 1rem;
         flex-direction: column;
         position: absolute;
-        max-height: calc(100vh - var(--panel-top) - 140px);
+        max-height: calc(100vh - var(--panel-top) - 200px);
         left: 0;
         right: 0;
         overflow: hidden;
@@ -435,7 +435,7 @@
     }
 
     .panel-header.inactive:hover {
-        background-color: var(--rams-red);
+        background-color: var(--rams-black);
         color: white;
     }
 
@@ -447,6 +447,25 @@
         hyphens: auto;
         overflow-y: auto;
         padding: 20px;
+        scrollbar-color: var(--panel-border) var(--rams-black);
+        scrollbar-width: thin;
+    }
+
+    .panel-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .panel-content::-webkit-scrollbar-track {
+        background: var(--rams-black);
+    }
+
+    .panel-content::-webkit-scrollbar-thumb {
+        background: var(--panel-border);
+        border-radius: 3px;
+    }
+
+    .panel-content::-webkit-scrollbar-thumb:hover {
+        background: var(--text-muted);
     }
 
     /* Style content within the panel */
@@ -464,7 +483,7 @@
         align-items: center;
         height: 20px;
         justify-content: center;
-        background-color: var(--rams-red);
+        background-color: var(--accent-hover);
         color: white;
         border-radius: var(--border-s);
         cursor: pointer;

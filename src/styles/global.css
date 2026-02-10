@@ -8,7 +8,7 @@
 }
 
 ::selection {
-    background: color-mix(in srgb, var(--accent) 30%, transparent);
+    background: color-mix(in srgb, var(--accent) 70%, transparent);
     color: white;
 }
 
@@ -18,7 +18,7 @@ html {
     color: var(--text);
     position: relative;
     overflow-x: hidden;
-    scrollbar-gutter: stable;
+    scrollbar-gutter: auto;
 }
 
 body {
@@ -73,14 +73,19 @@ a {
     color: var(--text);
     text-decoration: underline;
     text-decoration-style: dotted;
-    text-decoration-color: #777;
-    text-decoration-thickness: 1px;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
     text-underline-offset: 3px;
     transition: color 0.2s ease;
 }
 
 a:hover {
     color: var(--accent);
+}
+
+a.external-link::after {
+    content: "°";
+    font-family: monospace;
 }
 
 .expressive-code {
@@ -129,6 +134,7 @@ mark.hl {
 
 @media (max-width: 768px) {
     body {
-        margin: calc(var(--q) * 4);
+        padding: calc(var(--q) * 4);
+        margin-top: calc(var(--q) * 4);
     }
 }

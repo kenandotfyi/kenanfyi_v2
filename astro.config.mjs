@@ -2,6 +2,8 @@
 import { defineConfig } from "astro/config";
 import { remarkReadingTime } from "./src/lib/remark-readtime.mjs";
 
+import rehypeKatex from "rehype-katex";
+import rehypeExternalLinks from "rehype-external-links";
 import expressiveCode from "astro-expressive-code";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import mdx from "@astrojs/mdx";
@@ -12,6 +14,7 @@ import icon from "astro-icon";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://kenan.fyi",
   scopedStyleStrategy: "class",
   integrations: [
     expressiveCode({
@@ -38,11 +41,26 @@ export default defineConfig({
         },
       },
     }),
-    mdx(),
+    mdx({
+      extendMarkdownConfig: true,
+    }),
     svelte(),
     icon(),
   ],
   markdown: {
     remarkPlugins: [remarkReadingTime],
+    rehypePlugins: [
+      [
+        rehypeExternalLinks,
+        {
+          properties: {
+            className: "external-link",
+          },
+          target: "_blank",
+          rel: "noopener",
+        },
+      ],
+      [rehypeKatex, {}],
+    ]
   }
 });

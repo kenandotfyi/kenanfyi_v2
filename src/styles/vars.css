@@ -27,6 +27,7 @@
     --rams-black: #1a1a1a;
     --rams-gray: #6b6b6b;
     --rams-red: var(--accent);
+    --rams-green: #0D703F;
     --rams-orange: var(--accent-hover);
     --rams-bg: var(--surface);
 }
