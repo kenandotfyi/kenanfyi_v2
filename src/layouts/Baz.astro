@@ -6,23 +6,67 @@ import "@fontsource/jetbrains-mono";
 import "@fontsource/source-serif-pro";
 import "@fontsource/gentium-book-plus";
 
-const { pageTitle } = Astro.props;
+const { pageTitle, description, ogImage } = Astro.props;
+
+const siteUrl = Astro.site ?? "https://kenan.fyi";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const ogTitle = pageTitle ? `kenan.fyi / ${pageTitle}` : "kenan.fyi";
+const ogDescription =
+    description ?? "Hardware engineer, occasional programmer, dabbler.";
+const ogImageUrl = ogImage
+    ? new URL(ogImage, siteUrl).toString()
+    : new URL("/og-default.png", siteUrl).toString();
 ---
 
 <!doctype html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
+        <link rel="me" href="https://mas.to/@ingenieur" />
+        <link href="https://github.com/kenandotfyi" rel="me" />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-touch-icon.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon-32x32.png"
+        />
+        <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon-16x16.png"
+        />
+
         <link
             rel="alternate"
             type="application/rss+xml"
             title="kenan.fyi"
             href={new URL("rss.xml", Astro.site)}
         />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>kenan.fyi / {pageTitle}</title>
+        <title>{ogTitle}</title>
+        <meta name="description" content={ogDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={ogDescription} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:site_name" content="kenan.fyi" />
+
+        <!-- Twitter / X -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={ogTitle} />
+        <meta name="twitter:description" content={ogDescription} />
+        <meta name="twitter:image" content={ogImageUrl} />
     </head>
     <body>
         <Nav />

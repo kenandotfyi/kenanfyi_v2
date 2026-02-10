@@ -7,7 +7,10 @@ import "../styles/global.css";
 const { frontmatter, minutes } = Astro.props;
 ---
 
-<Baz pageTitle={frontmatter.data.title}>
+<Baz
+    pageTitle={frontmatter.data.title}
+    description={frontmatter.data.description}
+>
     <Banner
         metadata={frontmatter.data}
         minutes={minutes}
