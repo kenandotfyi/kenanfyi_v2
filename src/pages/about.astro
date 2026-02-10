@@ -1,8 +1,19 @@
 ---
 import Baz from "../layouts/Baz.astro";
+import { Icon } from "astro-icon/components";
 ---
 
 <Baz>
+    <div class="hero-section">
+        <div class="hero-image"></div>
+        <h1 class="hero-text">ABOUT</h1>
+    </div>
+
+    <section class="intro">
+        Hey again! Kenan here and below are some personal and professional
+        information about me.
+    </section>
+
     <section class="experience">
         <h2 class="section-heading">Experience</h2>
         <div class="jobs">
@@ -10,16 +21,18 @@ import Baz from "../layouts/Baz.astro";
                 <span class="current-marker"></span><a
                     href="https://kollmorgen.com/"
                     target="_blank"
-                    >Kollmorgen<span class="external-link-icon">°</span></a
+                    class="external-link">Kollmorgen</a
                 > — Senior Hardware Design Engineer <span class="tenure"
                     >(Oct 2025 - current)</span
                 >
             </p>
             <p>
-                <a href="https://elektroautomatik.com/" target="_blank"
-                    >EA Elektro-Automatik<span class="external-link-icon"
-                        >°</span
-                    ></a
+                <a
+                    href="https://elektroautomatik.com/"
+                    target="_blank"
+                    class="external-link"
+                >
+                    EA Elektro-Automatik</a
                 > — Senior Hardware Design Engineer <span class="tenure"
                     >(@2023, 2 years)</span
                 >
@@ -28,7 +41,7 @@ import Baz from "../layouts/Baz.astro";
                 <a
                     href="https://www.bonfiglioli.com/international/en/product/axia-vert-series_inverters-servo-drives_premium-inverters"
                     target="_blank"
-                    >Bonfiglioli<span class="external-link-icon">°</span></a
+                    class="external-link">Bonfiglioli</a
                 > — Hardware Design Engineer <span class="tenure"
                     >(@2018, 5 years)</span
                 >
@@ -37,7 +50,7 @@ import Baz from "../layouts/Baz.astro";
                 <a
                     href="https://www.a-group.com.tr/en/arge/arge-merkezi-1"
                     target="_blank"
-                    >A Group R&D<span class="external-link-icon">°</span></a
+                    class="external-link">A Group R&D</a
                 > — Hardware Design Engineer <span class="tenure"
                     >(@2015, 3 years)</span
                 >
@@ -51,23 +64,61 @@ import Baz from "../layouts/Baz.astro";
             <a
                 href="https://www.researchgate.net/publication/329277035_Life_Prediction_of_Aluminum_Electrolytic_Capacitors_Used_in_Two-Level_Inverters"
                 target="_blank"
+                class="external-link"
                 >Life Prediction of Aluminum Electrolytic Capacitors Used in
-                Two-Level Inverters<span class="external-link-icon">°</span></a
+                Two-Level Inverters</a
             ><br /><span class="tenure">October 2018 - ICENTE</span>
         </p>
         <p>
             <a
                 href="http://www.isites.info/PastConferences/ISITES2015/ISITES2015/papers/A1-ISITES2015ID181.pdf"
                 target="_blank"
+                class="external-link"
                 >A Variable AC Power Source Based on the Arduino Platform Using
-                Finite State Machines<span class="external-link-icon">°</span
-                ></a
+                Finite State Machines</a
             ><br /><span class="tenure">June 2015 - ISITES</span>
         </p>
+    </section>
+
+    <section class="disclaimer">
+        <Icon name="ph:warning-duotone" size="20" />
+        <p>The views and opinions expressed on this website are my own and do not represent those of my employer in any way.</p>
     </section>
 </Baz>
 
 <style>
+    .hero-section {
+        position: relative;
+        height: 40vh;
+        margin-top: -40px;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        overflow: hidden;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        background-color: var(--rams-black);
+        background-image: url("/banner-bg/banner-bg-9.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.6;
+    }
+
+    .hero-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 6rem;
+        font-weight: 400;
+        margin: 0;
+        z-index: 10;
+    }
+
     .section-heading {
         text-transform: uppercase;
         letter-spacing: 0.08em;
@@ -78,8 +129,10 @@ import Baz from "../layouts/Baz.astro";
         border-bottom: 1px solid var(--panel-border);
     }
 
-    .experience {
+    .experience,
+    .intro {
         margin-bottom: calc(var(--q) * 12);
+        margin-top: calc(var(--q) * 12);
     }
 
     .jobs {
@@ -108,15 +161,49 @@ import Baz from "../layouts/Baz.astro";
         font-size: 0.7em;
     }
 
-    .external-link-icon {
-        font-family: monospace;
-    }
-
     .papers {
         margin-bottom: calc(var(--q) * 12);
     }
 
     .papers p {
         margin-bottom: calc(var(--q) * 4);
+    }
+
+    .disclaimer {
+        margin-top: calc(var(--q) * 12);
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: calc(var(--q) * 4);
+        border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+        border-radius: var(--border-s);
+        background: color-mix(in srgb, var(--accent) 8%, transparent);
+        font-size: 1rem;
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    .disclaimer :global(svg) {
+        flex-shrink: 0;
+        color: var(--accent);
+        opacity: 0.8;
+        position: relative;
+        top: 2px;
+    }
+
+    .disclaimer p {
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .hero-text {
+            font-size: 2.5rem;
+        }
+
+        .hero-section {
+            height: 30vh;
+            margin-top: -10px;
+            min-height: 300px;
+        }
     }
 </style>
