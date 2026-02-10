@@ -1,0 +1,291 @@
+---
+import Baz from "../layouts/Baz.astro";
+import { Icon } from "astro-icon/components";
+
+const RDAPIKEY = import.meta.env.RDAPIKEY;
+const collectionId = import.meta.env.RDCOLLECTIONID;
+
+var bearer = "Bearer " + RDAPIKEY;
+var rdUrl = `https://api.raindrop.io/rest/v1/raindrops/${collectionId}?perpage=71`;
+
+async function fetchLinks() {
+    const resp = await fetch(rdUrl, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            Authorization: bearer,
+            "Content-Type": "application/json",
+        },
+    });
+    const data = await resp.json();
+    return data;
+}
+
+interface RaindropItem {
+    link: string;
+    title: string;
+    note: string;
+    excerpt: string;
+    created: string;
+    cover: string;
+}
+
+const links = await fetchLinks();
+
+function getDomain(url: string) {
+    try {
+        return new URL(url).hostname.replace("www.", "");
+    } catch {
+        return url;
+    }
+}
+---
+
+<Baz>
+    <div id="preview" class="preview">
+        <img id="preview-img" src="" alt="" />
+    </div>
+
+    <div class="hero-section">
+        <div class="hero-image">
+            <!-- Image will go here -->
+        </div>
+        <h1 class="hero-text">BOOKMARKS</h1>
+    </div>
+    <div class="links-list">
+        {
+            links.items.map((item: RaindropItem) => (
+                <a
+                    href={item.link}
+                    target="_blank"
+                    class="link-item"
+                    data-cover={item.cover || ""}
+                    style={item.cover ? `--cover: url('${item.cover}')` : ""}
+                >
+                    {item.cover && <div class="link-bg" />}
+                    <span class="link-domain">
+                        <Icon name="ph:bookmark-duotone" size="14" />
+                        {getDomain(item.link)}
+                    </span>
+                    <div class="link-content">
+                        <span class="link-title">{item.title}</span>
+                        {item.note && (
+                            <span class="link-note">{item.note}</span>
+                        )}
+                    </div>
+                </a>
+            ))
+        }
+    </div>
+</Baz>
+
+<script>
+    const preview = document.getElementById("preview") as HTMLElement;
+    const previewImg = document.getElementById(
+        "preview-img",
+    ) as HTMLImageElement;
+
+    const isMobile = () => window.innerWidth <= 768;
+
+    document.querySelectorAll<HTMLElement>(".link-item").forEach((item) => {
+        item.addEventListener("mouseenter", () => {
+            if (isMobile()) return;
+            const cover = item.dataset.cover;
+            if (!cover) return;
+            previewImg.src = cover;
+            previewImg.onload = () => preview.classList.add("visible");
+            previewImg.onerror = () => preview.classList.remove("visible");
+        });
+
+        item.addEventListener("mouseleave", () => {
+            preview.classList.remove("visible");
+        });
+
+        item.addEventListener("mousemove", (e) => {
+            const offset = 20;
+            const x = e.clientX + offset;
+            const y = e.clientY + offset;
+            const pw = preview.offsetWidth;
+            const ph = preview.offsetHeight;
+            preview.style.left =
+                (x + pw > window.innerWidth ? e.clientX - pw - offset : x) +
+                "px";
+            preview.style.top =
+                (y + ph > window.innerHeight ? e.clientY - ph - offset : y) +
+                "px";
+        });
+    });
+</script>
+
+<style>
+    .preview {
+        position: fixed;
+        width: 380px;
+        aspect-ratio: 16 / 9;
+        border: 1px solid var(--panel-border);
+        border-radius: var(--border-s);
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 0;
+        z-index: 9999;
+        transition: opacity 0.15s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .preview.visible {
+        opacity: 1;
+    }
+
+    .preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-section {
+        position: relative;
+        height: 40vh;
+        margin-top: -40px;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        overflow: hidden;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        background-color: var(--rams-black);
+        background-image: url("/banner-bg/banner-bg-11.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.6;
+    }
+
+    .hero-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 6rem;
+        font-weight: 400;
+        margin: 0;
+        z-index: 10;
+    }
+
+    .section-heading {
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+        font-family: "JetBrains Mono";
+        font-weight: 400;
+    }
+
+    .links-list {
+        display: flex;
+        flex-direction: column;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        border-top: 1px solid var(--panel-border);
+    }
+
+    .link-item {
+        position: relative;
+        display: flex;
+        align-items: baseline;
+        gap: 2rem;
+        padding: 1rem 4vw;
+        border-bottom: 1px solid var(--panel-border);
+        text-decoration: none;
+        transition: background 0.15s ease;
+        overflow: hidden;
+    }
+
+    .link-item:hover {
+        background: color-mix(in srgb, var(--accent) 5%, transparent);
+    }
+
+    .link-bg {
+        position: absolute;
+        inset: 0;
+        background-image: var(--cover);
+        background-size: cover;
+        background-position: center;
+        opacity: 0.3;
+        mask-image: linear-gradient(to left, black, transparent 70%);
+        -webkit-mask-image: linear-gradient(to left, black, transparent 70%);
+        z-index: 0;
+    }
+
+    .link-domain {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.75rem;
+        font-family: "JetBrains Mono";
+        color: var(--text-muted);
+        opacity: 0.5;
+        flex-shrink: 0;
+        min-width: 16ch;
+        position: relative;
+        z-index: 1;
+    }
+
+    .link-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        flex: 1;
+        position: relative;
+        z-index: 1;
+    }
+
+    .link-title {
+        font-family: "Gentium Book Plus", serif;
+        font-size: clamp(1rem, 2vw, 1.6rem);
+        color: var(--text);
+        line-height: 1.2;
+    }
+
+    .link-item:hover .link-title {
+        color: var(--accent);
+    }
+
+    .link-note {
+        font-size: 0.8rem;
+        font-family: "JetBrains Mono";
+        font-style: italic;
+        color: var(--text-muted);
+        opacity: 0.6;
+    }
+
+    @media (max-width: 768px) {
+        .link-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+            padding: 0.75rem 1rem;
+        }
+
+        .link-domain {
+            min-width: unset;
+        }
+
+        .link-note {
+            font-size: 0.75rem;
+        }
+
+        .hero-text {
+            font-size: 2.5rem;
+        }
+
+        .hero-section {
+            height: 30vh;
+            margin-top: -10px;
+            min-height: 300px;
+        }
+    }
+</style>
