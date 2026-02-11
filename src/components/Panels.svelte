@@ -84,9 +84,9 @@
             if (stored) {
                 const panelState = JSON.parse(stored);
 
-                const currentPath = window.location.pathname;
+                const currentPath = window.location.pathname.replace(/\/$/, "");
                 const filteredPanels = (panelState.panels || []).filter(
-                    (p) => p.url !== currentPath,
+                    (p) => p.url.replace(/\/$/, "") !== currentPath,
                 );
 
                 panels = [...filteredPanels];
