@@ -1,0 +1,154 @@
+---
+import Baz from "../layouts/Baz.astro";
+
+const pageTitle = "blogroll";
+---
+
+<Baz pageTitle={pageTitle}>
+    <div class="hero-section">
+        <div class="hero-image">
+            <!-- Image will go here -->
+        </div>
+        <h1 class="hero-text">BLOGROLL</h1>
+    </div>
+    <section class="intro">
+        below are some blogs I regularly read, in no particular order:
+    </section>
+    <ul>
+        <li>
+            <a href="https://manuelmoreale.com/" target="_blank"
+                >Manuel Moreale</a
+            >
+        </li>
+        <li>
+            <a href="https://maggieappleton.com/" target="_blank"
+                >Maggie Appleton</a
+            >
+        </li>
+        <li>
+            <a href="https://blog.jim-nielsen.com/" target="_blank"
+                >Jim Nielsen</a
+            >
+        </li>
+        <li>
+            <a href="https://fasterthanli.me" target="_blank">Amos Wenger</a>
+        </li>
+        <li>
+            <a href="https://matklad.github.io" target="_blank">Alex Kladov</a>
+        </li>
+        <li><a href="https://thesephist.com" target="_blank">Linus Lee</a></li>
+        <li>
+            <a href="https://macwright.com/" target="_blank">Tom MacWright</a>
+        </li>
+        <li>
+            <a href="https://meltingasphalt.com/" target="_blank"
+                >Kevin Simler</a
+            >
+        </li>
+        <li>
+            <a href="https://mtwb.blog/" target="_blank"
+                >Matt's Blog, Matthew Weber</a
+            >
+        </li>
+        <li><a href="https://tonsky.me" target="_blank">Nikita Prokopov</a></li>
+        <li>
+            <a href="https://css-irl.info/" target="_blank"
+                >CSS in Real Life, Michelle Barker</a
+            >
+        </li>
+        <li><a href="https://csscade.com" target="_blank">Robin Rendle</a></li>
+        <li>
+            <a href="https://fabiensanglard.net/" target="_blank"
+                >Fabien Sanglard</a
+            >
+        </li>
+        <li><a href="https://jvns.ca/" target="_blank">Julia Evans</a></li>
+        <li><a href="https://stephango.com" target="_blank">Steph Ango</a></li>
+        <li>
+            <a href="https://interconnected.org/home/" target="_blank"
+                >Matt Webb, interconnected.org</a
+            >
+        </li>
+        <li>
+            <a href="https://librarian.aedileworks.com/" target="_blank"
+                >Mita Williams, Librarian of Things</a
+            >
+        </li>
+        <li>
+            <a href="https://sebastiandedeyne.com/" target="_blank"
+                >Sebastian De Deyne</a
+            >
+        </li>
+        <li><a href="https://adactio.com/" target="_blank">Jeremy Keith</a></li>
+        <li>
+            <a href="https://blog.wesleyac.com/" target="_blank"
+                >Wesley Aptekar-Cassels</a
+            >
+        </li>
+        <li>
+            <a href="https://tangiblelife.net" target="_blank">Tangible Life</a>
+        </li>
+        <li>
+            <a href="https://chriscoyier.net/" target="_blank">Chris Coyier</a>
+        </li>
+        <li>
+            <a href="https://julian.digital" target="_blank">julian.digital</a>
+        </li>
+        <li>
+            <a href="https://brainbaking.com/" target="_blank"
+                >Wouter Groeneveld</a
+            >
+        </li>
+    </ul>
+</Baz>
+
+<style>
+    .intro {
+        margin-bottom: calc(var(--q) * 12);
+        margin-top: calc(var(--q) * 12);
+    }
+
+    .hero-section {
+        position: relative;
+        height: 40vh;
+        margin-top: -45px;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        overflow: hidden;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        background-color: var(--rams-black);
+        background-image: url("/banner-bg/banner-bg-2.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.6;
+    }
+
+    .hero-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 6rem;
+        font-weight: 400;
+        margin: 0;
+        z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+        .hero-text {
+            font-size: 2.5rem;
+        }
+
+        .hero-section {
+            height: 30vh;
+            margin-top: -10px;
+            min-height: 300px;
+        }
+    }
+</style>
