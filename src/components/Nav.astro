@@ -40,6 +40,12 @@ const isActive = (href: string) => {
                 Bookmarks
             </a>
             <a
+                href="/blogroll/"
+                class:list={["nav-link", { active: isActive("/blogroll/") }]}
+            >
+                Blogroll
+            </a>
+            <a
                 href="/about/"
                 class:list={["nav-link", { active: isActive("/about/") }]}
             >
@@ -120,6 +126,7 @@ const isActive = (href: string) => {
         align-items: center;
         justify-content: space-between;
         padding: 12px 24px;
+        border-bottom: 1px solid var(--panel-border);
         background: transparent;
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
