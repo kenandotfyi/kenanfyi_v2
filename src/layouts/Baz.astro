@@ -67,10 +67,20 @@ const ogImageUrl = ogImage
         <meta name="twitter:title" content={ogTitle} />
         <meta name="twitter:description" content={ogDescription} />
         <meta name="twitter:image" content={ogImageUrl} />
+
         <script
-            data-goatcounter="https://goat.akinci.fyi/count"
-            async
-            src="//goat.akinci.fyi/count.js"></script>
+            defer
+            data-domain="kenan.fyi"
+            src="https://plausible.akinci.fyi/js/script.js"></script>
+        <script>
+            window.plausible =
+                window.plausible ||
+                function () {
+                    (window.plausible.q = window.plausible.q || []).push(
+                        arguments,
+                    );
+                };
+        </script>
     </head>
     <body>
         <Nav />
