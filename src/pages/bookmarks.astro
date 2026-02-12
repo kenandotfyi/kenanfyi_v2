@@ -1,6 +1,9 @@
 ---
 import Baz from "../layouts/Baz.astro";
 import { Icon } from "astro-icon/components";
+import { createHash } from "crypto";
+import { writeFileSync, existsSync, mkdirSync } from "fs";
+import { join } from "path";
 
 const RDAPIKEY = import.meta.env.RDAPIKEY;
 const collectionId = import.meta.env.RDCOLLECTIONID;
@@ -30,8 +33,56 @@ interface RaindropItem {
     cover: string;
 }
 
-const links = await fetchLinks();
+function extFromContentType(ct: string): string {
+    if (ct.includes("png")) return "png";
+    if (ct.includes("webp")) return "webp";
+    if (ct.includes("gif")) return "gif";
+    return "jpg";
+}
 
+// get the images from the raindrop API and cache them locally.
+// only looking for jpg, png, webp and gif.
+// hashing might not be necessary, but why not. it is also a guard rail for images
+// with possible same names from the websites.
+
+async function downloadCover(url: string): Promise<string> {
+    const hash = createHash("md5").update(url).digest("hex").slice(0, 12);
+    const dir = join(process.cwd(), "public/covers");
+
+    // Check cache — find existing file with any extension
+    if (existsSync(dir)) {
+        const cached = ["jpg", "png", "webp", "gif"].find((ext) =>
+            existsSync(join(dir, `${hash}.${ext}`)),
+        );
+        if (cached) return `/covers/${hash}.${cached}`;
+    } else {
+        mkdirSync(dir, { recursive: true });
+    }
+
+    try {
+        const res = await fetch(url);
+        if (!res.ok) return "";
+        const ct = res.headers.get("content-type") || "";
+        if (!ct.startsWith("image/")) return "";
+        const ext = extFromContentType(ct);
+        const filepath = join(dir, `${hash}.${ext}`);
+        writeFileSync(filepath, Buffer.from(await res.arrayBuffer()));
+        return `/covers/${hash}.${ext}`;
+    } catch {
+        return "";
+    }
+}
+
+// fetch links from Raindrop first and then put them in the items[], with downloaded covers.
+const links = await fetchLinks();
+const items: RaindropItem[] = await Promise.all(
+    links.items.map(async (item: RaindropItem) => ({
+        ...item,
+        cover: item.cover ? await downloadCover(item.cover) : "",
+    })),
+);
+
+// don't write www. to the list items, it is ugly.
 function getDomain(url: string) {
     try {
         return new URL(url).hostname.replace("www.", "");
@@ -56,7 +107,7 @@ const pageTitle = "bookmarks";
     </div>
     <div class="links-list">
         {
-            links.items.map((item: RaindropItem) => (
+            items.map((item: RaindropItem) => (
                 <a
                     href={item.link}
                     target="_blank"

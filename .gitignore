@@ -1,5 +1,8 @@
 # build output
 dist/
+
+# downloaded cover images (generated at build time)
+public/covers/
 # generated types
 .astro/
 
