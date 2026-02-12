@@ -4,6 +4,7 @@ import { Icon } from "astro-icon/components";
 import { createHash } from "crypto";
 import { writeFileSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
+import sharp from "sharp";
 
 const RDAPIKEY = import.meta.env.RDAPIKEY;
 const collectionId = import.meta.env.RDCOLLECTIONID;
@@ -33,41 +34,30 @@ interface RaindropItem {
     cover: string;
 }
 
-function extFromContentType(ct: string): string {
-    if (ct.includes("png")) return "png";
-    if (ct.includes("webp")) return "webp";
-    if (ct.includes("gif")) return "gif";
-    return "jpg";
-}
-
-// get the images from the raindrop API and cache them locally.
-// only looking for jpg, png, webp and gif.
-// hashing might not be necessary, but why not. it is also a guard rail for images
-// with possible same names from the websites.
+// get the images from the raindrop API, resize + compress to webp, and cache locally.
+// hashing guards against name collisions across different source domains.
 
 async function downloadCover(url: string): Promise<string> {
     const hash = createHash("md5").update(url).digest("hex").slice(0, 12);
     const dir = join(process.cwd(), "public/covers");
+    const filename = `${hash}.webp`;
+    const filepath = join(dir, filename);
 
-    // Check cache — find existing file with any extension
-    if (existsSync(dir)) {
-        const cached = ["jpg", "png", "webp", "gif"].find((ext) =>
-            existsSync(join(dir, `${hash}.${ext}`)),
-        );
-        if (cached) return `/covers/${hash}.${cached}`;
-    } else {
-        mkdirSync(dir, { recursive: true });
-    }
+    if (existsSync(filepath)) return `/covers/${filename}`;
+    if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
     try {
         const res = await fetch(url);
         if (!res.ok) return "";
         const ct = res.headers.get("content-type") || "";
         if (!ct.startsWith("image/")) return "";
-        const ext = extFromContentType(ct);
-        const filepath = join(dir, `${hash}.${ext}`);
-        writeFileSync(filepath, Buffer.from(await res.arrayBuffer()));
-        return `/covers/${hash}.${ext}`;
+        const buffer = Buffer.from(await res.arrayBuffer());
+        const optimized = await sharp(buffer)
+            .resize({ width: 400, withoutEnlargement: true })
+            .webp({ quality: 80 })
+            .toBuffer();
+        writeFileSync(filepath, optimized);
+        return `/covers/${filename}`;
     } catch {
         return "";
     }
