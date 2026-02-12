@@ -3,6 +3,9 @@ dist/
 
 # downloaded cover images (generated at build time)
 public/covers/
+
+# generated OG images (generated at build time)
+public/og/
 # generated types
 .astro/
 

@@ -26,12 +26,15 @@ export default defineConfig({
       name: "copy-covers",
       hooks: {
         "astro:build:done": async ({ dir }) => {
-          const srcDir = join(process.cwd(), "public/covers");
-          if (!existsSync(srcDir)) return;
-          const destDir = join(new URL(dir).pathname, "covers");
-          if (!existsSync(destDir)) mkdirSync(destDir, { recursive: true });
-          for (const file of readdirSync(srcDir)) {
-            copyFileSync(join(srcDir, file), join(destDir, file));
+          const distPath = new URL(dir).pathname;
+          for (const folder of ["covers", "og"]) {
+            const srcDir = join(process.cwd(), "public", folder);
+            if (!existsSync(srcDir)) continue;
+            const destDir = join(distPath, folder);
+            if (!existsSync(destDir)) mkdirSync(destDir, { recursive: true });
+            for (const file of readdirSync(srcDir)) {
+              copyFileSync(join(srcDir, file), join(destDir, file));
+            }
           }
         },
       },

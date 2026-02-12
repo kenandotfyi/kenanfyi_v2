@@ -4,12 +4,21 @@ import Baz from "./Baz.astro";
 import Backlinks from "../components/Backlinks.astro";
 import Panels from "../components/Panels.svelte";
 import "../styles/global.css";
+import { generateOgImage } from "../lib/generate-og";
+
 const { frontmatter, minutes } = Astro.props;
+
+const ogImage = await generateOgImage({
+    title: frontmatter.data.title,
+    collection: frontmatter.collection,
+    id: frontmatter.id,
+});
 ---
 
 <Baz
     pageTitle={frontmatter.data.title}
     description={frontmatter.data.description}
+    ogImage={ogImage}
 >
     <Banner
         metadata={frontmatter.data}
