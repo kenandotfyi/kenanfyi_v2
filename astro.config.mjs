@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import { remarkReadingTime } from "./src/lib/remark-readtime.mjs";
+import { existsSync, mkdirSync, readdirSync, copyFileSync } from "fs";
+import { join } from "path";
 
 import rehypeKatex from "rehype-katex";
 import rehypeExternalLinks from "rehype-external-links";
@@ -17,6 +19,23 @@ export default defineConfig({
   site: "https://kenan.fyi",
   scopedStyleStrategy: "class",
   integrations: [
+    // since Vite copies the public/ to dist/ before page frontmatter runs.
+    // files in public/covers during rendering never copied there.
+    // this hook explicitly copies the covers directory to the dist directory after render.
+    {
+      name: "copy-covers",
+      hooks: {
+        "astro:build:done": async ({ dir }) => {
+          const srcDir = join(process.cwd(), "public/covers");
+          if (!existsSync(srcDir)) return;
+          const destDir = join(new URL(dir).pathname, "covers");
+          if (!existsSync(destDir)) mkdirSync(destDir, { recursive: true });
+          for (const file of readdirSync(srcDir)) {
+            copyFileSync(join(srcDir, file), join(destDir, file));
+          }
+        },
+      },
+    },
     expressiveCode({
       plugins: [],
       frames: {
