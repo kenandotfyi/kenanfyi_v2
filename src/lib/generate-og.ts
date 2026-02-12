@@ -1,5 +1,6 @@
+import satori from "satori";
 import sharp from "sharp";
-import { writeFileSync, existsSync, mkdirSync } from "fs";
+import { writeFileSync, existsSync, mkdirSync, readFileSync } from "fs";
 import { join } from "path";
 
 const W = 1200;
@@ -11,32 +12,19 @@ const BG_MAP: Record<string, string> = {
   bits: "banner-bg-13.png",
 };
 
-function escapeXml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
-
-// naive word-wrap — good enough for titles at this font size
-function wrapLines(text: string, maxChars: number): string[] {
-  const words = text.split(" ");
-  const lines: string[] = [];
-  let current = "";
-  for (const word of words) {
-    const candidate = current ? `${current} ${word}` : word;
-    if (candidate.length <= maxChars) {
-      current = candidate;
-    } else {
-      if (current) lines.push(current);
-      current = word;
-    }
-  }
-  if (current) lines.push(current);
-  return lines;
-}
+// load fonts once — satori accepts WOFF2 directly
+const gentiumData = readFileSync(
+  join(
+    process.cwd(),
+    "node_modules/@fontsource/gentium-book-plus/files/gentium-book-plus-latin-700-normal.woff",
+  ),
+);
+const jetbrainsData = readFileSync(
+  join(
+    process.cwd(),
+    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
+  ),
+);
 
 export async function generateOgImage({
   title,
@@ -54,62 +42,123 @@ export async function generateOgImage({
   if (existsSync(filepath)) return `/og/${filename}`;
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
-  const bgFile = BG_MAP[collection];
+  const bgFile = BG_MAP[collection] ?? "banner-bg-11.png";
   const bgPath = join(process.cwd(), "public/banner-bg", bgFile);
 
-  const titleFont = 58;
-  const collFont = 24;
-  const siteFont = 20;
-  const lineHeight = titleFont * 1.28;
-  const lines = wrapLines(title, 30);
-
-  // anchor from the bottom-left, building upward
-  const siteY = H - PAD;                                       // kenan.fyi baseline
-  const titleLastY = siteY - siteFont - 36;                    // last title line baseline
-  const titleFirstY = titleLastY - (lines.length - 1) * lineHeight;
-  const collectionY = titleFirstY - collFont - 36;             // collection label baseline
-
-  const titleElements = lines
-    .map(
-      (line, i) =>
-        `<text
-            x="${PAD}"
-            y="${titleFirstY + i * lineHeight}"
-            font-family="serif"
-            font-size="${titleFont}"
-            font-weight="bold"
-            fill="white"
-        >${escapeXml(line)}</text>`,
-    )
-    .join("\n");
-
-  const svg = `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
-  <rect width="${W}" height="${H}" fill="rgba(8,8,8,0.60)" />
-
-  <text
-    x="${PAD}"
-    y="${collectionY}"
-    font-family="monospace"
-    font-size="${collFont}"
-    letter-spacing="9"
-    fill="rgba(255,255,255,0.60)"
-  >${escapeXml(collection.toUpperCase())}</text>
-
-  ${titleElements}
-
-  <text
-    x="${PAD}"
-    y="${siteY}"
-    font-family="monospace"
-    font-size="${siteFont}"
-    letter-spacing="3"
-    fill="rgba(255,255,255,0.60)"
-  >kenan.fyi</text>
-</svg>`;
-
-  await sharp(bgPath)
+  // resize background and convert to base64 data URI for satori
+  const bgBuffer = await sharp(bgPath)
     .resize(W, H, { fit: "cover", position: "center" })
-    .composite([{ input: Buffer.from(svg), top: 0, left: 0 }])
+    .toBuffer();
+  const bgDataUri = `data:image/png;base64,${bgBuffer.toString("base64")}`;
+
+  const svg = await satori(
+    {
+      type: "div",
+      props: {
+        style: {
+          display: "flex",
+          width: `${W}px`,
+          height: `${H}px`,
+          backgroundImage: `url(${bgDataUri})`,
+          backgroundSize: `${W}px ${H}px`,
+        },
+        children: [
+          // dark scrim
+          {
+            type: "div",
+            props: {
+              style: {
+                display: "flex",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: "rgba(8,8,8,0.60)",
+              },
+            },
+          },
+          // text block anchored bottom-left
+          {
+            type: "div",
+            props: {
+              style: {
+                display: "flex",
+                flexDirection: "column",
+                position: "absolute",
+                bottom: `${PAD}px`,
+                left: `${PAD}px`,
+                right: `${PAD}px`,
+                gap: "16px",
+              },
+              children: [
+                {
+                  type: "div",
+                  props: {
+                    style: {
+                      display: "flex",
+                      fontFamily: "JetBrains Mono",
+                      fontSize: "18px",
+                      color: "rgba(255,255,255,0.55)",
+                      letterSpacing: "6px",
+                    },
+                    children: collection.toUpperCase(),
+                  },
+                },
+                {
+                  type: "div",
+                  props: {
+                    style: {
+                      display: "flex",
+                      fontFamily: "Gentium Book Plus",
+                      fontSize: "58px",
+                      fontWeight: 700,
+                      color: "white",
+                      lineHeight: 1.2,
+                    },
+                    children: title,
+                  },
+                },
+                {
+                  type: "div",
+                  props: {
+                    style: {
+                      display: "flex",
+                      fontFamily: "JetBrains Mono",
+                      fontSize: "18px",
+                      color: "rgba(255,255,255,0.55)",
+                      letterSpacing: "3px",
+                    },
+                    children: "kenan.fyi",
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      width: W,
+      height: H,
+      fonts: [
+        {
+          name: "Gentium Book Plus",
+          data: gentiumData,
+          weight: 700,
+          style: "normal",
+        },
+        {
+          name: "JetBrains Mono",
+          data: jetbrainsData,
+          weight: 400,
+          style: "normal",
+        },
+      ],
+    },
+  );
+
+  await sharp(Buffer.from(svg))
     .png({ compressionLevel: 8 })
     .toFile(filepath);
 
