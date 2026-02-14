@@ -1,4 +1,5 @@
 ---
+import { Icon } from "astro-icon/components";
 const currentPath = Astro.url.pathname;
 
 const isActive = (href: string) => {
@@ -10,276 +11,183 @@ const isActive = (href: string) => {
 ---
 
 <nav class="top-nav">
-    <div class="nav-left">
-        <a href="/" class="site-name"
-            ><img src="/logo.svg" width="48" height="48" alt="kenan.fyi" />
-        </a>
-        <div class="nav-links">
+    <ul class="nav-links">
+        <li><a href="/" class="nav-link home">kenan.fyi</a></li>
+        <li><Icon name="ph:dot-duotone" size="20" /></li>
+        <li>
             <a
                 href="/thoughts/"
                 class:list={["nav-link", { active: isActive("/thoughts/") }]}
+                >Thoughts</a
             >
-                Thoughts
-            </a>
+        </li>
+        <li>
             <a
                 href="/bits/"
                 class:list={["nav-link", { active: isActive("/bits/") }]}
+                >Bits</a
             >
-                Bits
-            </a>
+        </li>
+        <li>
             <a
                 href="/library/"
                 class:list={["nav-link", { active: isActive("/library/") }]}
+                >Library</a
             >
-                Library
-            </a>
+        </li>
+        <li>
             <a
                 href="/bookmarks/"
                 class:list={["nav-link", { active: isActive("/bookmarks/") }]}
+                >Bookmarks</a
             >
-                Bookmarks
-            </a>
+        </li>
+        <li>
             <a
                 href="/blogroll/"
                 class:list={["nav-link", { active: isActive("/blogroll/") }]}
+                >Blogroll</a
             >
-                Blogroll
-            </a>
+        </li>
+        <li>
             <a
                 href="/about/"
                 class:list={["nav-link", { active: isActive("/about/") }]}
+                >About</a
             >
-                About
-            </a>
-        </div>
-    </div>
+        </li>
+    </ul>
+
     <div class="nav-right">
         <button
-            id="panels-toggle"
-            class="panels-toggle"
-            aria-label="Toggle Panels"
+            id="theme-toggle"
+            class="theme-toggle"
+            aria-label="Toggle theme"
         >
-            Panels
-        </button>
-        <button id="hamburger" class="hamburger" aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span class="icon-sun"
+                ><Icon name="ph:sun-duotone" size="18" /></span
+            >
+            <span class="icon-moon"
+                ><Icon name="ph:moon-duotone" size="18" /></span
+            >
         </button>
     </div>
 </nav>
 
 <script>
-    const PANELS_STORAGE_KEY = "panels-enabled";
-    const panelsToggle = document.getElementById("panels-toggle");
-    const hamburger = document.getElementById("hamburger");
-    const navLinks = document.querySelector(".nav-links");
+    const themeToggle = document.getElementById("theme-toggle");
 
-    function getPanelsEnabled() {
-        const stored = localStorage.getItem(PANELS_STORAGE_KEY);
-        return stored !== "false";
+    function getTheme() {
+        return document.documentElement.getAttribute("data-theme") ?? "dark";
     }
 
-    function updatePanelsToggle() {
-        const isEnabled = getPanelsEnabled();
-        if (panelsToggle) {
-            panelsToggle.classList.toggle("disabled", !isEnabled);
+    function setTheme(theme: string) {
+        if (theme === "light") {
+            document.documentElement.setAttribute("data-theme", "light");
+        } else {
+            document.documentElement.removeAttribute("data-theme");
         }
-        window.dispatchEvent(
-            new CustomEvent("panels-toggle", {
-                detail: { enabled: isEnabled },
-            }),
-        );
+        localStorage.setItem("theme", theme);
     }
 
-    panelsToggle?.addEventListener("click", (e) => {
-        e.preventDefault();
-        const currentState = getPanelsEnabled();
-        localStorage.setItem(PANELS_STORAGE_KEY, (!currentState).toString());
-        updatePanelsToggle();
+    themeToggle?.addEventListener("click", () => {
+        setTheme(getTheme() === "light" ? "dark" : "light");
     });
-
-    hamburger?.addEventListener("click", () => {
-        hamburger.classList.toggle("active");
-        navLinks?.classList.toggle("active");
-    });
-
-    // Close menu when clicking a link
-    document.querySelectorAll(".nav-link").forEach((link) => {
-        link.addEventListener("click", () => {
-            hamburger?.classList.remove("active");
-            navLinks?.classList.remove("active");
-        });
-    });
-
-    updatePanelsToggle();
 </script>
 
 <style>
     .top-nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1500;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 12px 24px;
-        border-bottom: 1px solid var(--panel-border);
-        background: transparent;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        gap: 4px;
+        z-index: 30;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
     }
 
     .site-name {
-        display: block;
-        line-height: 0;
+        display: inline-flex;
         text-decoration: none;
+        flex-shrink: 0;
+        font-size: 1rem;
+        letter-spacing: -0.02em;
+        margin-right: 0.5rem;
     }
 
-    .site-name:hover {
-        background: none;
+    .site-name:hover span {
+        opacity: 0.75;
     }
 
     .site-name img {
         display: block;
     }
 
-    .nav-right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .nav-left {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        & span {
-            font-family: monospace;
-            font-size: 0.85rem;
-        }
-    }
-
     .nav-links {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         gap: 4px;
+        flex: 1;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .nav-links :global(svg) {
+        display: block;
+    }
+
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: auto;
+        flex-shrink: 0;
     }
 
     .nav-link {
-        padding: 4px 10px;
         text-decoration: none;
-        font-size: 1rem;
-        border-radius: var(--border-s);
+        text-transform: lowercase;
+        padding-right: 4px;
         transition: color 0.2s ease;
+        white-space: nowrap;
     }
 
     .nav-link:hover {
-        color: var(--accent);
+        color: var(--red-dim);
+        background: unset;
     }
 
     .nav-link.active {
-        color: var(--accent);
-        font-weight: 600;
+        color: var(--red);
     }
 
-    .panels-toggle {
-        padding: 4px 10px;
-        background: none;
-        border: 1px solid var(--panel-border);
-        color: var(--text);
-        border-radius: var(--border-s);
-        cursor: pointer;
-        font-size: 0.85rem;
-        font-family: inherit;
-        transition: all 0.2s ease;
+    .home {
+        font-weight: 700;
     }
 
-    .panels-toggle:hover {
-        border-color: var(--accent);
-        color: var(--accent);
-    }
-
-    .panels-toggle.disabled {
-        opacity: 0.4;
-        text-decoration: line-through;
-    }
-
-    .hamburger {
-        display: none;
-        flex-direction: column;
-        gap: 4px;
+    .theme-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 6px;
         background: none;
         border: none;
+        color: var(--text-muted);
         cursor: pointer;
-        padding: 8px;
-        z-index: 1501;
+        transition: color 0.2s ease;
+        line-height: 0;
     }
 
-    .hamburger span {
-        display: block;
-        width: 24px;
-        height: 2px;
-        background: var(--text);
-        transition: all 0.3s ease;
+    .theme-toggle:hover {
+        color: var(--accent);
     }
 
-    .hamburger.active span:nth-child(1) {
-        transform: rotate(-45deg) translate(0px, 0px);
+    /* in dark mode: show sun (click to go light), hide moon */
+    :global(html:not([data-theme="light"])) .icon-moon {
+        display: none;
     }
-
-    .hamburger.active span:nth-child(2) {
-        transform: rotate(-45deg) translate(0px, 0px);
-    }
-
-    .hamburger.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(0px, 0px);
-    }
-
-    @media (max-width: 1100px) {
-        .panels-toggle {
-            display: none;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .top-nav {
-            padding: 8px;
-            background: transparent;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-
-        .hamburger {
-            display: flex;
-        }
-
-        .nav-links {
-            display: none;
-            position: fixed;
-            top: 64px;
-            right: 16px;
-            width: auto;
-            min-width: fit-content;
-            background: var(--bg);
-            flex-direction: column;
-            align-items: stretch;
-            gap: 4px;
-            padding: 4px 0;
-            border: 1px solid var(--panel-border);
-            border-radius: var(--border-s);
-        }
-
-        .nav-links.active {
-            display: flex;
-        }
-
-        .nav-link {
-            font-size: 1rem;
-            padding: 2px 10px;
-        }
+    /* in light mode: show moon (click to go dark), hide sun */
+    :global(html[data-theme="light"]) .icon-sun {
+        display: none;
     }
 </style>

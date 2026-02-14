@@ -1,33 +1,110 @@
 ---
+import { Icon } from "astro-icon/components";
+
 const year = new Date().getFullYear();
 ---
 
 <footer>
-    <div class="footer-content">
-        <span>kenan.fyi</span>
-        <span class="sep">/</span>
-        <span>{year}</span>
-        <span class="sep">/</span>
-        <span>CC BY-NC-SA 4.0</span>
+    <div class="footer-top">
+        <span>2024-{year}</span>
+        <Icon name="ph:dot-duotone" size="20" />
+        <a href="/" class="footer-logo"
+            ><img src="/logo.svg" alt="kenan.fyi" /></a
+        >
+        <Icon name="ph:dot-duotone" size="20" />
+        <span>v2</span>
+    </div>
+    <div class="footer-bottom">
+        <a
+            href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+            target="_blank"
+            rel="noopener"
+        >
+            <img
+                class="cc-badge"
+                src="https://licensebuttons.net/i/l/by-nc-sa/transparent/00/00/00/76x22.png"
+                alt="CC BY-NC-SA 4.0"
+            />
+        </a>
+        <!-- <a href="/">now</a>
+        <a href="/">uses</a>
+        <a href="/">colophon</a> -->
+    </div>
+    <div class="footer-middle">
+        The views and opinions expressed on this website are my own and do not
+        represent those of my employer in any way.
     </div>
 </footer>
 
 <style>
     footer {
-        border-top: 1px solid var(--panel-border);
-        padding: calc(var(--q) * 6) 0;
-        margin-top: auto;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        padding-top: 1rem;
+        display: flex;
+        font-family: var(--font-mono);
+        flex-direction: column;
+        gap: 4px;
     }
 
-    .footer-content {
+    footer::before {
+        content: "";
+        display: block;
+        border-top: 1px solid var(--border-subtle);
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        margin-bottom: 1rem;
+    }
+
+    .footer-top,
+    .footer-bottom,
+    .footer-middle {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        font-size: 0.75rem;
+        flex-wrap: wrap;
+        gap: 4px;
+        font-size: 0.8rem;
+    }
+
+    .footer-middle {
+        font-size: 0.65rem;
+        color: var(--fg-muted);
+    }
+
+    .footer-logo img {
+        display: block;
+        height: 48px;
+        width: auto;
+    }
+
+    .cc-badge {
+        display: block;
+        height: 16px;
+        width: auto;
+        filter: invert(1) opacity(0.3);
+    }
+
+    :global(html[data-theme="light"]) .cc-badge {
+        filter: opacity(0.5);
+    }
+
+    .footer-top a,
+    .footer-bottom a {
+        text-decoration: none;
         color: var(--text-muted);
+        padding: 0 4px;
+        transition: color 0.2s ease;
+    }
+
+    .footer-top a:first-child {
+        padding-left: 0;
+    }
+
+    .footer-top a:hover,
+    .footer-bottom a:hover {
+        color: var(--red-dim);
+        background: unset;
     }
 
     .sep {

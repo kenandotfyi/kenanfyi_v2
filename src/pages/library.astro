@@ -82,7 +82,7 @@ const statuses = statusOrder.filter((s) => booksByStatus[s]);
 const pageTitle = "library";
 ---
 
-<Baz pageTitle={pageTitle}>
+<Baz pageTitle={pageTitle} wide>
     <div id="preview" class="preview">
         <img id="preview-img" src="" alt="" />
     </div>
@@ -216,7 +216,6 @@ const pageTitle = "library";
     .hero-section {
         position: relative;
         height: 40vh;
-        margin-top: -45px;
         margin-left: calc(50% - 50vw);
         margin-right: calc(50% - 50vw);
         overflow: hidden;
@@ -230,7 +229,7 @@ const pageTitle = "library";
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
-        opacity: 0.6;
+        opacity: 1;
     }
 
     .hero-text {
@@ -291,15 +290,23 @@ const pageTitle = "library";
         background-image: var(--cover);
         background-size: cover;
         background-position: center;
-        opacity: 0.55;
+        opacity: 0.5;
         mask-image: linear-gradient(to left, black, transparent 60%);
         -webkit-mask-image: linear-gradient(to left, black, transparent 60%);
         z-index: 0;
+        transition:
+            opacity 0.2s ease,
+            filter 0.2s ease;
+    }
+
+    .book-item:hover .book-bg {
+        opacity: 1;
+        filter: brightness(1.15) saturate(1.1);
     }
 
     .status-header {
         padding: 0.5rem 2vw;
-        font-family: "JetBrains Mono";
+        font-family: var(--font-mono);
         font-size: clamp(1.1rem, 2vw, 2rem);
         color: var(--text-muted);
         opacity: 0.5;
@@ -337,7 +344,7 @@ const pageTitle = "library";
     }
 
     .book-title {
-        font-family: "Gentium Book Plus", serif;
+        font-family: var(--font-serif);
         font-size: clamp(1rem, 2vw, 1.6rem);
         color: var(--text);
         line-height: 1.2;
@@ -349,7 +356,7 @@ const pageTitle = "library";
 
     .book-author {
         font-size: 0.85rem;
-        font-family: "JetBrains Mono";
+        font-family: var(--font-mono);
         color: var(--text);
         opacity: 0.8;
         display: flex;
@@ -363,7 +370,7 @@ const pageTitle = "library";
 
     .book-review {
         font-size: 0.8rem;
-        font-family: "JetBrains Mono";
+        font-family: var(--font-mono);
         font-style: italic;
         color: var(--text);
         background: color-mix(in srgb, var(--accent) 20%, transparent);

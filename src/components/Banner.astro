@@ -12,7 +12,7 @@ const formatDate = (date: Date) => {
 ---
 
 <div class="banner">
-    <a href={`/${collection}/`} class="back-button exclude-from-panel">
+    <a href={`/${collection}/`} class="back-button">
         <Icon name="ph:arrow-left-bold" />
         <span class="back-text">Back to {collection}</span>
     </a>
@@ -42,8 +42,9 @@ const formatDate = (date: Date) => {
 <style>
     div.banner {
         padding-bottom: calc(var(--q) * 16);
-        border-bottom: 1px solid var(--panel-border);
-        margin-bottom: calc(var(--q) * 2);
+        margin-bottom: calc(var(--q) * 4);
+        margin-top: calc(var(--q) * 8);
+        border-bottom: 1px dotted var(--border-subtle);
     }
 
     .header-row {
@@ -60,7 +61,8 @@ const formatDate = (date: Date) => {
     .excerpt {
         color: var(--text-muted);
         font-weight: 400;
-        font-size: 1.1rem;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
     }
 
     .back-button {
@@ -100,7 +102,7 @@ const formatDate = (date: Date) => {
     }
 
     .back-button:hover {
-        background: var(--accent);
+        background: var(--red);
         color: white;
         padding-right: 10px;
     }

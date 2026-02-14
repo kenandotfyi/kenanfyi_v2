@@ -6,6 +6,8 @@ import { join } from "path";
 
 import rehypeKatex from "rehype-katex";
 import rehypeExternalLinks from "rehype-external-links";
+import rehypeSidenotes from "./src/lib/rehype-sidenotes.mjs";
+import rehypeHrDivider from "./src/lib/rehype-hr-divider.mjs";
 import expressiveCode from "astro-expressive-code";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import mdx from "@astrojs/mdx";
@@ -46,11 +48,16 @@ export default defineConfig({
       },
       shiki: {
       },
-      themes: ["vesper"],
+      themes: ["vesper", "github-light"],
+      useDarkModeMediaQuery: false,
+      themeCssSelector: (theme) =>
+        theme.type === "light"
+          ? '[data-theme="light"]'
+          : ':not([data-theme="light"])',
       styleOverrides: {
-        borderRadius: "0.1rem",
-        codeFontFamily: "JetBrains Mono",
-        uiFontFamily: "JetBrains Mono",
+        borderRadius: "0px",
+        codeFontFamily: "IBM Plex Mono",
+        uiFontFamily: "IBM Plex Mono",
         codeFontSize: "14px",
         uiFontSize: "13px",
         uiFontWeight: "bold",
@@ -72,6 +79,8 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [remarkReadingTime],
     rehypePlugins: [
+      rehypeSidenotes,
+      rehypeHrDivider,
       [
         rehypeExternalLinks,
         {

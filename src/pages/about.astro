@@ -1,11 +1,10 @@
 ---
 import Baz from "../layouts/Baz.astro";
-import { Icon } from "astro-icon/components";
 
 const pageTitle = "about";
 ---
 
-<Baz pageTitle={pageTitle}>
+<Baz pageTitle={pageTitle} wide>
     <div class="hero-section">
         <div class="hero-image"></div>
         <h1 class="hero-text">ABOUT</h1>
@@ -81,21 +80,12 @@ const pageTitle = "about";
             ><br /><span class="tenure">June 2015 - ISITES</span>
         </p>
     </section>
-
-    <section class="disclaimer">
-        <Icon name="ph:warning-duotone" size="20" />
-        <p>
-            The views and opinions expressed on this website are my own and do
-            not represent those of my employer in any way.
-        </p>
-    </section>
 </Baz>
 
 <style>
     .hero-section {
         position: relative;
         height: 40vh;
-        margin-top: -45px;
         margin-left: calc(50% - 50vw);
         margin-right: calc(50% - 50vw);
         overflow: hidden;
@@ -109,7 +99,7 @@ const pageTitle = "about";
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
-        opacity: 0.6;
+        opacity: 1;
     }
 
     .hero-text {

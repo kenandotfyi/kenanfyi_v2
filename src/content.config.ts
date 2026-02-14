@@ -32,13 +32,5 @@ const thoughts = defineCollection({
   }),
 });
 
-const books = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/library" }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    published: z.coerce.date(),
-  }),
-});
 
-export const collections = { bits, thoughts, books };
+export const collections = { bits, thoughts };

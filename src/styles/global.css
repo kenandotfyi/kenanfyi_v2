@@ -8,32 +8,33 @@
 }
 
 ::selection {
-    background: color-mix(in srgb, var(--accent) 70%, transparent);
+    background: var(--red);
     color: white;
 }
 
 html {
-    background-color: var(--bg);
+    background-color: var(--bg-base);
     box-sizing: border-box;
-    color: var(--text);
+    color: var(--fg-bright);
     position: relative;
     overflow-x: hidden;
     scrollbar-gutter: auto;
 }
 
 body {
-    font-family: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
-    font-size: 17px;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
     line-height: 1.6;
-    max-width: 60ch;
+    max-width: 65ch;
     margin: 0 auto;
-    padding-top: 76px;
 }
 
-body.panels-active {
-    margin-left: calc(50% - 30ch - var(--panel-width) / 2 - 0.5rem);
-    margin-right: auto;
+body.wide {
+    max-width: clamp(600px, 88vw, 1280px);
+    padding-left: 0;
+    padding-right: 0;
 }
+
 
 h1,
 h2,
@@ -42,10 +43,10 @@ h4,
 h5,
 h6 {
     text-wrap: stable;
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
     margin-bottom: 12px;
     margin-top: 24px;
-    font-family: 'Gentium Book Plus', serif;
+    font-family: var(--font-serif);
     font-weight: 400;
 }
 
@@ -58,7 +59,7 @@ blockquote {
     padding-left: 1rem;
     padding-bottom: 0.5rem;
     padding-top: 0.5rem;
-    background-color: var(--rams-black);
+    background-color: var(--bg-surface);
     margin-bottom: 16px;
 
     p,
@@ -70,22 +71,24 @@ blockquote {
 }
 
 a {
-    color: var(--text);
+    color: var(--fg-bright);
     text-decoration: underline;
     text-decoration-style: dotted;
-    text-decoration-color: var(--accent);
+    text-decoration-color: var(--red);
     text-decoration-thickness: 2px;
     text-underline-offset: 3px;
     transition: color 0.2s ease;
 }
 
 a:hover {
-    color: var(--accent);
+    color: var(--red);
+    background-color: var(--accent-hover-bg);
 }
 
 a.external-link::after {
-    content: "°";
-    font-family: monospace;
+    content: "×";
+    vertical-align: super;
+    font-size: 0.75rem;
 }
 
 .expressive-code {
@@ -128,13 +131,18 @@ span.toggle-btn:hover {
 }
 
 mark.hl {
-    background-color: var(--accent);
+    background-color: var(--red-dim);
     color: white;
 }
 
 @media (max-width: 768px) {
     body {
-        padding: calc(var(--q) * 4);
-        margin-top: calc(var(--q) * 4);
+        padding-left: calc(var(--q) * 4);
+        padding-right: calc(var(--q) * 4);
+    }
+
+    body.wide {
+        padding-left: calc(var(--q) * 4);
+        padding-right: calc(var(--q) * 4);
     }
 }

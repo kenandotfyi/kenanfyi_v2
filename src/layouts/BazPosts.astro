@@ -19,29 +19,88 @@ const ogImage = await generateOgImage({
     pageTitle={frontmatter.data.title}
     description={frontmatter.data.description}
     ogImage={ogImage}
+    wide
 >
-    <Banner
-        metadata={frontmatter.data}
-        minutes={minutes}
-        collection={frontmatter.collection}
-    />
-    <slot />
-    <Backlinks id={frontmatter.id} />
+    <div class="post-container">
+        <Banner
+            metadata={frontmatter.data}
+            minutes={minutes}
+            collection={frontmatter.collection}
+        />
+        <article class="post-body">
+            <slot />
+        </article>
+        <Backlinks id={frontmatter.id} />
+    </div>
     <Panels client:load slot="panels-outside-main" />
 </Baz>
+
 <style>
-    article {
-        margin-top: calc(var(--q) * 8);
+    /* Centers the combined text (65ch) + gap (3ch) + sidenote (35ch) area */
+    .post-container {
+        max-width: calc(65ch + 3ch + 35ch);
+        margin: 0 auto;
     }
 
-    article :global(p) {
-        text-align: justify;
-        hyphens: auto;
+    .post-body {
+        max-width: 65ch;
+        position: relative;
+        overflow: visible;
     }
 
-    .dot {
-        text-align: center;
-        color: var(--text-muted);
-        margin: calc(var(--q) * 8) 0;
+    /* Desktop: float sidenotes into right margin */
+    :global(.sidenote) {
+        float: right;
+        clear: right;
+        margin-right: -38ch;
+        width: 35ch;
+        font-size: 0.8rem;
+        color: var(--fg-muted);
+        padding: 0.6rem 1rem;
+        background: var(--bg-raised);
+        position: relative;
+    }
+
+    :global(.sidenote-number) {
+        font-size: 0.75em;
+        vertical-align: super;
+        color: var(--accent);
+        margin: 0 1px;
+        cursor: default;
+    }
+
+    :global(.sidenote > sup) {
+        color: var(--accent);
+        font-size: 0.75em;
+        margin-right: 3px;
+    }
+
+    /* Always hide the footnotes section */
+    :global([data-footnotes]) {
+        display: none;
+    }
+
+    :global(.post-divider) {
+        display: flex;
+        justify-content: center;
+        margin: calc(var(--q) * 10) 0;
+        color: var(--fg-muted);
+        opacity: 0.4;
+    }
+
+    /* Mobile: sidenotes become inline blocks below the text */
+    @media (max-width: 1050px) {
+        :global(.sidenote) {
+            float: none;
+            clear: both;
+            display: block;
+            width: auto;
+            margin-right: 0;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.6rem 1rem;
+            background: var(--bg-raised);
+            padding-top: 0.6rem;
+        }
     }
 </style>

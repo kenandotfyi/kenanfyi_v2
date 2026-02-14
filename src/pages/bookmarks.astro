@@ -84,7 +84,7 @@ function getDomain(url: string) {
 const pageTitle = "bookmarks";
 ---
 
-<Baz pageTitle={pageTitle}>
+<Baz pageTitle={pageTitle} wide>
     <div id="preview" class="preview">
         <img id="preview-img" src="" alt="" />
     </div>
@@ -201,7 +201,6 @@ const pageTitle = "bookmarks";
     .hero-section {
         position: relative;
         height: 40vh;
-        margin-top: -45px;
         margin-left: calc(50% - 50vw);
         margin-right: calc(50% - 50vw);
         overflow: hidden;
@@ -215,7 +214,7 @@ const pageTitle = "bookmarks";
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
-        opacity: 0.6;
+        opacity: 1;
     }
 
     .hero-text {
@@ -236,7 +235,7 @@ const pageTitle = "bookmarks";
         letter-spacing: 0.1em;
         color: var(--text-muted);
         margin-bottom: 2rem;
-        font-family: "JetBrains Mono";
+        font-family: var(--font-mono);
         font-weight: 400;
     }
 
@@ -289,7 +288,7 @@ const pageTitle = "bookmarks";
         align-items: center;
         gap: 0.35rem;
         font-size: 0.75rem;
-        font-family: "JetBrains Mono";
+        font-family: var(--font-mono);
         color: var(--text-muted);
         opacity: 0.5;
         flex-shrink: 0;
@@ -308,7 +307,7 @@ const pageTitle = "bookmarks";
     }
 
     .link-title {
-        font-family: "Gentium Book Plus", serif;
+        font-family: var(--font-serif);
         font-size: clamp(1rem, 2vw, 1.6rem);
         color: var(--text);
         line-height: 1.2;
@@ -320,7 +319,7 @@ const pageTitle = "bookmarks";
 
     .link-note {
         font-size: 0.8rem;
-        font-family: "JetBrains Mono";
+        font-family: var(--font-mono);
         font-style: italic;
         color: var(--text-muted);
         opacity: 0.6;

@@ -1,561 +1,553 @@
 <script>
     import { onMount } from "svelte";
 
-    let panels = [];
-    let maxZIndex = 100;
-    const STACK_OFFSET = 32;
-    let isEnabled = true;
-    let userEnabled = true;
-    const MOBILE_BREAKPOINT = 1100;
-    const STORAGE_KEY = "stacked-panels-state";
-    const PANELS_ENABLED_KEY = "panels-enabled";
+    // --- State ---
+    // One unified list. pinned:false = hover preview (dismisses on mouseout), pinned:true = sticky window
+    let windows = [];
+    let contentCache = new Map();
+    let maxZIndex = 200;
+    let showTimer = null;
+    let dismissTimers = new Map(); // url → timer
 
+    const SHOW_DELAY = 200;
+    const DISMISS_DELAY = 350;
+    const WIN_WIDTH = 480;
+    const WIN_HEIGHT = 320;
+    const PREVIEW_OFFSET = 14;
+    let WIN_HEIGHT_MAX = 500;
+
+    // --- Mount ---
     onMount(() => {
-        const stored = localStorage.getItem(PANELS_ENABLED_KEY);
-        userEnabled = stored !== "false"; // default to true
-
-        checkScreenSize();
-
-        if (isEnabled) {
-            restorePanelsFromStorage();
-        }
-
-        window.addEventListener("resize", checkScreenSize);
-
-        if (isEnabled) {
-            document.addEventListener("click", handleLinkClick);
-        }
-
-        // use the custom event panels-toggle define ind BottomNav.astro
-        window.addEventListener("panels-toggle", handlePanelsToggle);
-        window.addEventListener("beforeunload", savePanelsToStorage);
-
+        WIN_HEIGHT_MAX = Math.round(window.innerHeight * 0.6);
+        document.addEventListener("mouseover", handleMouseOver);
+        document.addEventListener("mouseout", handleMouseOut);
+        document.addEventListener("mousemove", onDragMove);
+        document.addEventListener("mouseup", onDragEnd);
         return () => {
-            window.removeEventListener("resize", checkScreenSize);
-            window.removeEventListener("click", handleLinkClick);
-            window.removeEventListener("panels-toggle", handlePanelsToggle);
-            window.removeEventListener("beforeunload", savePanelsToStorage);
+            document.removeEventListener("mouseover", handleMouseOver);
+            document.removeEventListener("mouseout", handleMouseOut);
+            document.removeEventListener("mousemove", onDragMove);
+            document.removeEventListener("mouseup", onDragEnd);
         };
     });
 
-    function handlePanelsToggle(event) {
-        userEnabled = event.detail.enabled;
-        checkScreenSize();
-    }
-
-    function checkScreenSize() {
-        const wasEnabled = isEnabled;
-        const screenSizeOk = window.innerWidth >= MOBILE_BREAKPOINT;
-        isEnabled = screenSizeOk && userEnabled;
-
-        if (!wasEnabled && isEnabled) {
-            document.addEventListener("click", handleLinkClick);
-            restorePanelsFromStorage();
-        } else if (wasEnabled && !isEnabled) {
-            document.removeEventListener("click", handleLinkClick);
+    // --- Helpers ---
+    function isInternalPostLink(href) {
+        if (!href) return false;
+        try {
+            const url = new URL(href, window.location.href);
+            if (url.origin !== window.location.origin) return false;
+            const p = url.pathname;
+            return (
+                (p.startsWith("/thoughts/") || p.startsWith("/bits/")) &&
+                p !== "/thoughts/" &&
+                p !== "/bits/"
+            );
+        } catch {
+            return false;
         }
     }
 
-    function savePanelsToStorage() {
-        if (!isEnabled) return;
+    function getLinkEl(target) {
+        const a = target?.closest("a");
+        if (!a) return null;
+        const href = a.getAttribute("href");
+        if (!href || href.startsWith("#")) return null;
+        if (a.closest("nav") || a.closest("header")) return null;
+        if (!isInternalPostLink(href)) return null;
+        return a;
+    }
 
-        try {
-            const panelState = {
-                panels: panels.map((p) => ({
-                    id: p.id,
-                    url: p.url,
-                    pubDate: p.pubDate,
-                    title: p.title,
-                    content: p.content,
-                    zIndex: p.zIndex,
-                })),
-                maxZIndex,
-            };
-            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(panelState));
-        } catch (error) {
-            console.error("Failed to save panels to storage:", error);
+    function resolvedPath(href) {
+        return new URL(href, window.location.href).pathname;
+    }
+
+    function calcPos(rect) {
+        const margin = 8;
+        let x = rect.left;
+        let y = rect.bottom + PREVIEW_OFFSET;
+        if (x + WIN_WIDTH > window.innerWidth - margin)
+            x = window.innerWidth - WIN_WIDTH - margin;
+        if (x < margin) x = margin;
+        if (y + WIN_HEIGHT > window.innerHeight - margin)
+            y = rect.top - WIN_HEIGHT - PREVIEW_OFFSET;
+        if (y < margin) y = margin;
+        return { x, y };
+    }
+
+    function getWindowElForUrl(url) {
+        return document.querySelector(`[data-win-url="${CSS.escape(url)}"]`);
+    }
+
+    // --- Dismiss timers ---
+    function startDismiss(url) {
+        clearDismiss(url);
+        const t = setTimeout(() => {
+            dismissTimers.delete(url);
+            // Final check: if mouse is physically still over the window, don't dismiss
+            const winEl = document.querySelector(
+                `[data-win-url="${CSS.escape(url)}"]`,
+            );
+            if (winEl?.matches(":hover")) return;
+            windows = windows.filter((w) => w.url !== url);
+        }, DISMISS_DELAY);
+        dismissTimers.set(url, t);
+    }
+
+    function clearDismiss(url) {
+        if (dismissTimers.has(url)) {
+            clearTimeout(dismissTimers.get(url));
+            dismissTimers.delete(url);
         }
     }
 
-    function restorePanelsFromStorage() {
-        try {
-            const stored = sessionStorage.getItem(STORAGE_KEY);
+    // --- Hover: show ---
+    function handleMouseOver(e) {
+        const a = getLinkEl(e.target);
+        if (!a) return;
 
-            if (stored) {
-                const panelState = JSON.parse(stored);
+        const url = resolvedPath(a.getAttribute("href"));
 
-                const currentPath = window.location.pathname.replace(/\/$/, "");
-                const filteredPanels = (panelState.panels || []).filter(
-                    (p) => p.url.replace(/\/$/, "") !== currentPath,
-                );
+        // Window already open for this url — just cancel any pending dismiss
+        if (windows.some((w) => w.url === url)) {
+            clearDismiss(url);
+            return;
+        }
 
-                panels = [...filteredPanels];
-                maxZIndex = panelState.maxZIndex || 100;
+        clearTimeout(showTimer);
+        showTimer = setTimeout(async () => {
+            const rect = a.getBoundingClientRect();
+            const pos = calcPos(rect);
+            maxZIndex += 1;
+
+            if (contentCache.has(url)) {
+                const { title, content } = contentCache.get(url);
+                windows = [
+                    ...windows,
+                    {
+                        id: Date.now(),
+                        url,
+                        title,
+                        content,
+                        ...pos,
+                        zIndex: maxZIndex,
+                        pinned: false,
+                        loading: false,
+                    },
+                ];
+            } else {
+                windows = [
+                    ...windows,
+                    {
+                        id: Date.now(),
+                        url,
+                        title: "Loading…",
+                        content: "",
+                        ...pos,
+                        zIndex: maxZIndex,
+                        pinned: false,
+                        loading: true,
+                    },
+                ];
+                const result = await fetchContent(url);
+                if (result)
+                    windows = windows.map((w) =>
+                        w.url === url ? { ...w, ...result, loading: false } : w,
+                    );
             }
-        } catch (error) {
-            console.error("Failed to restore panels from storage:", error);
-        }
+        }, SHOW_DELAY);
     }
 
-    function handleLinkClick(e) {
-        if (!isEnabled) return;
+    // --- Hover: hide ---
+    function handleMouseOut(e) {
+        const fromLink = getLinkEl(e.target);
+        const toEl = e.relatedTarget;
 
-        const link = e.target.closest("a");
-        if (!link) return;
-
-        const href = link.getAttribute("href");
-        if (!href) return;
-
-        if (href.startsWith("#")) {
-            return;
-        }
-
-        const resolvedUrl = new URL(href, window.location.href);
-        const pathname = resolvedUrl.pathname;
-
-        if (resolvedUrl.hash && pathname === window.location.pathname) {
-            return;
-        }
-
-        if (
-            link.closest("nav") ||
-            link.closest("header") ||
-            link.closest('[role="navigation"]')
-        ) {
-            return;
-        }
-
-        if (
-            pathname === "/thoughts" ||
-            pathname === "/thoughts/" ||
-            pathname === "/bits" ||
-            pathname === "/bits/"
-        ) {
-            return;
-        }
-
-        const isPanelLink =
-            pathname.startsWith("/thoughts/") || pathname.startsWith("/bits/");
-
-        if (isPanelLink && resolvedUrl.origin === window.location.origin) {
-            e.preventDefault();
-            loadAndStackPanel(pathname);
-        }
-    }
-
-    async function loadAndStackPanel(url) {
-        const existingPanel = panels.find((p) => p.url === url);
-
-        if (existingPanel) {
-            bringToFront(existingPanel.id);
-            return;
-        }
-
-        try {
-            const response = await fetch(url);
-            if (!response.ok)
-                throw new Error(`Failed to fetch: ${response.status}`);
-
-            const htmlText = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlText, "text/html");
-
-            let contentElement = null;
-
-            const pubDate = doc.getElementById("pubDate").textContent;
-
-            const selectors = ["article", "main"];
-            for (const selector of selectors) {
-                try {
-                    contentElement = doc.querySelector(selector);
-                    if (contentElement) break;
-                } catch (e) {
-                    console.warn(`Selector ${selector} failed:`, e);
-                }
-            }
-
-            if (!contentElement) {
-                console.error("Could not find content in fetched page");
+        // Leaving a link
+        if (fromLink) {
+            const url = resolvedPath(fromLink.getAttribute("href"));
+            const win = windows.find((w) => w.url === url);
+            if (!win || win.pinned) return;
+            // Moving into the window itself — keep it
+            const winEl = getWindowElForUrl(url);
+            if (winEl && toEl && winEl.contains(toEl)) {
+                clearDismiss(url);
                 return;
             }
+            clearTimeout(showTimer);
+            startDismiss(url);
+        }
 
-            const titleElement = doc.querySelector("h1.displayTitle");
-            const title = titleElement ? titleElement.textContent : "Untitled";
-
-            createPanel(url, title, pubDate, contentElement.innerHTML);
-        } catch (error) {
-            console.error("Error loading panel:", error);
+        // Leaving a window
+        const winEl = e.target?.closest("[data-win-url]");
+        if (winEl) {
+            const url = winEl.dataset.winUrl;
+            const win = windows.find((w) => w.url === url);
+            if (!win || win.pinned) return;
+            // Internal DOM mutation (Svelte re-render swapping nodes) — ignore
+            if (toEl && winEl.contains(toEl)) return;
+            // Moving back to the triggering link — keep it
+            const targetLink = getLinkEl(toEl);
+            if (
+                targetLink &&
+                resolvedPath(targetLink.getAttribute("href")) === url
+            ) {
+                clearDismiss(url);
+                return;
+            }
+            startDismiss(url);
         }
     }
 
-    function createPanel(url, title, pubDate, content) {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = content;
+    // --- Content fetching ---
+    async function fetchContent(url) {
+        try {
+            const res = await fetch(url);
+            if (!res.ok) return null;
+            const html = await res.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
 
-        // Remove elements that shouldn't appear in panels
-        const excludedElements = tempDiv.querySelectorAll(
-            ".exclude-from-panel",
-        );
-        excludedElements.forEach((el) => el.remove());
+            const titleEl = doc.querySelector("h1.displayTitle");
+            const title = titleEl?.textContent?.trim() || "Untitled";
 
-        const elementsWithIds = tempDiv.querySelectorAll("[id]");
-        elementsWithIds.forEach((el) => {
-            const id = el.getAttribute("id");
-            if (id && /^\d/.test(id)) {
-                el.setAttribute("id", "heading-" + id);
+            const contentEl = doc.querySelector("main");
+            if (!contentEl) return null;
+
+            const tmp = document.createElement("div");
+            tmp.innerHTML = contentEl.innerHTML;
+
+            const pubDateEl = tmp.querySelector("#pubDate");
+            const metaHTML = pubDateEl ? pubDateEl.innerHTML : null;
+
+            tmp.querySelectorAll(".exclude-from-panel, .banner, hr").forEach(
+                (el) => el.remove(),
+            );
+
+            if (metaHTML) {
+                const meta = document.createElement("div");
+                meta.className = "panel-meta";
+                meta.innerHTML = metaHTML;
+                tmp.prepend(meta);
             }
-        });
 
-        const anchorLinks = tempDiv.querySelectorAll('a[href^="#"]');
-        anchorLinks.forEach((link) => {
-            const href = link.getAttribute("href");
-            const hash = href.substring(1);
-            if (/^\d/.test(hash)) {
-                link.setAttribute("href", "#heading-" + hash);
-            }
-        });
+            tmp.querySelectorAll("[id]").forEach((el) => {
+                const id = el.getAttribute("id");
+                if (id && /^\d/.test(id)) el.setAttribute("id", "p-" + id);
+            });
+            tmp.querySelectorAll('a[href^="#"]').forEach((a) => {
+                const hash = a.getAttribute("href").slice(1);
+                if (/^\d/.test(hash)) a.setAttribute("href", "#p-" + hash);
+            });
 
-        const sanitizedContent = tempDiv.innerHTML;
+            const content = tmp.innerHTML;
+            contentCache.set(url, { title, content });
+            return { title, content };
+        } catch (err) {
+            console.error("Failed to fetch preview:", err);
+            return null;
+        }
+    }
 
-        const newPanel = {
-            id: Date.now(),
-            url,
-            title,
-            pubDate,
-            content: sanitizedContent,
-            zIndex: maxZIndex + 1,
-        };
+    // --- Pin toggle ---
+    function togglePin(id) {
+        const win = windows.find((w) => w.id === id);
+        if (!win) return;
+        if (win.pinned) {
+            // Unpin → go back to hover mode, but don't dismiss yet.
+            // mouseout will start the dismiss timer when mouse actually leaves.
+            // noAnim: true prevents the fadeIn animation from replaying.
+            windows = windows.map((w) =>
+                w.id === id ? { ...w, pinned: false, noAnim: true } : w,
+            );
+        } else {
+            // Pin → cancel any pending dismiss, stay
+            clearDismiss(win.url);
+            windows = windows.map((w) =>
+                w.id === id ? { ...w, pinned: true } : w,
+            );
+        }
+    }
 
-        panels = [...panels, newPanel];
+    function closeWindow(id) {
+        const win = windows.find((w) => w.id === id);
+        if (win) clearDismiss(win.url);
+        windows = windows.filter((w) => w.id !== id);
+    }
+
+    function bringToFront(id) {
         maxZIndex += 1;
-
-        savePanelsToStorage();
+        windows = windows.map((w) =>
+            w.id === id ? { ...w, zIndex: maxZIndex } : w,
+        );
     }
 
-    function bringToFront(panelId) {
-        panels = panels.map((panel) => {
-            if (panel.id === panelId) {
-                maxZIndex += 1;
-                return { ...panel, zIndex: maxZIndex };
-            }
-            return panel;
+    // --- Drag (pinning via drag) ---
+    let dragging = null;
+
+    function onTitleMouseDown(e, id) {
+        if (e.button !== 0) return;
+        if (e.target.closest("button") || e.target.closest("a")) return;
+        e.preventDefault();
+        const win = windows.find((w) => w.id === id);
+        if (!win) return;
+        // Dragging always pins
+        clearDismiss(win.url);
+        windows = windows.map((w) =>
+            w.id === id ? { ...w, pinned: true } : w,
+        );
+        bringToFront(id);
+        dragging = {
+            id,
+            startX: e.clientX,
+            startY: e.clientY,
+            origX: win.x,
+            origY: win.y,
+        };
+    }
+
+    function onDragMove(e) {
+        if (!dragging) return;
+        const dx = e.clientX - dragging.startX;
+        const dy = e.clientY - dragging.startY;
+        windows = windows.map((w) => {
+            if (w.id !== dragging.id) return w;
+            const x = Math.max(
+                4,
+                Math.min(
+                    window.innerWidth - WIN_WIDTH - 4,
+                    dragging.origX + dx,
+                ),
+            );
+            const y = Math.max(
+                4,
+                Math.min(
+                    window.innerHeight - WIN_HEIGHT - 4,
+                    dragging.origY + dy,
+                ),
+            );
+            return { ...w, x, y };
         });
-
-        savePanelsToStorage();
     }
 
-    function closePanel(panelId) {
-        panels = panels.filter((panel) => panel.id !== panelId);
-
-        savePanelsToStorage();
+    function onDragEnd() {
+        dragging = null;
     }
 
-    function isTopPanel(panel) {
-        const maxZ = Math.max(...panels.map((p) => p.zIndex));
-        return panel.zIndex === maxZ;
+    // Svelte action: restore scroll on mount
+    function initScroll(node, scrollTop) {
+        node.scrollTop = scrollTop ?? 0;
+        return {};
     }
 
-    $: sortedPanels = [...panels].sort((a, b) => a.zIndex - b.zIndex);
-
-    // update body width and margin when panels are opened/closed
-    $: {
-        if (typeof document !== "undefined") {
-            if (isEnabled && panels.length > 0) {
-                document.body.classList.add("panels-active");
-            } else {
-                document.body.classList.remove("panels-active");
-            }
-        }
-    }
+    // --- Icons ---
+    const iconPin = `<g fill="currentColor"><path d="m229.66 98.34l-57.27 57.46c11.46 22.93-1.72 45.86-10.11 57a8 8 0 0 1-12 .83L42.34 105.76A8 8 0 0 1 43 93.85c29.65-23.92 57.4-10 57.4-10l57.27-57.46a8 8 0 0 1 11.31 0L229.66 87a8 8 0 0 1 0 11.34" opacity=".2"/><path d="m235.32 81.37l-60.69-60.68a16 16 0 0 0-22.63 0l-53.63 53.8c-10.66-3.34-35-7.37-60.4 13.14a16 16 0 0 0-1.29 23.78L85 159.71l-42.66 42.63a8 8 0 0 0 11.32 11.32L96.29 171l48.29 48.29A16 16 0 0 0 155.9 224h1.13a15.93 15.93 0 0 0 11.64-6.33c19.64-26.1 17.75-47.32 13.19-60L235.33 104a16 16 0 0 0-.01-22.63M224 92.69l-57.27 57.46a8 8 0 0 0-1.49 9.22c9.46 18.93-1.8 38.59-9.34 48.62L48 100.08c12.08-9.74 23.64-12.31 32.48-12.31A40.1 40.1 0 0 1 96.81 91a8 8 0 0 0 9.25-1.51L163.32 32L224 92.68Z"/></g>`;
+    const iconPinSlash = `<g fill="currentColor"><path d="m229.66 98.34l-57.27 57.46c11.46 22.93-1.72 45.86-10.11 57a8 8 0 0 1-12 .83L42.34 105.76A8 8 0 0 1 43 93.85c29.65-23.92 57.4-10 57.4-10l57.27-57.46a8 8 0 0 1 11.31 0L229.66 87a8 8 0 0 1 0 11.34" opacity=".2"/><path d="M53.92 34.62a8 8 0 1 0-11.84 10.76L67.37 73.2A69.8 69.8 0 0 0 38 87.63a16 16 0 0 0-1.29 23.78L85 159.71l-42.66 42.63a8 8 0 0 0 11.32 11.32L96.29 171l48.29 48.29A16 16 0 0 0 155.9 224h1.13a15.93 15.93 0 0 0 11.64-6.33a89.8 89.8 0 0 0 11.58-20.27l21.84 24a8 8 0 1 0 11.84-10.76ZM155.9 208L48 100.08c10.23-8.25 21.2-12.36 32.66-12.27l87.16 95.88c-2.23 9.87-7.58 18.54-11.92 24.31m79.42-104l-44.64 44.79a8 8 0 1 1-11.33-11.3L224 92.7L163.32 32L122.1 73.35a8 8 0 0 1-11.33-11.29L152 20.7a16 16 0 0 1 22.63 0l60.69 60.68a16 16 0 0 1 0 22.62"/></g>`;
+    const iconOpen = `<g fill="currentColor"><path d="M224 48v160a16 16 0 0 1-16 16H48a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h160a16 16 0 0 1 16 16" opacity=".2"/><path d="M216 48v48a8 8 0 0 1-16 0V67.31l-50.34 50.35a8 8 0 0 1-11.32-11.32L188.69 56H160a8 8 0 0 1 0-16h48a8 8 0 0 1 8 8m-109.66 90.34L56 188.69V160a8 8 0 0 0-16 0v48a8 8 0 0 0 8 8h48a8 8 0 0 0 0-16H67.31l50.35-50.34a8 8 0 0 0-11.32-11.32"/></g>`;
+    const iconTrash = `<g fill="currentColor"><path d="M200 56v152a8 8 0 0 1-8 8H64a8 8 0 0 1-8-8V56Z" opacity=".2"/><path d="M216 48h-40v-8a24 24 0 0 0-24-24h-48a24 24 0 0 0-24 24v8H40a8 8 0 0 0 0 16h8v144a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16V64h8a8 8 0 0 0 0-16M96 40a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8v8H96Zm96 168H64V64h128Zm-80-104v64a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0m48 0v64a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0"/></g>`;
 </script>
 
-<div class="stacked-panel-container" class:disabled={!isEnabled}>
-    {#if isEnabled}
-        {#each sortedPanels as panel, index (panel.id)}
-            {@const isTop = isTopPanel(panel)}
-            {@const isSinglePanel = sortedPanels.length === 1}
-            {@const isFirstInactive = !isTop && index === 0}
-            <div
-                class="stacked-panel"
-                class:is-top={isTop}
-                class:single-panel={isSinglePanel}
-                class:first-inactive={isFirstInactive}
-                data-panel-id={panel.id}
-                style="
-          top: {index * STACK_OFFSET}px;
-          z-index: {panel.zIndex};
-          --panel-top: {index * STACK_OFFSET}px;
-        "
-            >
-                {#if !isTop}
-                    <div
-                        class="panel-header inactive clickable"
-                        on:click={() => bringToFront(panel.id)}
-                        role="button"
-                        tabindex="0"
-                        on:keydown={(e) =>
-                            e.key === "Enter" && bringToFront(panel.id)}
+{#each windows as win (win.id)}
+    <div
+        class="win"
+        class:pinned={win.pinned}
+        class:no-anim={win.noAnim}
+        data-win-url={win.url}
+        style="left:{win.x}px; top:{win.y}px; width:{WIN_WIDTH}px; height:{WIN_HEIGHT}px; z-index:{win.zIndex};"
+        on:mousedown={() => bringToFront(win.id)}
+        role="dialog"
+        aria-label={win.title}
+    >
+        <div class="titlebar" on:mousedown={(e) => onTitleMouseDown(e, win.id)}>
+            <span class="win-title">{win.title}</span>
+            <div class="actions">
+                <button
+                    class="icon-btn"
+                    class:active={win.pinned}
+                    on:click|stopPropagation={() => togglePin(win.id)}
+                    title={win.pinned ? "Unpin" : "Pin"}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18"
+                        viewBox="0 0 256 256"
                     >
-                        {panel.title}
-                        <div class="panel-actions">
-                            <a
-                                href={panel.url}
-                                class="open-link small"
-                                title="Open in full page"
-                                aria-label="Open in full page"
-                                on:click|stopPropagation
-                            >
-                                Go to page
-                            </a>
-                            <button
-                                class="close-button small"
-                                on:click|stopPropagation={() =>
-                                    closePanel(panel.id)}
-                                aria-label="Close panel"
-                            >
-                                ×
-                            </button>
-                        </div>
-                    </div>
-                {:else}
-                    <div class="panel-header">
-                        <div>
-                            <span>{panel.title}</span>
-                        </div>
-                        <div class="panel-actions">
-                            <a
-                                href={panel.url}
-                                class="open-link"
-                                title="Open in full page"
-                                aria-label="Open in full page"
-                                on:click|stopPropagation
-                            >
-                                Go to page
-                            </a>
-                            <button
-                                class="close-button"
-                                on:click|stopPropagation={() =>
-                                    closePanel(panel.id)}
-                                aria-label="Close panel"
-                            >
-                                ×
-                            </button>
-                        </div>
-                    </div>
-                {/if}
-
-                {#if isTop}
-                    <div class="panel-content">
-                        {@html panel.content}
-                    </div>
-                {/if}
+                        {@html win.pinned ? iconPinSlash : iconPin}
+                    </svg>
+                </button>
+                <a
+                    href={win.url}
+                    class="icon-btn"
+                    on:click|stopPropagation
+                    title="Open"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18"
+                        viewBox="0 0 256 256">{@html iconOpen}</svg
+                    >
+                </a>
+                <button
+                    class="icon-btn"
+                    on:click|stopPropagation={() => closeWindow(win.id)}
+                    title="Close"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18" height="18"
+                        viewBox="0 0 256 256">{@html iconTrash}</svg
+                    >
+                </button>
             </div>
-        {/each}
-
-        {#if panels.length === 0}
-            <div class="empty-state"></div>
+        </div>
+        {#if win.loading}
+            <div class="win-loading">Loading…</div>
+        {:else}
+            <div class="win-content">{@html win.content}</div>
         {/if}
-    {/if}
-</div>
+    </div>
+{/each}
 
 <style>
-    .stacked-panel-container {
+    .win {
         position: fixed;
-        margin-top: calc(var(--q) * 8);
-        left: calc(50% + 30ch + 1rem - var(--panel-width) / 2);
-        width: var(--panel-width);
-        height: auto;
-        opacity: 0.6;
+        background: var(--bg);
+        border: 2px solid var(--border-default);
+        border-radius: 0;
+        box-shadow: 4px 4px 0 #bbb;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        font-size: 0.9rem;
+        animation: fadeIn 0.15s ease;
     }
 
-    .stacked-panel-container:hover {
+    :global(html:not([data-theme="light"])) .win {
+        box-shadow: none;
+    }
+
+    .win.pinned {
+        animation: none;
+    }
+
+    .win.no-anim {
+        animation: none;
+    }
+
+    .titlebar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 6px 10px;
+        background: var(--bg-surface);
+        border-bottom: 2px solid var(--border-default);
+        flex-shrink: 0;
+        min-height: 36px;
+        cursor: grab;
+        user-select: none;
+        position: relative;
+        z-index: 1;
+    }
+
+    .titlebar:active {
+        cursor: grabbing;
+    }
+
+    .win-title {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--text);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+        letter-spacing: 0.03em;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+    }
+
+    .icon-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        text-decoration: none;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.1s;
+        flex-shrink: 0;
+    }
+
+    .icon-btn:hover {
+        opacity: 1;
+        background: none;
+    }
+
+    .icon-btn.active {
         opacity: 1;
     }
 
-    .stacked-panel-container.disabled {
-        display: none;
+    .win-loading {
+        padding: 1rem;
+        color: var(--fg-muted);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
     }
 
-    .stacked-panel {
-        display: flex;
-        font-size: 1rem;
-        flex-direction: column;
-        position: absolute;
-        max-height: calc(100vh - var(--panel-top) - 200px);
-        left: 0;
-        right: 0;
-        overflow: hidden;
-        animation: slideDown 0.3s linear;
-        border-left: 1px solid var(--panel-border);
-        border-right: 1px solid var(--panel-border);
-        border-bottom: 1px solid var(--panel-border);
-        border-top: 1px solid var(--panel-border);
+    .win-content :global(.panel-meta) {
+        font-size: 0.75rem;
+        font-family: var(--font-mono);
+        color: var(--fg-muted);
+        padding-bottom: 0.75rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--border-subtle);
     }
 
-    /* Single panel: all corners rounded */
-    .stacked-panel.single-panel {
-        border-radius: var(--border-s);
-    }
-
-    /* Multiple panels - active (top) panel: only bottom corners */
-    .stacked-panel.is-top:not(.single-panel) {
-        border-radius: 0 0 8px 8px;
-    }
-
-    /* Multiple panels - first inactive panel: only top corners */
-    .stacked-panel.first-inactive {
-        border-radius: 8px 8px 0 0;
-        border-top: 1px solid var(--panel-border);
-    }
-
-    /* Other inactive panels: no border radius */
-    .stacked-panel:not(.is-top):not(.first-inactive):not(.single-panel) {
-        border-radius: 0;
-    }
-
-    .panel-header {
-        line-height: 1;
-        padding: 8px;
-        height: 32px;
-        color: white;
-        background-color: var(--rams-black);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .panel-header.inactive {
-        background-color: var(--bg);
-        font-size: 14px;
-        height: 32px;
-        line-height: 1;
-        padding: 0 8px 0;
-        color: var(--text);
-        cursor: pointer;
-    }
-
-    .panel-header.inactive:hover {
-        background-color: var(--rams-black);
-        color: white;
-    }
-
-    .panel-header.clickable {
-        cursor: pointer;
-    }
-    .panel-content {
+    .win-content {
         flex: 1;
-        hyphens: auto;
         overflow-y: auto;
-        padding: 20px;
-        scrollbar-color: var(--panel-border) var(--rams-black);
+        padding: 16px 20px;
+        min-height: 0;
+        scrollbar-color: var(--border-default) var(--bg-raised);
         scrollbar-width: thin;
     }
 
-    .panel-content::-webkit-scrollbar {
-        width: 6px;
+    .win-content::-webkit-scrollbar {
+        width: 5px;
     }
-
-    .panel-content::-webkit-scrollbar-track {
-        background: var(--rams-black);
+    .win-content::-webkit-scrollbar-track {
+        background: var(--bg-raised);
     }
-
-    .panel-content::-webkit-scrollbar-thumb {
-        background: var(--panel-border);
+    .win-content::-webkit-scrollbar-thumb {
+        background: var(--border-default);
         border-radius: 3px;
     }
 
-    .panel-content::-webkit-scrollbar-thumb:hover {
-        background: var(--text-muted);
-    }
-
-    /* Style content within the panel */
-
-    .panel-actions {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .open-link {
-        display: flex;
-        font-size: 12px;
-        font-family: system-ui;
-        align-items: center;
-        height: 20px;
-        justify-content: center;
-        background-color: var(--accent-hover);
-        color: white;
-        border-radius: var(--border-s);
-        cursor: pointer;
-        text-decoration: none;
-        padding: 4px;
-        transition: color 0.2s;
-    }
-
-    .open-link:hover {
-        background-color: var(--accent);
-    }
-
-    .open-link::after {
-        content: "↗";
-        margin-left: 4px;
-    }
-
-    .open-link.small {
-        opacity: 0.7;
-    }
-
-    .open-link.small:hover {
-        opacity: 1;
-    }
-
-    .close-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        width: 20px;
-        height: 20px;
-        margin: 4px;
-        border-radius: var(--border-s);
-        border: none;
-        cursor: pointer;
-        transition: color 0.2s;
-        background-color: inherit;
-        font-size: 14px;
-        line-height: 1;
-    }
-
-    .close-button:hover {
-        background-color: var(--rams-orange);
-    }
-
-    .close-button.small {
-        font-size: 12px;
-        opacity: 0.7;
-        color: var(--text);
-    }
-
-    .close-button.small:hover {
-        opacity: 1;
-    }
-
-    .empty-state {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        color: #9ca3af;
-    }
-
-    @keyframes slideDown {
+    @keyframes fadeIn {
         from {
             opacity: 0;
-            transform: translateY(-20px);
+            transform: translateY(6px);
         }
         to {
             opacity: 1;
             transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .win {
+            display: none;
         }
     }
 </style>

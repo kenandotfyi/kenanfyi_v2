@@ -97,9 +97,7 @@ fi
 
 
 After that, we need to first make the script executable and use it in our GNOME
-setting when assigning custom keybindings.
-
-
+setting when assigning custom keybindings. 
 ```shell
 chmod +x fl.sh
 ```
@@ -123,8 +121,7 @@ fi
 then we store the arguments to variables and make a small trick in between to
 kind of reset the arguments list to the beginning. We store the first
 argument into `WM_CLASS` and then remove it with `shift` and then collect the remaining arguments with `APP_CMD("$@")`. So this will let applications to be able to have their own
-arguments when starting.[This](https://unix.stackexchange.com/a/174568) from StackOverflow
-helped here.
+arguments when starting. [^1]
 
 
 ```shell title="shell"
@@ -164,3 +161,6 @@ of an application that comes up in the list, we can not focus to other
 windows. An option to implement would be some kind of a switcher in **rofi** or
 **dmenu** to show running windows of that application. I might implement that in
 some free time just for fun.
+
+[^1]: [This](https://unix.stackexchange.com/a/174568) from StackOverflow
+helped here.

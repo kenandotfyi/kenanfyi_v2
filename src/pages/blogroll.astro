@@ -4,7 +4,7 @@ import Baz from "../layouts/Baz.astro";
 const pageTitle = "blogroll";
 ---
 
-<Baz pageTitle={pageTitle}>
+<Baz pageTitle={pageTitle} wide>
     <div class="hero-section">
         <div class="hero-image">
             <!-- Image will go here -->
@@ -111,7 +111,6 @@ const pageTitle = "blogroll";
     .hero-section {
         position: relative;
         height: 40vh;
-        margin-top: -45px;
         margin-left: calc(50% - 50vw);
         margin-right: calc(50% - 50vw);
         overflow: hidden;
@@ -125,7 +124,7 @@ const pageTitle = "blogroll";
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
-        opacity: 0.6;
+        opacity: 1;
     }
 
     .hero-text {

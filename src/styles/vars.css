@@ -1,16 +1,74 @@
 :root {
 
+    /* scales */
+    --space-1: 0.25rem;
+    /* 4px */
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+
+
+    --font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+    --font-sans: 'IBM Plex Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-serif: 'IBM Plex Serif', 'Georgia', serif;
+
+
+    /* text sizes */
+
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.25rem;
+    /* base × 1.25 */
+    --text-xl: 1.563rem;
+    /* base × 1.25² */
+    --text-2xl: 1.953rem;
+    /* base × 1.25³ */
+
+
+    /*colors*/
+    --bg-deep: #090909;
+    --bg-base: #111111;
+    --bg-raised: #181818;
+    --bg-surface: #202020;
+    --bg-hover: #272727;
+    --border-subtle: #2a2a2a;
+    --border-default: #383838;
+    --fg-muted: #585858;
+    --fg-secondary: #808080;
+    --fg-primary: #bebebe;
+    --fg-bright: #dedede;
+    --accent: #e8a435;
+    --accent-dim: #c48820;
+    --accent-bright: #f0bc5a;
+    --accent-subtle-bg: rgba(232, 164, 53, 0.07);
+    --accent-hover-bg: rgba(255, 255, 255, 0.04);
+    --green: #5ab87a;
+    --green-dim: #3d8a58;
+    --red: #5a9080;
+    --red-dim: #406a60;
+    --blue: #5a90c0;
+    --blue-dim: #406888;
+    --code-bg: #090909;
+    --selection: rgba(232, 164, 53, 0.20);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.25);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.35);
+
+
     /* Core */
-    /*--text: #fafaf8;*/
-    --text: #E6E4D5;
-    --bg: #1f1f1f;
-    --text-muted: #6b6b6b;
-    --border: #e0e0dc;
-    --panel-border: #333333;
+    --text: #d0d0d0;
+    --bg: #111111;
+    --text-muted: #585858;
+    --border: #c0c0c0;
+    --panel-border: #282828;
 
     /* Accent */
-    --accent: #c05d3e;
-    --accent-hover: #a34d32;
+    --accent: #5a9080;
+    --accent-hover: #406a60;
 
     /* Surfaces */
     --surface: #f0efeb;
@@ -22,7 +80,6 @@
     --border-m: 0.5rem;
     --border-l: 1rem;
 
-    /* Panels.svelte compatibility */
     --lichtgrau: #d0d0cc;
     --rams-black: #1a1a1a;
     --rams-gray: #6b6b6b;
@@ -30,4 +87,46 @@
     --rams-green: #0D703F;
     --rams-orange: var(--accent-hover);
     --rams-bg: var(--surface);
+}
+
+html[data-theme="light"] {
+
+    /*colors light*/
+    --bg-deep: #e8e0d4;
+    --bg-base: #f2ece4;
+    --bg-raised: #faf6f0;
+    --bg-surface: #ffffff;
+    --bg-hover: #efe9e0;
+    --border-subtle: #ddd5c8;
+    --border-default: #c8bca8;
+    --fg-muted: #9a8e7c;
+    --fg-secondary: #6e6354;
+    --fg-primary: #3d3328;
+    --fg-bright: #1a1410;
+    --accent: #b87d18;
+    --accent-dim: #9a6810;
+    --accent-bright: #d49520;
+    --accent-subtle-bg: rgba(184, 125, 24, 0.07);
+    --accent-hover-bg: rgba(184, 125, 24, 0.13);
+    --green: #3a8855;
+    --green-dim: #2d6b42;
+    --red: #b84838;
+    --red-dim: #943828;
+    --blue: #3a7098;
+    --blue-dim: #2d5878;
+    --code-bg: #ece6dc;
+    --selection: rgba(184, 125, 24, 0.18);
+    --shadow: 0 1px 3px rgba(60, 50, 35, 0.08), 0 4px 12px rgba(60, 50, 35, 0.05);
+    --shadow-lg: 0 4px 12px rgba(60, 50, 35, 0.10), 0 12px 32px rgba(60, 50, 35, 0.07);
+
+
+    --text: #1c1c1c;
+    --bg: #f5f4f0;
+    --text-muted: #888888;
+    --border: #2a2a2a;
+    --panel-border: #dddeee;
+    --surface: #eae9e4;
+    --surface-hover: #dddcd7;
+    --rams-black: #eae9e4;
+    --rams-gray: #888888;
 }

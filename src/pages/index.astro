@@ -45,46 +45,78 @@ interface RaindropItem {
 const links = await fetchLinks();
 ---
 
-<Baz pageTitle={pageTitle}>
-    <div class="hero">
-        <video autoplay muted playsinline loop>
-            <source src="/effect.webm" type="video/webm" />
-            Your browser does not support the video tag.
-        </video>
-    </div>
-    <header class="intro">
-        <h1>Kenan Akinci</h1>
-        <p class="role">Sr. Hardware Design Engineer</p>
-    </header>
+<Baz pageTitle={pageTitle} wide>
+    <div class="home">
+        <div class="hero">
+            <video class="hero-video" autoplay muted playsinline loop>
+                <source src="/hero-2.webm" type="video/webm" />
+            </video>
+        </div>
 
-    <section class="bio">
-        <p>
-            I'm a senior hardware design engineer from Germany with over 10
-            years of experience in designing and developing hardware for power
-            electronics systems. Although not officially a software engineer, I
-            program in various languages for personal and professional projects
-            too.
-        </p>
-        <p>
-            I dabble here at this website and I believe everyone should have
-            their own place in web and freely express themselves the way they
-            want. This is therefore my place where I post about
-            hardware/software and other things that interest me. I write mostly
-            for myself, but maybe you find them interesting too.
-        </p>
-        <p>
-            Check out my <a href="/about">about</a> page for further details on my
-            professional career.
-        </p>
-        <p class="muted">
-            P.S. This site is constantly being re-designed and re-organized,
-            since it is serving me as a playground for my dabbling as well.
-        </p>
-    </section>
+        <div class="intro-header">
+            <h1 class="hero-name">Kenan Akinci</h1>
+            <p class="role">Sr. Hardware Design Engineer</p>
+        </div>
 
-    <section class="writings">
-        <div class="columns">
-            <div class="column">
+        <div class="intro-row">
+            <div class="intro-col">
+                <p>
+                    I'm a senior hardware design engineer from Germany with over
+                    10 years of experience in designing and developing hardware
+                    for power electronics systems. Although not officially a
+                    software engineer, I program in various languages for
+                    personal and professional projects too.
+                </p>
+                <p></p>
+            </div>
+            <div class="intro-col">
+                <p>
+                    I build power electronics systems by day and tinker with
+                    code, words, and the web by night. This site is my little
+                    corner of the internet with no algorithm, no feed, just
+                    things I find worth writing down. I believe everyone should
+                    have their own place on the web. Although I write mostly for
+                    myself, you may find it interesting too. <a href="/about/"
+                        >More about me →</a
+                    >
+                </p>
+                <div class="social-icons">
+                    <a
+                        href="https://github.com/kenandotfyi"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="GitHub"
+                    >
+                        <Icon name="ph:github-logo-duotone" size="22" />
+                    </a>
+                    <a
+                        href="https://mas.to/@ingenieur"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="Mastodon"
+                    >
+                        <Icon name="ph:mastodon-logo-duotone" size="22" />
+                    </a>
+                    <a
+                        href="https://www.linkedin.com/in/kenanakinci/"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="LinkedIn"
+                    >
+                        <Icon name="ph:linkedin-logo-duotone" size="22" />
+                    </a>
+                    <a href="mailto:hey@kenan.fyi" aria-label="Email">
+                        <Icon name="ph:envelope-duotone" size="22" />
+                    </a>
+                    <a href="/rss.xml" aria-label="RSS Feed">
+                        <Icon name="ph:rss-duotone" size="22" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <section class="col">
                 <h2 class="section-heading">Thoughts</h2>
                 <div class="posts-list">
                     {
@@ -94,232 +126,230 @@ const links = await fetchLinks();
                                     href={`/thoughts/${post.id}`}
                                     class="post-title"
                                 >
-                                    <Icon name="ph:feather-duotone" size="20" />{post.data.title}                                </a>
+                                    <Icon name="ph:feather-duotone" size="16" />
+                                    <span>{post.data.title}</span>
+                                </a>
                             </article>
                         ))
                     }
                 </div>
-            </div>
-            <div class="column">
+            </section>
+
+            <section class="col">
                 <h2 class="section-heading">Bits</h2>
                 <div class="posts-list">
                     {
                         allBits.map((post) => (
                             <article class="post-item">
                                 <a href={`/bits/${post.id}`} class="post-title">
-                                    <Icon name="ph:asterisk-fill" size="20" />{post.data.title}
+                                    <Icon name="ph:asterisk-fill" size="16" />
+                                    <span>{post.data.title}</span>
                                 </a>
                             </article>
                         ))
                     }
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <section class="bookmarks">
-        <h2 class="section-heading">Latest bookmarks</h2>
-        <div class="posts-list">
-          {
-            links.items.map((item: RaindropItem) => (
-            <article class="post-item">
-                <a href=`${item.link}` target="_blank" class="post-title">
-                    <Icon name="ph:bookmark-duotone" size="20"/>{item.title}<span class="external-link-icon">°</span>
-                </a>
-            </article>
-            ))
-          }
-          <p>
-            <a href="/bookmarks"><i>see more →</i></a>
-          </p>
+            <section class="col col-bookmarks">
+                <h2 class="section-heading">Bookmarks</h2>
+                <div class="posts-list">
+                    {
+                        links.items.map((item: RaindropItem) => (
+                            <article class="post-item">
+                                <a
+                                    href={item.link}
+                                    target="_blank"
+                                    class="post-title"
+                                >
+                                    <Icon
+                                        name="ph:bookmark-duotone"
+                                        size="16"
+                                    />
+                                    <span>{item.title}</span>
+                                </a>
+                            </article>
+                        ))
+                    }
+                    <p class="see-more"><a href="/bookmarks">see more →</a></p>
+                </div>
+            </section>
         </div>
-    </section>
-
-    <section class="elsewhere">
-        <h2 class="section-heading">Elsewhere</h2>
-        <p>
-            You can find me on <a href="https://mas.to/@ingenieur"
-                >Mastodon<Icon name="ph:mastodon-logo-duotone" size="16" /></a
-            >, <a href="https://github.com/kenandotfyi"
-                >GitHub<Icon name="ph:github-logo-duotone" size="16" /></a
-            > or contact me directly via <b>hey@kenan.fyi</b>. I always
-            appreciate a meaningful and friendly conversation on topics such as
-            software development, design, minimalism, electronics and
-            non-fiction books.
-        </p>
-        <p>
-            If you like to use RSS, I also have a feed which you can find <a
-                href="/rss.xml">here</a
-            >.
-        </p>
-    </section>
+    </div>
 </Baz>
 
 <style>
-    :global(body) {
-        max-width: 70ch;
+    .home {
+        color: var(--fg-bright);
+        font-size: var(--text-base);
     }
 
-    .intro {
-        margin-bottom: calc(var(--q) * 4);
-        color: var(--accent);
+    /* ── Hero ── */
+    .hero {
+        height: 640px;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        overflow: hidden;
+        margin-bottom: 0;
     }
 
-    .intro h1 {
-        font-size: 2rem;
-        margin: 0;
+    .hero-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .intro-header {
+        padding: calc(var(--q) * 8) 0 calc(var(--q) * 4);
+    }
+
+    .hero-name {
+        font-size: clamp(1.5rem, 3vw, 2.5rem);
+        font-weight: 400;
+        color: var(--red);
+        margin: 0 0 calc(var(--q) * 2);
+        line-height: 1.1;
     }
 
     .role {
-        font-size: 1.1rem;
-        color: var(--text-muted);
+        font-family: var(--font-mono);
+        font-size: clamp(0.75rem, 1.5vw, 1rem);
+        color: var(--fg-muted);
+        margin: 0;
+        letter-spacing: 0.05em;
+    }
+
+    .intro-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: calc(var(--q) * 12);
+        padding-bottom: calc(var(--q) * 10);
+        margin-bottom: calc(var(--q) * 8);
+    }
+
+    .intro-row::after {
+        content: "";
+        display: block;
+        grid-column: 1 / -1;
+        border-bottom: 1px solid var(--border-subtle);
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+    }
+
+    .intro-col {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--q) * 3);
+        color: var(--fg-primary);
+        font-size: var(--text-base);
+        line-height: 1.7;
+    }
+
+    .intro-col p {
         margin: 0;
     }
 
-    .hero {
-        margin-bottom: calc(var(--q) * 8);
-        margin-inline: clamp(-5%, calc(-50vw + 50% + 1rem), 0px);
+    .social-icons {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: calc(var(--q) * 5);
+        margin-top: auto;
+        padding-top: calc(var(--q) * 4);
     }
 
-    .hero video {
-        width: 100%;
-        border-radius: var(--border-m);
+    .social-icons a {
+        color: var(--fg-muted);
+        text-decoration: none;
+        line-height: 0;
+        transition: color 0.2s ease;
     }
 
-    .bio {
-        margin-bottom: calc(var(--q) * 12);
-        text-align: justify;
-        hyphens: auto;
+    .social-icons a:hover {
+        color: var(--accent);
+        background: none;
     }
 
-    .bio p {
-        margin-bottom: calc(var(--q) * 4);
-    }
-
-    .bio .muted {
-        font-style: italic;
-        color: var(--text-muted);
-    }
-
-    /* Two-column writings */
-    .writings, .bookmarks {
-        margin-bottom: calc(var(--q) * 12);
-    }
-
-    .bookmarks {
-        p {
-            text-align: right;
-        }
-
-        & a {
-            color: var(--text-muted);
-        }
-
-    }
-    .bookmarks a:hover {
-        color: var(--accent-hover);
-    }
-
-    .columns {
+    /* ── 3-col grid ── */
+    .grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: calc(var(--q) * 4);
+        grid-template-columns: repeat(3, 1fr);
+        gap: calc(var(--q) * 8);
+        margin-bottom: calc(var(--q) * 16);
     }
-
-
 
     .section-heading {
+        font-family: var(--font-mono);
+        font-size: var(--text-base);
         text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--text-muted);
+        letter-spacing: 0.1em;
+        color: var(--accent);
         margin-top: 0;
         margin-bottom: calc(var(--q) * 4);
-        padding-bottom: calc(var(--q) * 2);
-        border-bottom: 1px solid var(--panel-border);
     }
 
     .posts-list {
         display: flex;
         flex-direction: column;
-    }
-
-    .post-item {
-        display: flex;
-        align-items: baseline;
-        gap: calc(var(--q) * 3);
+        gap: calc(var(--q) * 1);
     }
 
     .post-title {
-        font-size: 18px;
-        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: var(--text-base);
+        line-height: 1.4;
+        padding: calc(var(--q) * 1) 0;
+        text-decoration: none;
+    }
+
+    .post-title span {
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-decoration-color: var(--red);
+        text-decoration-thickness: 2px;
+        text-underline-offset: 3px;
+    }
+
+    .col-bookmarks .post-title {
+        color: var(--fg-muted);
     }
 
     .post-title :global(svg) {
-        vertical-align: middle;
-        opacity: 0.5;
-        margin-right: 2px;
-        position: relative;
-        top: -1px;
+        opacity: 0.4;
+        flex-shrink: 0;
     }
 
-    .external-link-icon {
-        font-family: monospace;
+    .see-more {
+        margin-top: calc(var(--q) * 3);
+        text-align: right;
     }
 
-    /* Elsewhere */
-    .elsewhere {
-        margin-bottom: calc(var(--q) * 12);
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+        .grid {
+            grid-template-columns: 1fr 1fr;
+        }
+        .col:last-child {
+            grid-column: 1 / -1;
+        }
     }
 
-    /* Experience */
-    .experience {
-        margin-bottom: calc(var(--q) * 12);
-    }
-
-    .jobs {
-        display: flex;
-        flex-direction: column;
-        gap: calc(var(--q) * 6);
-    }
-
-    .job {
-        padding: calc(var(--q) * 4);
-        border: 1px solid var(--panel-border);
-        border-radius: var(--border-m);
-    }
-
-    .job h3 {
-        margin: 0;
-    }
-
-    .job > p:first-of-type {
-        margin: 0;
-        color: var(--text-muted);
-        font-size: 0.95rem;
-    }
-
-    .tenure {
-        font-style: italic;
-        color: var(--text-muted);
-        font-size: 0.9em;
-    }
-
-    .current-marker::before {
-        content: "\25CF";
-        color: var(--accent);
-        margin-right: 6px;
-        font-size: 0.7em;
-    }
-
-    /* Papers */
-    .papers {
-        margin-bottom: calc(var(--q) * 12);
-    }
-
-    @media (max-width: 768px) {
-        .columns {
+    @media (max-width: 600px) {
+        .hero {
+            height: 300px;
+        }
+        .intro-row {
             grid-template-columns: 1fr;
-            gap: calc(var(--q) * 8);
+            gap: calc(var(--q) * 4);
+        }
+        .grid {
+            grid-template-columns: 1fr;
+        }
+        .col:last-child {
+            grid-column: auto;
         }
     }
 </style>

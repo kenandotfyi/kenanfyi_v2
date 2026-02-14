@@ -9,10 +9,10 @@ const { id } = Astro.props;
 const backlinks = await getBacklinks(id);
 ---
 
-<div class="backlinks">
-    <h3 class="backlinks-heading">Backlinks</h3>
-    {
-        backlinks.length > 0 ? (
+{
+    backlinks.length > 0 && (
+        <div class="backlinks">
+            <span class="backlinks-heading">Backlinks</span>
             <ul>
                 {backlinks.map((post) => (
                     <li>
@@ -22,41 +22,45 @@ const backlinks = await getBacklinks(id);
                     </li>
                 ))}
             </ul>
-        ) : (
-            <p>No backlinks!</p>
-        )
-    }
-</div>
+        </div>
+    )
+}
 
 <style>
     .backlinks {
+        margin-top: calc(var(--q) * 16);
+        padding: calc(var(--q) * 5) calc(var(--q) * 6);
+        border: 2px solid var(--accent-hover);
+        background: var(--bg-deep);
+        max-width: 65ch;
     }
 
-    .backlinks h2 {
-        font-size: 1rem;
-        margin-block-end: 1rem;
+    .backlinks-heading {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--accent);
+        margin-bottom: calc(var(--q) * 3);
     }
 
     .backlinks ul {
         list-style: none;
         padding: 0;
         margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--q) * 2);
     }
 
-    .backlinks li {
-        margin-block-end: 0.5rem;
+    .backlinks li a {
+        font-size: var(--text-sm);
+        color: var(--fg-secondary);
+        text-decoration-color: var(--border-default);
     }
 
-    .collection-tag {
-        font-size: 0.75rem;
-        color: var(--text-muted, #666);
-        margin-inline-start: 0.5rem;
-    }
-
-    .backlinks-heading {
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--text-muted);
+    .backlinks li a:hover {
+        color: var(--fg-bright);
     }
 </style>
