@@ -44,7 +44,7 @@
     --fg-bright: #dedede;
     --accent: #5a9080;
     --accent-hover: #406a60;
-    --accent-bright: #f0bc5a;
+    --accent-bright: #7ac3ad;
     --accent-subtle-bg: rgba(232, 164, 53, 0.07);
     --accent-hover-bg: rgba(255, 255, 255, 0.04);
     --green: #5ab87a;
@@ -103,7 +103,7 @@ html[data-theme="light"] {
     --fg-primary: #3d3328;
     --fg-bright: #1a1410;
     --accent: #b87d18;
-    --accent-dim: #9a6810;
+    --accent-hover: #9a6810;
     --accent-bright: #d49520;
     --accent-subtle-bg: rgba(184, 125, 24, 0.07);
     --accent-hover-bg: rgba(184, 125, 24, 0.13);
