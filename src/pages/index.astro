@@ -96,14 +96,6 @@ const links = await fetchLinks();
                     >
                         <Icon name="ph:mastodon-logo-duotone" size="22" />
                     </a>
-                    <a
-                        href="https://www.linkedin.com/in/kenanakinci/"
-                        target="_blank"
-                        rel="noopener"
-                        aria-label="LinkedIn"
-                    >
-                        <Icon name="ph:linkedin-logo-duotone" size="22" />
-                    </a>
                     <a href="mailto:hey@kenan.fyi" aria-label="Email">
                         <Icon name="ph:envelope-duotone" size="22" />
                     </a>
@@ -119,9 +111,18 @@ const links = await fetchLinks();
                 <div class="col-header">
                     <h2 class="section-heading">Thoughts</h2>
                     <div class="sort-controls">
-                        <button class="sort-btn active" data-list="thoughts" data-field="published">published</button>
+                        <span class="sort-label">sort by</span>
+                        <button
+                            class="sort-btn active"
+                            data-list="thoughts"
+                            data-field="published">published ↓</button
+                        >
                         <span class="sep">/</span>
-                        <button class="sort-btn" data-list="thoughts" data-field="updated">updated</button>
+                        <button
+                            class="sort-btn"
+                            data-list="thoughts"
+                            data-field="updated">updated ↓</button
+                        >
                     </div>
                 </div>
                 <div class="posts-list" id="thoughts-list">
@@ -138,7 +139,10 @@ const links = await fetchLinks();
                                 >
                                     <Icon name="ph:feather-duotone" size="16" />
                                     <span>{post.data.title}</span>
-                                    <PostBadge published={post.data.published} updated={post.data.updated} />
+                                    <PostBadge
+                                        published={post.data.published}
+                                        updated={post.data.updated}
+                                    />
                                 </a>
                             </article>
                         ))
@@ -150,9 +154,18 @@ const links = await fetchLinks();
                 <div class="col-header">
                     <h2 class="section-heading">Bits</h2>
                     <div class="sort-controls">
-                        <button class="sort-btn active" data-list="bits" data-field="published">published</button>
+                        <span class="sort-label">sort by</span>
+                        <button
+                            class="sort-btn active"
+                            data-list="bits"
+                            data-field="published">published ↓</button
+                        >
                         <span class="sep">/</span>
-                        <button class="sort-btn" data-list="bits" data-field="updated">updated</button>
+                        <button
+                            class="sort-btn"
+                            data-list="bits"
+                            data-field="updated">updated ↓</button
+                        >
                     </div>
                 </div>
                 <div class="posts-list" id="bits-list">
@@ -166,7 +179,9 @@ const links = await fetchLinks();
                                 <a href={`/bits/${post.id}`} class="post-title">
                                     <Icon name="ph:asterisk-fill" size="16" />
                                     <span>{post.data.title}</span>
-                                    <PostBadge published={post.data.published} />
+                                    <PostBadge
+                                        published={post.data.published}
+                                    />
                                 </a>
                             </article>
                         ))
@@ -348,6 +363,10 @@ const links = await fetchLinks();
         color: var(--accent);
         margin-top: 0;
         margin-bottom: 0;
+    }
+
+    .sort-label {
+        opacity: 0.5;
     }
 
     .sort-controls {
