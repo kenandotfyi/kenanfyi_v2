@@ -1,0 +1,55 @@
+---
+interface Props {
+    published: Date;
+    updated?: Date; //because bits don't have updated field
+}
+
+const { published, updated } = Astro.props;
+
+const now = new Date();
+const oneMonthAgo = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    now.getDate(),
+);
+
+// neverUpdate is like saying the updated is either equal to published which is the case for new posts
+// or it does not event exist. undefine can only be valid for bits, since they don't have updated field.
+// TODO: Add updated to bits too and correct the logic here.
+const neverUpdated =
+    updated === undefined || updated.getTime() === published.getTime();
+
+const isNew = neverUpdated && published >= oneMonthAgo;
+const isUpdated = !neverUpdated && updated! >= oneMonthAgo;
+
+const badge = isUpdated ? "UPDATED" : isNew ? "NEW" : null;
+---
+
+{
+    badge && (
+        <span class={`post-badge badge-${badge.toLowerCase()}`}>{badge}</span>
+    )
+}
+
+<style>
+    .post-badge {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        padding: 2px 4px;
+        line-height: 1;
+        align-self: center;
+    }
+
+    .badge-new {
+        color: var(--bg-raised);
+        background-color: var(--green);
+        border: 1px solid var(--green-dim);
+    }
+
+    .badge-updated {
+        color: white;
+        background-color: var(--red);
+        border: 1px solid var(--red-dim);
+    }
+</style>
