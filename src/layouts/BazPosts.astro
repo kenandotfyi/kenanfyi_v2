@@ -3,10 +3,22 @@ import Banner from "../components/Banner.astro";
 import Baz from "./Baz.astro";
 import Backlinks from "../components/Backlinks.astro";
 import Panels from "../components/Panels.svelte";
+import { Icon } from "astro-icon/components";
 import "../styles/global.css";
 import { generateOgImage } from "../lib/generate-og";
 
 const { frontmatter, minutes } = Astro.props;
+
+const published: Date = frontmatter.data.published;
+const updated: Date | undefined = (frontmatter.data as any).updated;
+const lastRelevantDate =
+    updated && updated.getTime() !== published.getTime() ? updated : published;
+const oneYearAgo = new Date(
+    new Date().getFullYear() - 1,
+    new Date().getMonth(),
+    new Date().getDate(),
+);
+const isStale = lastRelevantDate < oneYearAgo;
 
 const ogImage = await generateOgImage({
     title: frontmatter.data.title,
@@ -27,6 +39,17 @@ const ogImage = await generateOgImage({
             minutes={minutes}
             collection={frontmatter.collection}
         />
+        {
+            isStale && (
+                <div class="stale-notice">
+                    <Icon name="ph:hourglass-duotone" size="16" />
+                    <span>
+                        This post is over a year old. So, behold the wisdom
+                        within!
+                    </span>
+                </div>
+            )
+        }
         <article class="post-body">
             <slot />
         </article>
@@ -40,6 +63,26 @@ const ogImage = await generateOgImage({
     .post-container {
         max-width: calc(65ch + 3ch + 35ch);
         margin: 0 auto;
+    }
+
+    .stale-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        margin: 1.5rem 0;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--accent-bright);
+        background: var(--bg-surface);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--fg-secondary);
+        max-width: fit-content;
+    }
+
+    .stale-notice :global(svg) {
+        flex-shrink: 0;
+        margin-top: 1px;
+        opacity: 0.7;
     }
 
     .post-body {
