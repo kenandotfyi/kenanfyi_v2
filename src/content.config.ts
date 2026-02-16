@@ -8,6 +8,7 @@ const bits = defineCollection({
     title: z.string(),
     description: z.string(),
     published: z.date(),
+    updated: z.coerce.date(),
     tags: z.union([
       z.array(z.string()),
       z.string().transform(s => s.split(',').map(t => t.trim())),
