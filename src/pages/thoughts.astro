@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Baz from "../layouts/Baz.astro";
 import { Icon } from "astro-icon/components";
+import PostBadge from "../components/PostBadge.astro";
 
 const allThoughts = await getCollection(
     "thoughts",
@@ -21,6 +22,22 @@ const postsByYear = allThoughts.reduce(
     {},
 );
 const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
+
+const sortedByUpdated = [...allThoughts].sort(
+    (a: any, b: any) => b.data.updated - a.data.updated,
+);
+const postsByUpdatedYear = sortedByUpdated.reduce(
+    (acc: Record<string, typeof allThoughts>, post) => {
+        const year = post.data.updated.getFullYear().toString();
+        if (!acc[year]) acc[year] = [];
+        acc[year].push(post);
+        return acc;
+    },
+    {},
+);
+const updatedYears = Object.keys(postsByUpdatedYear).sort(
+    (a, b) => Number(b) - Number(a),
+);
 ---
 
 <Baz pageTitle={pageTitle} wide>
@@ -32,41 +49,115 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
     </div>
 
     <div class="content-section">
+        <div class="sort-controls">
+            <span class="sort-label">sort by</span>
+            <button class="sort-btn active" data-field="published"
+                >published</button
+            >
+            <span class="sep">/</span>
+            <button class="sort-btn" data-field="updated">updated</button>
+        </div>
+
         <div class="posts-list">
-            {
-                years.map((year) => (
-                    <>
-                        <div class="year-header">{year}</div>
-                        {postsByYear[year].map((post) => (
-                            <a href={`${post.id}`} class="post-item">
-                                <time class="post-date">
-                                    {post.data.published.toLocaleDateString(
-                                        "en-US",
-                                        { day: "2-digit", month: "short" },
-                                    )}
-                                </time>
-                                <div class="post-content">
-                                    <span class="title-text">
-                                        <span class="title-icon">
-                                            <Icon
-                                                name="ph:feather-duotone"
-                                                size="20"
+            <div class="sort-view sort-view-published">
+                {
+                    years.map((year) => (
+                        <>
+                            <div class="year-header">in {year}</div>
+                            {postsByYear[year].map((post) => (
+                                <a href={`${post.id}`} class="post-item">
+                                    <time class="post-date">
+                                        {post.data.published.toLocaleDateString(
+                                            "en-US",
+                                            { day: "2-digit", month: "short" },
+                                        )}
+                                    </time>
+                                    <div class="post-content">
+                                        <span class="title-text">
+                                            <span class="title-icon">
+                                                <Icon
+                                                    name="ph:feather-duotone"
+                                                    size="20"
+                                                />
+                                            </span>
+                                            {post.data.title}
+                                            <PostBadge
+                                                published={post.data.published}
+                                                updated={post.data.updated}
                                             />
                                         </span>
-                                        {post.data.title}
-                                    </span>
-                                    <div class="post-description">
-                                        {post.data.description}
+                                        <div class="post-description">
+                                            {post.data.description.toLowerCase()}
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
-                        ))}
-                    </>
-                ))
-            }
+                                </a>
+                            ))}
+                        </>
+                    ))
+                }
+            </div>
+
+            <div class="sort-view sort-view-updated">
+                {
+                    updatedYears.map((year) => (
+                        <>
+                            <div class="year-header">in {year}</div>
+                            {postsByUpdatedYear[year].map((post) => (
+                                <a href={`${post.id}`} class="post-item">
+                                    <time class="post-date">
+                                        {post.data.updated.toLocaleDateString(
+                                            "en-US",
+                                            { day: "2-digit", month: "short" },
+                                        )}
+                                    </time>
+                                    <div class="post-content">
+                                        <span class="title-text">
+                                            <span class="title-icon">
+                                                <Icon
+                                                    name="ph:feather-duotone"
+                                                    size="20"
+                                                />
+                                            </span>
+                                            {post.data.title}
+                                            <PostBadge
+                                                published={post.data.published}
+                                                updated={post.data.updated}
+                                            />
+                                        </span>
+                                        <div class="post-description">
+                                            {post.data.description.toLowerCase()}
+                                        </div>
+                                    </div>
+                                </a>
+                            ))}
+                        </>
+                    ))
+                }
+            </div>
         </div>
     </div>
 </Baz>
+
+<script>
+    const btns = document.querySelectorAll<HTMLButtonElement>(".sort-btn");
+    const publishedView = document.querySelector<HTMLElement>(
+        ".sort-view-published",
+    );
+    const updatedView =
+        document.querySelector<HTMLElement>(".sort-view-updated");
+
+    btns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const field = btn.dataset.field;
+            btns.forEach((b) =>
+                b.classList.toggle("active", b.dataset.field === field),
+            );
+            publishedView!.style.display =
+                field === "published" ? "block" : "none";
+            updatedView!.style.display = field === "updated" ? "block" : "none";
+        });
+    });
+</script>
 
 <style>
     .hero-section {
@@ -103,6 +194,49 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
     .content-section {
         margin-left: calc(50% - 50vw);
         margin-right: calc(50% - 50vw);
+    }
+
+    .sort-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.5rem 4vw;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    .sort-label {
+        opacity: 0.5;
+    }
+
+    .sep {
+        opacity: 0.3;
+    }
+
+    .sort-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        padding: 0;
+        letter-spacing: 0.05em;
+        opacity: 0.5;
+    }
+
+    .sort-btn.active {
+        color: var(--accent);
+        opacity: 1;
+    }
+
+    .sort-btn:hover:not(.active) {
+        opacity: 1;
+    }
+
+    .sort-view-updated {
+        display: none;
     }
 
     .posts-list {

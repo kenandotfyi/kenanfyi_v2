@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Baz from "../layouts/Baz.astro";
 import { Icon } from "astro-icon/components";
+import PostBadge from "../components/PostBadge.astro";
 
 const pageTitle = "index";
 
@@ -115,17 +116,29 @@ const links = await fetchLinks();
 
         <div class="grid">
             <section class="col">
-                <h2 class="section-heading">Thoughts</h2>
-                <div class="posts-list">
+                <div class="col-header">
+                    <h2 class="section-heading">Thoughts</h2>
+                    <div class="sort-controls">
+                        <button class="sort-btn active" data-list="thoughts" data-field="published">published</button>
+                        <span class="sep">/</span>
+                        <button class="sort-btn" data-list="thoughts" data-field="updated">updated</button>
+                    </div>
+                </div>
+                <div class="posts-list" id="thoughts-list">
                     {
                         allThoughts.map((post) => (
-                            <article class="post-item">
+                            <article
+                                class="post-item"
+                                data-published={post.data.published.toISOString()}
+                                data-updated={post.data.updated.toISOString()}
+                            >
                                 <a
                                     href={`/thoughts/${post.id}`}
                                     class="post-title"
                                 >
                                     <Icon name="ph:feather-duotone" size="16" />
                                     <span>{post.data.title}</span>
+                                    <PostBadge published={post.data.published} updated={post.data.updated} />
                                 </a>
                             </article>
                         ))
@@ -134,14 +147,26 @@ const links = await fetchLinks();
             </section>
 
             <section class="col">
-                <h2 class="section-heading">Bits</h2>
-                <div class="posts-list">
+                <div class="col-header">
+                    <h2 class="section-heading">Bits</h2>
+                    <div class="sort-controls">
+                        <button class="sort-btn active" data-list="bits" data-field="published">published</button>
+                        <span class="sep">/</span>
+                        <button class="sort-btn" data-list="bits" data-field="updated">updated</button>
+                    </div>
+                </div>
+                <div class="posts-list" id="bits-list">
                     {
                         allBits.map((post) => (
-                            <article class="post-item">
+                            <article
+                                class="post-item"
+                                data-published={post.data.published.toISOString()}
+                                data-updated={post.data.published.toISOString()}
+                            >
                                 <a href={`/bits/${post.id}`} class="post-title">
                                     <Icon name="ph:asterisk-fill" size="16" />
                                     <span>{post.data.title}</span>
+                                    <PostBadge published={post.data.published} />
                                 </a>
                             </article>
                         ))
@@ -175,6 +200,36 @@ const links = await fetchLinks();
         </div>
     </div>
 </Baz>
+
+<script>
+    document.querySelectorAll<HTMLButtonElement>(".sort-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const listId = btn.dataset.list + "-list";
+            const field = btn.dataset.field as "published" | "updated";
+            const list = document.getElementById(listId);
+            if (!list) return;
+
+            // Update active state only within this column's buttons
+            document
+                .querySelectorAll<HTMLButtonElement>(
+                    `.sort-btn[data-list="${btn.dataset.list}"]`,
+                )
+                .forEach((b) =>
+                    b.classList.toggle("active", b.dataset.field === field),
+                );
+
+            const items = Array.from(
+                list.querySelectorAll<HTMLElement>("article.post-item"),
+            );
+            items.sort(
+                (a, b) =>
+                    new Date(b.dataset[field]!).getTime() -
+                    new Date(a.dataset[field]!).getTime(),
+            );
+            items.forEach((item) => list.appendChild(item));
+        });
+    });
+</script>
 
 <style>
     .home {
@@ -277,6 +332,14 @@ const links = await fetchLinks();
         margin-bottom: calc(var(--q) * 16);
     }
 
+    .col-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: calc(var(--q) * 4);
+    }
+
     .section-heading {
         font-family: var(--font-mono);
         font-size: var(--text-base);
@@ -284,13 +347,46 @@ const links = await fetchLinks();
         letter-spacing: 0.1em;
         color: var(--accent);
         margin-top: 0;
-        margin-bottom: calc(var(--q) * 4);
+        margin-bottom: 0;
+    }
+
+    .sort-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: var(--text-muted);
+    }
+
+    .sep {
+        opacity: 0.3;
+    }
+
+    .sort-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        padding: 0;
+        letter-spacing: 0.04em;
+        opacity: 0.5;
+    }
+
+    .sort-btn.active {
+        color: var(--accent);
+        opacity: 1;
+    }
+
+    .sort-btn:hover:not(.active) {
+        opacity: 1;
     }
 
     .posts-list {
         display: flex;
         flex-direction: column;
-        gap: calc(var(--q) * 1);
     }
 
     .post-title {
