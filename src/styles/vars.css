@@ -42,15 +42,15 @@
     --fg-secondary: #808080;
     --fg-primary: #bebebe;
     --fg-bright: #dedede;
-    --accent: #e8a435;
-    --accent-dim: #c48820;
+    --accent: #5a9080;
+    --accent-hover: #406a60;
     --accent-bright: #f0bc5a;
     --accent-subtle-bg: rgba(232, 164, 53, 0.07);
     --accent-hover-bg: rgba(255, 255, 255, 0.04);
     --green: #5ab87a;
     --green-dim: #3d8a58;
-    --red: #5a9080;
-    --red-dim: #406a60;
+    --red: #b84838;
+    --red-dim: #943828;
     --blue: #5a90c0;
     --blue-dim: #406888;
     --code-bg: #090909;
@@ -67,8 +67,7 @@
     --panel-border: #282828;
 
     /* Accent */
-    --accent: #5a9080;
-    --accent-hover: #406a60;
+
 
     /* Surfaces */
     --surface: #f0efeb;
