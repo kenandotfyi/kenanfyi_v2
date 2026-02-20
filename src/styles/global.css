@@ -8,7 +8,7 @@
 }
 
 ::selection {
-    background: var(--red);
+    background: var(--accent-hover);
     color: white;
 }
 
@@ -46,7 +46,7 @@ h6 {
     font-size: var(--text-xl);
     margin-bottom: 12px;
     margin-top: 24px;
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     font-weight: 400;
 }
 
@@ -59,6 +59,7 @@ blockquote {
     padding-left: 1rem;
     padding-bottom: 0.5rem;
     padding-top: 0.5rem;
+    padding-right: 0.5rem;
     background-color: var(--bg-surface);
     margin-bottom: 16px;
 
@@ -74,15 +75,14 @@ a {
     color: var(--fg-bright);
     text-decoration: underline;
     text-decoration-style: dotted;
-    text-decoration-color: var(--red);
-    text-decoration-thickness: 2px;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
     text-underline-offset: 3px;
     transition: color 0.2s ease;
 }
 
 a:hover {
-    color: var(--red);
-    background-color: var(--accent-hover-bg);
+    color: var(--accent-hover);
 }
 
 a.external-link::after {

@@ -1,3 +1,11 @@
+@font-face {
+    font-family: "Satoshi";
+    src: url("/fonts/Satoshi-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
 
     /* scales */
@@ -12,9 +20,20 @@
     --space-16: 4rem;
 
 
-    --font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
-    --font-sans: 'IBM Plex Sans', 'Inter', system-ui, -apple-system, sans-serif;
-    --font-serif: 'IBM Plex Serif', 'Georgia', serif;
+    --font-mono: 'IBM Plex Mono',
+        'JetBrains Mono',
+        'Fira Code',
+        ui-monospace,
+        monospace;
+    --font-sans: 'IBM Plex Sans',
+        'Inter',
+        system-ui,
+        -apple-system,
+        sans-serif;
+
+    --font-display: 'Satoshi',
+        sans-serif;
+
 
 
     /* text sizes */
@@ -55,8 +74,10 @@
     --blue-dim: #406888;
     --code-bg: #090909;
     --selection: rgba(232, 164, 53, 0.20);
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.25);
-    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.35);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4),
+        0 4px 12px rgba(0, 0, 0, 0.25);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5),
+        0 12px 32px rgba(0, 0, 0, 0.35);
 
 
     /* Core */
@@ -102,9 +123,9 @@ html[data-theme="light"] {
     --fg-secondary: #6e6354;
     --fg-primary: #3d3328;
     --fg-bright: #1a1410;
-    --accent: #b87d18;
-    --accent-hover: #9a6810;
-    --accent-bright: #d49520;
+    --accent: #b84838;
+    --accent-hover: #943828;
+    --accent-bright: #d24f41;
     --accent-subtle-bg: rgba(184, 125, 24, 0.07);
     --accent-hover-bg: rgba(184, 125, 24, 0.13);
     --green: #3a8855;
