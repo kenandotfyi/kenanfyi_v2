@@ -135,6 +135,16 @@ mark.hl {
     color: white;
 }
 
+ol.quest-list>li {
+    font-weight: bold;
+    color: var(--accent-hover);
+}
+
+pre,
+code {
+    font-family: var(--font-mono);
+}
+
 @media (max-width: 768px) {
     body {
         padding-left: calc(var(--q) * 4);
