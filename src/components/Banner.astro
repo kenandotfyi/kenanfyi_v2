@@ -39,14 +39,20 @@ const isStale = lastRelevantDate < oneYearAgo;
                     </span>
                 )
             }
-            <span>{formatDate(metadata.published)}</span>
+            <span>{formatDate(published)}</span>
             <span class="sep-icon">
                 <Icon name="ph:dot-duotone" size="28" />
             </span>
-            <span>UPDATE: {formatDate(metadata.updated)}</span>
-            <span class="sep-icon">
-                <Icon name="ph:dot-duotone" size="28" />
-            </span>
+            {
+                updated && updated.getTime() !== published.getTime() && (
+                    <>
+                        <span>UPDATE: {formatDate(updated)}</span>
+                        <span class="sep-icon">
+                            <Icon name="ph:dot-duotone" size="28" />
+                        </span>
+                    </>
+                )
+            }
             <span>{metadata.tags.join(", ")}</span>
         </div>
         <div>
