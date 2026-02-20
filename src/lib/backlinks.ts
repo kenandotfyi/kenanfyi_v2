@@ -57,7 +57,7 @@ async function buildBacklinksMap(): Promise<Map<string, Post[]>> {
 function extractInternalLinks(markdown: string, validPaths: Set<string>): string[] {
   const ids: string[] = [];
 
-  // Match markdown links: [text](/thoughts/some-id) or [text](/bits/some-id/) etc.
+  // Match markdown links: [text](/thoughts/slug) or [text](/bits/slug/) etc.
   const linkPattern = /\[.*?\]\(\/(thoughts|bits)\/([a-z0-9-]+)\/?(?:#[^\)]+)?\)/gi;
 
   let match;

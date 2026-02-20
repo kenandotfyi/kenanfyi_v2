@@ -1,5 +1,6 @@
 ---
 import { getBacklinks } from "../lib/backlinks.ts";
+import { Icon } from "astro-icon/components";
 
 interface Props {
     id: string;
@@ -12,7 +13,12 @@ const backlinks = await getBacklinks(id);
 {
     backlinks.length > 0 && (
         <div class="backlinks">
-            <span class="backlinks-heading">Backlinks</span>
+            <div class="backlinks-label">
+                <span class="backlinks-heading">
+                    <Icon name="ph:graph-duotone" size="20" />
+                    Backlinks
+                </span>
+            </div>
             <ul>
                 {backlinks.map((post) => (
                     <li>
@@ -28,21 +34,28 @@ const backlinks = await getBacklinks(id);
 
 <style>
     .backlinks {
-        margin-top: calc(var(--q) * 16);
-        padding: calc(var(--q) * 5) calc(var(--q) * 6);
-        border: 2px solid var(--accent-hover);
-        background: var(--bg-deep);
+        display: flex;
+        flex-direction: column;
+        border-top: 1px dotted var(--accent-hover);
+        border-bottom: 1px dotted var(--accent-hover);
+        padding-bottom: calc(var(--q) * 2);
         max-width: 65ch;
     }
 
+    .backlinks-label {
+        flex-shrink: 0;
+    }
+
     .backlinks-heading {
-        display: block;
+        display: flex;
+        padding-top: calc(var(--q) * 2);
+        gap: 4px;
         font-family: var(--font-mono);
         font-size: var(--text-sm);
+        color: var(--text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: var(--accent);
-        margin-bottom: calc(var(--q) * 3);
+        letter-spacing: 0.1em;
+        white-space: nowrap;
     }
 
     .backlinks ul {
@@ -51,7 +64,6 @@ const backlinks = await getBacklinks(id);
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: calc(var(--q) * 2);
     }
 
     .backlinks li a {
@@ -61,6 +73,6 @@ const backlinks = await getBacklinks(id);
     }
 
     .backlinks li a:hover {
-        color: var(--fg-bright);
+        color: var(--accent-hover);
     }
 </style>
