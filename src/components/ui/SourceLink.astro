@@ -1,0 +1,125 @@
+---
+import { Icon } from "astro-icon/components";
+
+type LinkType =
+    | "pdf"
+    | "book"
+    | "wiki"
+    | "ieee"
+    | "arxiv"
+    | "github"
+    | "youtube"
+    | "mastodon";
+
+interface Props {
+    href: string;
+    title: string;
+    subtitle?: string;
+    type: LinkType;
+}
+
+const { href, title, subtitle, type } = Astro.props;
+
+const iconMap: Record<LinkType, string> = {
+    pdf: "ph:file-pdf-duotone",
+    book: "ph:book-open-duotone",
+    wiki: "simple-icons:wikipedia",
+    ieee: "simple-icons:ieee",
+    arxiv: "simple-icons:arxiv",
+    github: "ph:github-logo-duotone",
+    youtube: "ph:youtube-logo-duotone",
+    mastodon: "ph:mastodon-logo-duotone",
+};
+---
+
+<div class={`source-link source-link--${type}`}>
+    <span class="source-icon">
+        <Icon name={iconMap[type]} size="16" />
+    </span>
+    <span class="source-content">
+        <a
+            href={href}
+            class="source-title"
+            target="_blank"
+            rel="noopener noreferrer">{title}</a
+        >
+        {subtitle && <span class="source-subtitle">{subtitle}</span>}
+    </span>
+</div>
+<style>
+    .source-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .source-title {
+        font-size: 0.9rem;
+    }
+
+    .source-subtitle {
+        font-size: 0.65rem;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        opacity: 0.5;
+    }
+
+    .source-link {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding-left: calc(var(--q) * 2);
+    }
+
+    .source-link:first-child {
+        border-top: 1px dotted var(--border-default);
+        padding-top: calc(var(--q) * 2);
+    }
+
+    .source-link:last-child {
+        margin-bottom: calc(var(--q) * 4);
+        padding-bottom: calc(var(--q) * 2);
+        border-bottom: 1px dotted var(--border-default);
+    }
+
+    .source-icon {
+        display: flex;
+        flex-shrink: 0;
+        padding-top: 5px;
+        filter: grayscale(1);
+        opacity: 0.7;
+        transition:
+            filter 0.2s ease,
+            opacity 0.2s ease;
+    }
+
+    .source-link:hover .source-icon {
+        filter: grayscale(0);
+        opacity: 1;
+    }
+
+    /* Per-type icon accent colors */
+    .source-link--pdf .source-icon {
+        color: #e05252;
+    }
+    .source-link--book .source-icon {
+        color: var(--fg-secondary);
+    }
+    .source-link--wiki .source-icon {
+        color: var(--fg-secondary);
+    }
+    .source-link--ieee .source-icon {
+        color: #0077b6;
+    }
+    .source-link--arxiv .source-icon {
+        color: #b31b1b;
+    }
+    .source-link--github .source-icon {
+        color: var(--fg-secondary);
+    }
+    .source-link--youtube .source-icon {
+        color: #e05252;
+    }
+    .source-link--mastodon .source-icon {
+        color: #6364ff;
+    }
+</style>

@@ -1,0 +1,36 @@
+---
+interface Props {
+    label?: string;
+}
+
+const { label } = Astro.props;
+---
+
+<div class="references">
+    {label && <span class="references-label">{label}</span>}
+    <div class="references-list">
+        <slot />
+    </div>
+</div>
+
+<style>
+    .references {
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--q) * 2);
+    }
+
+    .references-label {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        opacity: 0.6;
+    }
+
+    .references-list {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
