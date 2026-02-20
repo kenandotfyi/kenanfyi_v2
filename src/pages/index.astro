@@ -177,7 +177,7 @@ const links = await fetchLinks();
                                 data-updated={post.data.published.toISOString()}
                             >
                                 <a href={`/bits/${post.id}`} class="post-title">
-                                    <Icon name="ph:asterisk-fill" size="16" />
+                                    <Icon name="ph:code-duotone" size="16" />
                                     <span>{post.data.title}</span>
                                     <PostBadge
                                         published={post.data.published}
@@ -190,7 +190,9 @@ const links = await fetchLinks();
             </section>
 
             <section class="col col-bookmarks">
-                <h2 class="section-heading">Bookmarks</h2>
+                <div class="col-header">
+                    <h2 class="section-heading">Bookmarks</h2>
+                </div>
                 <div class="posts-list">
                     {
                         links.items.map((item: RaindropItem) => (
@@ -201,7 +203,7 @@ const links = await fetchLinks();
                                     class="post-title"
                                 >
                                     <Icon
-                                        name="ph:bookmark-duotone"
+                                        name="ph:bookmarks-duotone"
                                         size="16"
                                     />
                                     <span>{item.title}</span>
@@ -275,7 +277,7 @@ const links = await fetchLinks();
     .hero-name {
         font-size: clamp(1.5rem, 3vw, 2.5rem);
         font-weight: 400;
-        color: var(--red);
+        color: var(--accent);
         margin: 0 0 calc(var(--q) * 2);
         line-height: 1.1;
     }
@@ -421,8 +423,8 @@ const links = await fetchLinks();
     .post-title span {
         text-decoration: underline;
         text-decoration-style: dotted;
-        text-decoration-color: var(--red);
-        text-decoration-thickness: 2px;
+        text-decoration-color: var(--accent);
+        text-decoration-thickness: 1px;
         text-underline-offset: 3px;
     }
 

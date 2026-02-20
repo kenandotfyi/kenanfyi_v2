@@ -12,8 +12,12 @@ const isActive = (href: string) => {
 
 <nav class="top-nav">
     <ul class="nav-links">
-        <li><a href="/" class="nav-link home">kenan.fyi</a></li>
-        <li><Icon name="ph:dot-duotone" size="20" /></li>
+        <li>
+            <a href="/" class="nav-logo"
+                ><img src="/logo.svg" alt="kenan.fyi" width="32" /></a
+            >
+        </li>
+        <li class="nav-sep"><Icon name="ph:dot-duotone" size="20" /></li>
         <li>
             <a
                 href="/thoughts/"
@@ -104,36 +108,29 @@ const isActive = (href: string) => {
         margin-bottom: 1rem;
     }
 
-    .site-name {
-        display: inline-flex;
-        text-decoration: none;
-        flex-shrink: 0;
-        font-size: 1rem;
-        letter-spacing: -0.02em;
-        margin-right: 0.5rem;
-    }
+    .nav-logo {
+        display: flex;
+        align-items: center;
+        line-height: 1.2;
 
-    .site-name:hover span {
-        opacity: 0.75;
-    }
-
-    .site-name img {
-        display: block;
+        & img {
+            display: block;
+        }
     }
 
     .nav-links {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 4px;
         flex: 1;
         list-style: none;
         margin: 0;
         padding: 0;
-    }
 
-    .nav-links :global(svg) {
-        display: block;
+        & :global(svg) {
+            display: block;
+        }
     }
 
     .nav-right {
@@ -145,23 +142,21 @@ const isActive = (href: string) => {
     }
 
     .nav-link {
+        font-weight: 700;
+        line-height: 1.5;
         text-decoration: none;
         text-transform: lowercase;
         transition: color 0.2s ease;
         white-space: nowrap;
-    }
 
-    .nav-link:hover {
-        color: var(--accent-hover);
-        background: unset;
+        & :hover {
+            color: var(--accent-hover);
+            background: unset;
+        }
     }
 
     .nav-link.active {
         color: var(--accent);
-    }
-
-    .home {
-        font-weight: 700;
     }
 
     .theme-toggle {
@@ -174,10 +169,10 @@ const isActive = (href: string) => {
         cursor: pointer;
         transition: color 0.2s ease;
         line-height: 0;
-    }
 
-    .theme-toggle:hover {
-        color: var(--accent);
+        & :hover {
+            color: var(--accent);
+        }
     }
 
     /* in dark mode: show sun (click to go light), hide moon */

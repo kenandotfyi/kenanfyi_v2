@@ -3,22 +3,10 @@ import Banner from "../components/Banner.astro";
 import Baz from "./Baz.astro";
 import Backlinks from "../components/Backlinks.astro";
 import Panels from "../components/Panels.svelte";
-import { Icon } from "astro-icon/components";
 import "../styles/global.css";
 import { generateOgImage } from "../lib/generate-og";
 
 const { frontmatter, minutes } = Astro.props;
-
-const published: Date = frontmatter.data.published;
-const updated: Date | undefined = (frontmatter.data as any).updated;
-const lastRelevantDate =
-    updated && updated.getTime() !== published.getTime() ? updated : published;
-const oneYearAgo = new Date(
-    new Date().getFullYear() - 1,
-    new Date().getMonth(),
-    new Date().getDate(),
-);
-const isStale = lastRelevantDate < oneYearAgo;
 
 const ogImage = await generateOgImage({
     title: frontmatter.data.title,
@@ -39,17 +27,6 @@ const ogImage = await generateOgImage({
             minutes={minutes}
             collection={frontmatter.collection}
         />
-        {
-            isStale && (
-                <div class="stale-notice">
-                    <Icon name="ph:hourglass-duotone" size="16" />
-                    <span>
-                        This post is over a year old. So, behold the wisdom
-                        within!
-                    </span>
-                </div>
-            )
-        }
         <article class="post-body">
             <slot />
         </article>
@@ -58,6 +35,102 @@ const ogImage = await generateOgImage({
     <Panels client:load slot="panels-outside-main" />
 </Baz>
 
+<script>
+    const DESKTOP_BREAKPOINT = 1050;
+
+    // Resolve a CSS custom property to its computed value
+    function cssVar(name: string): string {
+        return getComputedStyle(document.documentElement)
+            .getPropertyValue(name)
+            .trim();
+    }
+
+    // Lazily create one shared SVG overlay for all arrows
+    function getOrCreateOverlay(): SVGSVGElement {
+        let svg = document.getElementById(
+            "sidenote-arrow-overlay",
+        ) as SVGSVGElement | null;
+        if (svg) return svg;
+
+        svg = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg",
+        ) as SVGSVGElement;
+        svg.id = "sidenote-arrow-overlay";
+        svg.style.cssText =
+            "position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;";
+
+        document.body.appendChild(svg);
+        return svg;
+    }
+
+    function showArrow(sidenote: Element) {
+        if (window.innerWidth <= DESKTOP_BREAKPOINT) return;
+
+        const number = sidenote.previousElementSibling;
+        if (!number?.classList.contains("sidenote-number")) return;
+
+        const noteRect = sidenote.getBoundingClientRect();
+        const numRect = number.getBoundingClientRect();
+
+        // Start: left-center of sidenote; End: right-center of number
+        const x1 = noteRect.left - 4;
+        const y1 = noteRect.top + noteRect.height / 2;
+        const x2 = numRect.left + numRect.width / 2;
+
+        // Horizontal leg runs through the inter-line gap just below the number's text line.
+        // The vertical leg on the sidenote side stays in the margin (not over body text).
+        const yBelow = numRect.bottom + 6;
+
+        const accent = cssVar("--accent");
+
+        const svg = getOrCreateOverlay();
+
+        // Reuse or create the path element
+        let path = svg.querySelector("#sn-arrow-path") as SVGPathElement | null;
+        if (!path) {
+            path = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "path",
+            ) as SVGPathElement;
+            path.id = "sn-arrow-path";
+            path.setAttribute("fill", "none");
+            svg.appendChild(path);
+        }
+
+        path.setAttribute("d", `M${x1},${y1} V${yBelow} H${x2}`);
+        path.setAttribute("stroke", accent);
+        path.setAttribute("stroke-width", "1.5");
+        path.removeAttribute("stroke-dasharray");
+        path.setAttribute("opacity", "1");
+        svg.style.display = "block";
+    }
+
+    function hideArrow() {
+        const svg = document.getElementById("sidenote-arrow-overlay");
+        if (svg) svg.style.display = "none";
+    }
+
+    let activeSidenote: Element | null = null;
+
+    function onScroll() {
+        if (activeSidenote) showArrow(activeSidenote);
+    }
+
+    document.querySelectorAll(".sidenote").forEach((sidenote) => {
+        sidenote.addEventListener("mouseenter", () => {
+            activeSidenote = sidenote;
+            showArrow(sidenote);
+            window.addEventListener("scroll", onScroll, { passive: true });
+        });
+        sidenote.addEventListener("mouseleave", () => {
+            activeSidenote = null;
+            hideArrow();
+            window.removeEventListener("scroll", onScroll);
+        });
+    });
+</script>
+
 <style>
     /* Centers the combined text (65ch) + gap (3ch) + sidenote (35ch) area */
     .post-container {
@@ -65,30 +138,15 @@ const ogImage = await generateOgImage({
         margin: 0 auto;
     }
 
-    .stale-notice {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.6rem;
-        margin: 1.5rem 0;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--accent-bright);
-        background: var(--bg-surface);
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        color: var(--fg-secondary);
-        max-width: fit-content;
-    }
-
-    .stale-notice :global(svg) {
-        flex-shrink: 0;
-        margin-top: 1px;
-        opacity: 0.7;
-    }
-
     .post-body {
         max-width: 65ch;
         position: relative;
         overflow: visible;
+    }
+
+    :global(.post-body img) {
+        width: 75ch;
+        max-width: calc(100vw - 2rem);
     }
 
     /* Desktop: float sidenotes into right margin */
@@ -104,12 +162,12 @@ const ogImage = await generateOgImage({
         position: relative;
     }
 
-    :global(.sidenote-number) {
+    :global(sup.sidenote-number a) {
         font-size: 0.75em;
-        vertical-align: super;
+        vertical-align: 10%;
+        text-decoration: none;
         color: var(--accent);
         margin: 0 1px;
-        cursor: default;
     }
 
     :global(.sidenote > sup) {
@@ -131,8 +189,19 @@ const ogImage = await generateOgImage({
         opacity: 0.4;
     }
 
+    :global(.post-body ul),
+    :global(.post-body ol) {
+        padding-left: 0;
+        margin-bottom: calc(var(--q) * 4);
+    }
+
     /* Mobile: sidenotes become inline blocks below the text */
     @media (max-width: 1050px) {
+        :global(.post-body ul),
+        :global(.post-body ol) {
+            padding-left: calc(var(--q) * 6);
+        }
+
         :global(.sidenote) {
             float: none;
             clear: both;

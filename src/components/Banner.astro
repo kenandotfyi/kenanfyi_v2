@@ -4,11 +4,22 @@ const { metadata, minutes, collection } = Astro.props;
 
 const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-US", {
-        year: "numeric",
+        year: "2-digit",
         month: "short",
         day: "numeric",
     });
 };
+
+const published: Date = metadata.published;
+const updated: Date | undefined = metadata.updated;
+const lastRelevantDate =
+    updated && updated.getTime() !== published.getTime() ? updated : published;
+const oneYearAgo = new Date(
+    new Date().getFullYear() - 1,
+    new Date().getMonth(),
+    new Date().getDate(),
+);
+const isStale = lastRelevantDate < oneYearAgo;
 ---
 
 <div class="banner">
@@ -18,44 +29,63 @@ const formatDate = (date: Date) => {
     </a>
     <div class="header-row">
         <div class="pubDate" id="pubDate">
+            {
+                isStale && (
+                    <span
+                        class="stale-icon"
+                        data-tooltip="Old post. Behold the wisdom within!"
+                    >
+                        <Icon name="ph:hourglass-medium-duotone" size="20" />
+                    </span>
+                )
+            }
             <span>{formatDate(metadata.published)}</span>
-            <span class="sep">/</span>
-            <span>{minutes}</span>
-            <span class="sep">/</span>
+            <span class="sep-icon">
+                <Icon name="ph:dot-duotone" size="28" />
+            </span>
+            <span>UPDATE: {formatDate(metadata.updated)}</span>
+            <span class="sep-icon">
+                <Icon name="ph:dot-duotone" size="28" />
+            </span>
             <span>{metadata.tags.join(", ")}</span>
         </div>
         <div>
             <h1 class="displayTitle exclude-from-panel">{metadata.title}</h1>
+            {
+                metadata.description && (
+                    <div>
+                        <span class="excerpt exclude-from-panel">
+                            {metadata.description} ~ <span>{minutes}</span>
+                        </span>
+                    </div>
+                )
+            }
         </div>
     </div>
-    {
-        metadata.description && (
-            <div>
-                <h3 class="excerpt exclude-from-panel">
-                    {metadata.description}
-                </h3>
-            </div>
-        )
-    }
 </div>
 
 <style>
     div.banner {
-        padding-bottom: calc(var(--q) * 16);
         margin-bottom: calc(var(--q) * 4);
         margin-top: calc(var(--q) * 8);
-        border-bottom: 1px dotted var(--border-subtle);
     }
 
     .header-row {
         display: flex;
         flex-direction: column;
+        margin-bottom: calc(var(--q) * 16);
     }
 
     h1.displayTitle {
-        font-size: 3rem;
+        font-family: var(--font-display);
+        font-size: 2.25rem;
+        font-weight: 700;
         text-wrap: balance;
-        line-height: 1.15;
+        line-height: 1.2;
+        letter-spacing: 0;
+        padding: 0;
+        margin-top: calc(var(--q) * 2);
+        margin-bottom: 0;
     }
 
     .excerpt {
@@ -63,6 +93,7 @@ const formatDate = (date: Date) => {
         font-weight: 400;
         font-family: var(--font-mono);
         font-size: 0.8rem;
+        text-transform: uppercase;
     }
 
     .back-button {
@@ -102,19 +133,65 @@ const formatDate = (date: Date) => {
     }
 
     .back-button:hover {
-        background: var(--red);
+        background: var(--accent-hover);
         color: white;
         padding-right: 10px;
     }
 
     div.pubDate {
+        display: flex;
+        align-items: center;
+        line-height: 1.2;
+        gap: 0.5rem;
         color: var(--text-muted);
         font-size: 0.85rem;
         margin-top: 12px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
     }
 
-    .sep {
-        margin: 0 6px;
-        opacity: 0.4;
+    .sep-icon {
+        display: flex;
+    }
+
+    .stale-icon {
+        color: var(--accent);
+        position: relative;
+        cursor: default;
+        display: flex;
+    }
+
+    .stale-icon::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: calc(100% + 6px);
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-default);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        line-height: 1.1;
+        padding: 4px 4px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+    }
+
+    .stale-icon:hover::after {
+        opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+        div.pubDate {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sep-icon {
+            display: none;
+        }
     }
 </style>

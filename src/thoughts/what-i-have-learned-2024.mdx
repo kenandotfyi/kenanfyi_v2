@@ -8,7 +8,8 @@ status: finished
 type: article
 tags: learning, indieweb, life
 ---
-
+import References from './src/components/ui/References.astro';
+import SourceLink from './src/components/ui/SourceLink.astro';
 
 As 2024 comes to an end, I wanted to reflect on the things that have happened this year in my life and I decided to write down the things I have learned instead of just giving a life update.
 
@@ -18,12 +19,14 @@ Here we go:
 <li>
 At work, I have learned a lot about resonant converters and how they work and what are the advantages and disadvantages of using them. Resources[^1] below are the ones I recommend to check out, if you are interested: 
 
-- [Resonant Power Converters](https://www.wiley.com/en-gb/Resonant+Power+Converters%2C+2nd+Edition-p-9780470905388) by Marian K. Kazimierczuk
-- Videos of Tim McRae on [YouTube](https://www.youtube.com/watch?v=nXwhJuNmGY0&list=PLEn13xdPyAYS-OQu9ax5OgxWCQFJyTMo1&index=21)
-- A comparison of half-bridge resonant converter topologies, Steigerwald [IEEE](https://ieeexplore.ieee.org/document/4347)
-- Survey of Resonant Converter Topologies, especially the White Paper [Texas Instruments](https://www.ti.com/video/series/survey-of-resonant-converter-topologies.html)
-- Equivalent circuit models for resonant and PWM switches, V. Vorperian; R. Tymerski; F.C.Y. Lee [IEEE](https://ieeexplore.ieee.org/document/24905)
-- Design of a Bidirectional CL3C Full-Bridge Resonant Converter for Battery Energy Storage Systems, Y. Yan, Y. Chang, Z. Peng [MDPI](https://www.mdpi.com/1996-1073/15/2/412?type=check_update&version=2)
+<References>
+<SourceLink type="book" href="https://www.wiley.com/en-gb/Resonant+Power+Converters%2C+2nd+Edition-p-9780470905388" title="Resonant Power Converters" subtitle=" Marian K. Kazimierczuk, 2nd Edition" />
+<SourceLink type="youtube" href="https://www.youtube.com/watch?v=nXwhJuNmGY0&list=PLEn13xdPyAYS-OQu9ax5OgxWCQFJyTMo1&index=21" title="Tim McRae" />
+<SourceLink type="pdf" href="https://www.ti.com/seclit/ml/slup376/slup376.pdf" title="Survey of Resonant Converter Topologies" subtitle="Texas Instruments, slup376.pdf" />
+<SourceLink type="ieee" href="https://ieeexplore.ieee.org/document/4347" title="A comparison of half-bridge resonant converter topologies" subtitle="Steigerwald, IEEE Transactions on Power Electronics (Volume: 3, Issue: 2, April 1988)"/>
+<SourceLink type="ieee" href="https://ieeexplore.ieee.org/document/24905" title="Equivalent circuit models for resonant and PWM switches" subtitle="V. Vorperian; R. Tymerski; F.C.Y. Lee, IEEE Transactions on Power Electronics (Volume: 4, Issue: 2, April 1989) " />
+<SourceLink type="pdf" href="https://www.mdpi.com/1996-1073/15/2/412?type=check_update&version=2" title="Design of a Bidirectional CL3C Full-Bridge Resonant Converter for Battery Energy Storage Systems" subtitle="Y. Yan, Y. Chang, Z. Peng, Energies 2022, 15, 412" />
+</References>
 
 </li>
 

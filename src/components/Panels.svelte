@@ -219,6 +219,7 @@
 
             const pubDateEl = tmp.querySelector("#pubDate");
             const metaHTML = pubDateEl ? pubDateEl.innerHTML : null;
+            metaHTML;
 
             tmp.querySelectorAll(".exclude-from-panel, .banner, hr").forEach(
                 (el) => el.remove(),
@@ -228,6 +229,9 @@
                 const meta = document.createElement("div");
                 meta.className = "panel-meta";
                 meta.innerHTML = metaHTML;
+                meta.querySelectorAll(".sep-icon").forEach((el) => {
+                    el.innerHTML = ".\u00A0";
+                });
                 tmp.prepend(meta);
             }
 
@@ -369,7 +373,8 @@
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="18" height="18"
+                        width="18"
+                        height="18"
                         viewBox="0 0 256 256"
                     >
                         {@html win.pinned ? iconPinSlash : iconPin}
@@ -383,7 +388,8 @@
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="18" height="18"
+                        width="18"
+                        height="18"
                         viewBox="0 0 256 256">{@html iconOpen}</svg
                     >
                 </a>
@@ -394,7 +400,8 @@
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="18" height="18"
+                        width="18"
+                        height="18"
                         viewBox="0 0 256 256">{@html iconTrash}</svg
                     >
                 </button>
@@ -455,8 +462,8 @@
     }
 
     .win-title {
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
+        font-family: var(--font-display);
+        font-weight: 700;
         color: var(--text);
         overflow: hidden;
         text-overflow: ellipsis;
@@ -505,16 +512,8 @@
         font-size: 0.8rem;
     }
 
-    .win-content :global(.panel-meta) {
-        font-size: 0.75rem;
-        font-family: var(--font-mono);
-        color: var(--fg-muted);
-        padding-bottom: 0.75rem;
-        margin-bottom: 1rem;
-        border-bottom: 1px solid var(--border-subtle);
-    }
-
     .win-content {
+        container-type: inline-size;
         flex: 1;
         overflow-y: auto;
         padding: 16px 20px;
@@ -548,6 +547,41 @@
     @media (max-width: 768px) {
         .win {
             display: none;
+        }
+    }
+
+    @container (max-width: 480px) {
+        /* styles that apply on the panels */
+        /* this is the hack to have the same styling on posts as if they are rendered inside a
+        mobile viewport */
+        /* media queries work only for the whole viewport. therefore container queries are used */
+
+        .win-content :global(.panel-meta) {
+            display: flex;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            color: var(--fg-muted);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .win-content :global(.post-body ul),
+        .win-content :global(.post-body ol) {
+            padding-left: calc(var(--q) * 4);
+        }
+
+        .win-content :global(.sidenote) {
+            float: none;
+            clear: both;
+            display: block;
+            width: auto;
+            margin-right: 0;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.6rem 1rem;
+            background: var(--bg-raised);
+            padding-top: 0.6rem;
         }
     }
 </style>

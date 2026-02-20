@@ -9,7 +9,7 @@ var bearer = "Bearer " + Hardcover;
 const query = `
 {
   me {
-    user_books(order_by: {status_id: asc}) {
+    user_books(order_by: [{status_id: asc}, {created_at: desc}]) {
       rating
       review_raw
       status_id
@@ -344,7 +344,7 @@ const pageTitle = "library";
     }
 
     .book-title {
-        font-family: var(--font-serif);
+        font-family: var(--font-display);
         font-size: clamp(1rem, 2vw, 1.6rem);
         color: var(--text);
         line-height: 1.2;
