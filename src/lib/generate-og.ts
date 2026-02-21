@@ -22,7 +22,7 @@ const gentiumData = readFileSync(
 const jetbrainsData = readFileSync(
   join(
     process.cwd(),
-    "node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff",
+    "node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff",
   ),
 );
 
