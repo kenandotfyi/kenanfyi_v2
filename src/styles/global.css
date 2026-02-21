@@ -43,7 +43,6 @@ h4,
 h5,
 h6 {
     text-wrap: stable;
-    font-size: var(--text-xl);
     margin-bottom: 12px;
     margin-top: 24px;
     font-family: var(--font-display);
@@ -86,7 +85,7 @@ a:hover {
 }
 
 a.external-link::after {
-    content: "×";
+    content: "☄︎";
     vertical-align: super;
     font-size: 0.75rem;
 }
