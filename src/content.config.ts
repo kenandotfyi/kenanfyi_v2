@@ -2,7 +2,7 @@ import { glob } from "astro/loaders";
 import { z, defineCollection } from "astro:content";
 
 const bits = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/bits" }),
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/bits" }),
   schema: z.object({
     draft: z.boolean(),
     title: z.string(),
@@ -18,7 +18,7 @@ const bits = defineCollection({
 });
 
 const thoughts = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/thoughts" }),
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/thoughts" }),
   schema: z.object({
     draft: z.boolean(),
     title: z.string(),

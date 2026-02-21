@@ -8,8 +8,8 @@ const H = 630;
 const PAD = 80;
 
 const BG_MAP: Record<string, string> = {
-  thoughts: "banner-bg-15.png",
-  bits: "banner-bg-13.png",
+  thoughts: "hero-thoughts.png",
+  bits: "hero-bits.png",
 };
 
 // load fonts once — satori accepts WOFF2 directly
@@ -42,8 +42,8 @@ export async function generateOgImage({
   if (existsSync(filepath)) return `/og/${filename}`;
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 
-  const bgFile = BG_MAP[collection] ?? "banner-bg-11.png";
-  const bgPath = join(process.cwd(), "public/banner-bg", bgFile);
+  const bgFile = BG_MAP[collection] ?? "hero-bits.png";
+  const bgPath = join(process.cwd(), "public/heros", bgFile);
 
   // resize background and convert to base64 data URI for satori
   const bgBuffer = await sharp(bgPath)
@@ -63,7 +63,6 @@ export async function generateOgImage({
           backgroundSize: `${W}px ${H}px`,
         },
         children: [
-          // dark scrim
           {
             type: "div",
             props: {
@@ -74,7 +73,7 @@ export async function generateOgImage({
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: "rgba(8,8,8,0.60)",
+                background: "rgba(8,8,8,0.65)",
               },
             },
           },
@@ -98,8 +97,8 @@ export async function generateOgImage({
                     style: {
                       display: "flex",
                       fontFamily: "JetBrains Mono",
-                      fontSize: "18px",
-                      color: "rgba(255,255,255,0.55)",
+                      fontSize: "24px",
+                      color: "rgba(255,255,255,0.75)",
                       letterSpacing: "6px",
                     },
                     children: collection.toUpperCase(),
@@ -125,8 +124,8 @@ export async function generateOgImage({
                     style: {
                       display: "flex",
                       fontFamily: "JetBrains Mono",
-                      fontSize: "18px",
-                      color: "rgba(255,255,255,0.55)",
+                      fontSize: "24px",
+                      color: "rgba(255,255,255,0.75)",
                       letterSpacing: "3px",
                     },
                     children: "kenan.fyi",
