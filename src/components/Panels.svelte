@@ -571,6 +571,10 @@
             padding-left: calc(var(--q) * 4);
         }
 
+        .win-content :global(img) {
+            max-width: 48ch;
+        }
+
         .win-content :global(.sidenote) {
             float: none;
             clear: both;
