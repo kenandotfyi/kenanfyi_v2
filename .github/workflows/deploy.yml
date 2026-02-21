@@ -41,6 +41,8 @@ jobs:
           BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
           BUNNY_PULL_ZONE_ID: ${{ secrets.BUNNY_PULL_ZONE_ID }}
         run: |
-          curl -s -X POST \
-            -H "AccessKey: $BUNNY_API_KEY" \
-            "https://api.bunny.net/pullzone/$BUNNY_PULL_ZONE_ID/purgeCache"
+          curl --request POST \
+            --url "https://api.bunny.net/pullzone/$BUNNY_PULL_ZONE_ID/purgeCache" \
+            --header "AccessKey: $BUNNY_API_KEY" \
+            --header "Content-Type: application/json" \
+            --data ''
