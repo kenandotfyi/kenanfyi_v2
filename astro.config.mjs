@@ -19,6 +19,7 @@ import icon from "astro-icon";
 // https://astro.build/config
 export default defineConfig({
   site: "https://kenan.fyi",
+  output: "static",
   scopedStyleStrategy: "class",
   integrations: [
     // since Vite copies the public/ to dist/ before page frontmatter runs.
