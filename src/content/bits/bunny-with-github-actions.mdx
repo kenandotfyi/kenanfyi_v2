@@ -1,0 +1,16 @@
+---
+title: "Deploy to Bunny with GitHub Actions"
+description: On how to deploy to BunnyCDN with Github Actions
+published: 2026-02-22
+updated: 2026-02-22
+tags: deployment, astro, cdn
+draft: true
+---
+
+I have recently deployed my website to [Bunny](https://bunny.net) in an effort to move my digital presence to European services. Below are the steps to do that since Bunny does not offer any push-to-deploy solution. At least yet.
+
+> For other Astro users like me, there is a [community adapter](https://bunny-launcher.net/adapters/astro) to do that on the CLI interactively, but since I want to push my changes and automate everything after that, I needed to find another solution. GitHub Actions is good for this and free for public repos. Gitea is another option since they also have a CI/CD solution. I'm considering to move to my self-hosted git server soon too. 
+
+# First steps
+
+I assume you have created your account, storage and pull zone in Bunny. After that what happens is more or less below:
