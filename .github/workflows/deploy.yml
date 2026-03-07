@@ -21,6 +21,9 @@ jobs:
           HARDCOVER: ${{ secrets.HARDCOVER }}
           RDAPIKEY: ${{ secrets.RDAPIKEY }}
           RDCOLLECTIONID: ${{ secrets.RDCOLLECTIONID }}
+          COMMAFEED_USER: ${{ secrets.COMMAFEED_USER }}
+          COMMAFEED_APIKEY: ${{ secrets.COMMAFEED_APIKEY }}
+          COMMAFEED_URL: ${{ secrets.COMMAFEED_URL }}
 
       - name: Upload to Bunny
         env:
