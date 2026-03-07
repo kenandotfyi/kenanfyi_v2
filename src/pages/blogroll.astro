@@ -1,153 +1,104 @@
 ---
-import Baz from "../layouts/Baz.astro";
+import BazPages from "../layouts/BazPages.astro";
+import { createHash } from "crypto";
 
 const pageTitle = "blogroll";
+
+const COMMAFEED_USER = import.meta.env.COMMAFEED_USER;
+const COMMAFEED_APIKEY = import.meta.env.COMMAFEED_APIKEY;
+const COMMAFEED_URL = import.meta.env.COMMAFEED_URL;
+
+// CommaFeed Fever API requires api_key = MD5(username:apiKey)
+const apiKey = createHash("md5")
+    .update(`${COMMAFEED_USER}:${COMMAFEED_APIKEY}`)
+    .digest("hex");
+
+let blogs: { name: string; url: string }[] = [];
+
+try {
+    const body = new URLSearchParams({ api_key: apiKey });
+
+    const resp = await fetch(`${COMMAFEED_URL}?groups&feeds&feeds_groups`, {
+        method: "POST",
+        body,
+    });
+    const data = await resp.json();
+
+    if (!data.auth) throw new Error("Fever API authentication failed");
+
+    const blogsGroup = (data.groups ?? []).find(
+        (g: any) => g.title.toLowerCase() === "blogs",
+    );
+
+    if (blogsGroup) {
+        const groupFeeds = (data.feeds_groups ?? []).find(
+            (fg: any) => fg.group_id === blogsGroup.id,
+        );
+        const feedIds = new Set(
+            groupFeeds?.feed_ids?.split(",").map(Number) ?? [],
+        );
+        blogs = (data.feeds ?? [])
+            .filter((f: any) => feedIds.has(f.id))
+            .map((f: any) => {
+                const raw = f.site_url ?? f.url;
+                const url = (() => {
+                    try {
+                        return new URL(raw).origin;
+                    } catch {
+                        return raw;
+                    }
+                })();
+                return { name: f.title, url };
+            });
+    }
+} catch (e) {
+    console.error("Failed to fetch blogroll from Fever API:", e);
+}
 ---
 
-<Baz pageTitle={pageTitle} wide>
-    <div class="hero-section">
-        <div class="hero-image">
-            <!-- Image will go here -->
-        </div>
-        <h1 class="hero-text">BLOGROLL</h1>
+<BazPages
+    pageTitle={pageTitle}
+    heroText="BLOGROLL"
+    heroImage="/heros/hero-blogroll.png"
+>
+    <div class="archive-label">
+        {blogs.length} blogs, in no particular order
     </div>
-    <section class="intro">
-        below are some blogs I regularly read, in no particular order:
-    </section>
-    <ul>
-        <li>
-            <a href="https://manuelmoreale.com/" target="_blank"
-                >Manuel Moreale</a
-            >
-        </li>
-        <li>
-            <a href="https://maggieappleton.com/" target="_blank"
-                >Maggie Appleton</a
-            >
-        </li>
-        <li>
-            <a href="https://blog.jim-nielsen.com/" target="_blank"
-                >Jim Nielsen</a
-            >
-        </li>
-        <li>
-            <a href="https://fasterthanli.me" target="_blank">Amos Wenger</a>
-        </li>
-        <li>
-            <a href="https://matklad.github.io" target="_blank">Alex Kladov</a>
-        </li>
-        <li><a href="https://thesephist.com" target="_blank">Linus Lee</a></li>
-        <li>
-            <a href="https://macwright.com/" target="_blank">Tom MacWright</a>
-        </li>
-        <li>
-            <a href="https://meltingasphalt.com/" target="_blank"
-                >Kevin Simler</a
-            >
-        </li>
-        <li>
-            <a href="https://mtwb.blog/" target="_blank"
-                >Matt's Blog, Matthew Weber</a
-            >
-        </li>
-        <li><a href="https://tonsky.me" target="_blank">Nikita Prokopov</a></li>
-        <li>
-            <a href="https://css-irl.info/" target="_blank"
-                >CSS in Real Life, Michelle Barker</a
-            >
-        </li>
-        <li><a href="https://csscade.com" target="_blank">Robin Rendle</a></li>
-        <li>
-            <a href="https://fabiensanglard.net/" target="_blank"
-                >Fabien Sanglard</a
-            >
-        </li>
-        <li><a href="https://jvns.ca/" target="_blank">Julia Evans</a></li>
-        <li><a href="https://stephango.com" target="_blank">Steph Ango</a></li>
-        <li>
-            <a href="https://interconnected.org/home/" target="_blank"
-                >Matt Webb, interconnected.org</a
-            >
-        </li>
-        <li>
-            <a href="https://librarian.aedileworks.com/" target="_blank"
-                >Mita Williams, Librarian of Things</a
-            >
-        </li>
-        <li>
-            <a href="https://sebastiandedeyne.com/" target="_blank"
-                >Sebastian De Deyne</a
-            >
-        </li>
-        <li><a href="https://adactio.com/" target="_blank">Jeremy Keith</a></li>
-        <li>
-            <a href="https://blog.wesleyac.com/" target="_blank"
-                >Wesley Aptekar-Cassels</a
-            >
-        </li>
-        <li>
-            <a href="https://tangiblelife.net" target="_blank">Tangible Life</a>
-        </li>
-        <li>
-            <a href="https://chriscoyier.net/" target="_blank">Chris Coyier</a>
-        </li>
-        <li>
-            <a href="https://julian.digital" target="_blank">julian.digital</a>
-        </li>
-        <li>
-            <a href="https://brainbaking.com/" target="_blank"
-                >Wouter Groeneveld</a
-            >
-        </li>
-    </ul>
-</Baz>
+
+    <p class="blogs-para">
+        {
+            blogs.map((blog, i) => (
+                <>
+                    <a href={blog.url} target="_blank">
+                        {blog.name}
+                    </a>
+                    {i < blogs.length - 1 && (
+                        <span class="sep">&nbsp;&nbsp;/&nbsp;&nbsp;</span>
+                    )}
+                </>
+            ))
+        }
+    </p>
+</BazPages>
 
 <style>
-    .intro {
-        margin-bottom: calc(var(--q) * 12);
-        margin-top: calc(var(--q) * 12);
+    .archive-label {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--fg-muted);
+        margin-bottom: 1.25rem;
     }
 
-    .hero-section {
-        position: relative;
-        height: 40vh;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        overflow: hidden;
-    }
-
-    .hero-image {
-        width: 100%;
-        height: 100%;
-        background-color: var(--rams-black);
-        background-image: url("/heros/hero-blogroll.png");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        opacity: 1;
-    }
-
-    .hero-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 6rem;
-        font-weight: 400;
+    .blogs-para {
+        line-height: 1.8;
+        font-size: var(--text-base);
         margin: 0;
-        z-index: 10;
     }
 
-    @media (max-width: 768px) {
-        .hero-text {
-            font-size: 2.5rem;
-        }
-
-        .hero-section {
-            height: 30vh;
-            margin-top: -10px;
-            min-height: 300px;
-        }
+    .sep {
+        color: var(--border-default);
+        user-select: none;
     }
 </style>

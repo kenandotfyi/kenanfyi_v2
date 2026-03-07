@@ -1,0 +1,153 @@
+---
+import Baz from "./Baz.astro";
+
+interface Props {
+    pageTitle: string;
+    heroText: string;
+    heroImage: string;
+    description?: string;
+    ogImage?: string;
+    wide?: boolean;
+}
+
+const { pageTitle, heroText, heroImage, description, ogImage, wide } =
+    Astro.props;
+---
+
+<Baz
+    pageTitle={pageTitle}
+    description={description}
+    ogImage={ogImage}
+    wide={wide}
+>
+    <div class="hero-section">
+        <div class="hero-image" style={`--hero-bg: url('${heroImage}')`}></div>
+        <h1 class="hero-text" data-text={heroText}>{heroText}</h1>
+    </div>
+    <slot />
+</Baz>
+
+<style>
+    .hero-section {
+        position: relative;
+        margin-bottom: 2.5rem;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 35vh;
+        min-height: 280px;
+        background-color: var(--bg-deep);
+        background-image: var(--hero-bg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        border-radius: var(--border-s);
+        filter: grayscale(1);
+        display: block;
+    }
+
+    .hero-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: clamp(2rem, 4vw, 4rem);
+        font-weight: 700;
+        color: white;
+        margin: 0;
+        line-height: 1;
+        letter-spacing: 0.25em;
+        z-index: 1;
+        white-space: nowrap;
+    }
+
+    .hero-text::before,
+    .hero-text::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: inherit;
+        font-weight: inherit;
+        letter-spacing: inherit;
+        line-height: inherit;
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+    }
+
+    .hero-text::before {
+        color: var(--accent);
+        animation: glitch-a 6s infinite;
+    }
+
+    .hero-text::after {
+        color: var(--fg-muted);
+        animation: glitch-b 6s infinite;
+    }
+
+    @keyframes glitch-a {
+        0%,
+        88%,
+        100% {
+            opacity: 0;
+            transform: translate(0);
+            clip-path: inset(0 0 100% 0);
+        }
+        89% {
+            opacity: 1;
+            clip-path: inset(8% 0 62% 0);
+            transform: translate(-5px) skewX(-2deg);
+        }
+        90.5% {
+            clip-path: inset(52% 0 22% 0);
+            transform: translate(4px);
+        }
+        92% {
+            clip-path: inset(28% 0 48% 0);
+            transform: translate(-3px) skewX(1deg);
+        }
+        93% {
+            opacity: 0;
+            clip-path: inset(0 0 100% 0);
+            transform: translate(0);
+        }
+    }
+
+    @keyframes glitch-b {
+        0%,
+        91%,
+        100% {
+            opacity: 0;
+            transform: translate(0);
+            clip-path: inset(0 0 100% 0);
+        }
+        92% {
+            opacity: 1;
+            clip-path: inset(62% 0 8% 0);
+            transform: translate(4px);
+        }
+        93% {
+            clip-path: inset(18% 0 58% 0);
+            transform: translate(-4px) skewX(-1deg);
+        }
+        94% {
+            opacity: 0;
+            clip-path: inset(0 0 100% 0);
+            transform: translate(0);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .hero-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-image {
+            height: 200px;
+            min-height: unset;
+        }
+    }
+</style>

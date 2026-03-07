@@ -19,7 +19,6 @@ const ogImage = await generateOgImage({
     pageTitle={frontmatter.data.title}
     description={frontmatter.data.description}
     ogImage={ogImage}
-    wide
 >
     <div class="post-container">
         <Banner
@@ -191,7 +190,6 @@ const ogImage = await generateOgImage({
 
     :global(.post-body ul),
     :global(.post-body ol) {
-        padding-left: 0;
         margin-bottom: calc(var(--q) * 4);
     }
 

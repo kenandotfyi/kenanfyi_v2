@@ -11,9 +11,11 @@ const allThoughts = await getCollection(
     ({ data }) => data.draft !== true,
 );
 allThoughts.sort((a: any, b: any) => b.data.published - a.data.published);
+const displayThoughts = allThoughts.slice(0, 5);
 
 const allBits = await getCollection("bits", ({ data }) => data.draft !== true);
 allBits.sort((a: any, b: any) => b.data.published - a.data.published);
+const displayBits = allBits.slice(0, 5);
 
 const RDAPIKEY = import.meta.env.RDAPIKEY;
 const collectionId = import.meta.env.RDCOLLECTIONID;
@@ -46,27 +48,25 @@ interface RaindropItem {
 const links = await fetchLinks();
 ---
 
-<Baz pageTitle={pageTitle} wide>
+<Baz pageTitle={pageTitle}>
     <div class="home">
+        <div class="intro-header">
+            <h1 class="hero-name">Hello, I'm Kenan</h1>
+        </div>
         <div class="hero">
             <video class="hero-video" autoplay muted playsinline loop>
                 <source src="/hero-2.webm" type="video/webm" />
             </video>
         </div>
 
-        <div class="intro-header">
-            <h1 class="hero-name">Kenan Akinci</h1>
-            <p class="role">Sr. Hardware Design Engineer</p>
-        </div>
-
         <div class="intro-row">
             <div class="intro-col">
                 <p>
-                    Hey! I'm a senior hardware design engineer from Germany with
-                    over 10 years of experience in designing and developing
-                    hardware for power electronics systems. Although not
-                    officially a software engineer, I program in various
-                    languages for personal and professional projects too.
+                    I'm a senior hardware design engineer from Germany with over
+                    10 years of experience in designing and developing hardware
+                    for power electronics systems. Although not officially a
+                    software engineer, I program in various languages for
+                    personal and professional projects too.
                 </p>
                 <p></p>
             </div>
@@ -110,6 +110,7 @@ const links = await fetchLinks();
             <section class="col">
                 <div class="col-header">
                     <h2 class="section-heading">Thoughts</h2>
+                    <span class="h-line"></span>
                     <div class="sort-controls">
                         <span class="sort-label">sort by</span>
                         <button
@@ -127,7 +128,7 @@ const links = await fetchLinks();
                 </div>
                 <div class="posts-list" id="thoughts-list">
                     {
-                        allThoughts.map((post) => (
+                        displayThoughts.map((post) => (
                             <article
                                 class="post-item"
                                 data-published={post.data.published.toISOString()}
@@ -144,15 +145,35 @@ const links = await fetchLinks();
                                         updated={post.data.updated}
                                     />
                                 </a>
+                                <div class="post-meta">
+                                    <time class="post-date">
+                                        {post.data.published.toLocaleDateString(
+                                            "en-US",
+                                            {
+                                                day: "2-digit",
+                                                month: "short",
+                                                year: "numeric",
+                                            },
+                                        )}
+                                    </time>
+                                    {post.data.tags?.length > 0 &&
+                                        post.data.tags.map((tag: string) => (
+                                            <span class="post-tag">#{tag}</span>
+                                        ))}
+                                </div>
                             </article>
                         ))
                     }
+                    <p class="see-more">
+                        <a href="/thoughts/">see all {allThoughts.length} →</a>
+                    </p>
                 </div>
             </section>
 
             <section class="col">
                 <div class="col-header">
                     <h2 class="section-heading">Bits</h2>
+                    <span class="h-line"></span>
                     <div class="sort-controls">
                         <span class="sort-label">sort by</span>
                         <button
@@ -170,7 +191,7 @@ const links = await fetchLinks();
                 </div>
                 <div class="posts-list" id="bits-list">
                     {
-                        allBits.map((post) => (
+                        displayBits.map((post) => (
                             <article
                                 class="post-item"
                                 data-published={post.data.published.toISOString()}
@@ -183,9 +204,28 @@ const links = await fetchLinks();
                                         published={post.data.published}
                                     />
                                 </a>
+                                <div class="post-meta">
+                                    <time class="post-date">
+                                        {post.data.published.toLocaleDateString(
+                                            "en-US",
+                                            {
+                                                day: "2-digit",
+                                                month: "short",
+                                                year: "numeric",
+                                            },
+                                        )}
+                                    </time>
+                                    {post.data.tags?.length > 0 &&
+                                        post.data.tags.map((tag: string) => (
+                                            <span class="post-tag">#{tag}</span>
+                                        ))}
+                                </div>
                             </article>
                         ))
                     }
+                    <p class="see-more">
+                        <a href="/bits/">see all {allBits.length} →</a>
+                    </p>
                 </div>
             </section>
 
@@ -207,6 +247,15 @@ const links = await fetchLinks();
                                         size="16"
                                     />
                                     <span>{item.title}</span>
+                                    <time class="bookmark-date">
+                                        {new Date(
+                                            item.created,
+                                        ).toLocaleDateString("en-US", {
+                                            day: "2-digit",
+                                            month: "short",
+                                            year: "numeric",
+                                        })}
+                                    </time>
                                 </a>
                             </article>
                         ))
@@ -214,6 +263,7 @@ const links = await fetchLinks();
                     <p class="see-more"><a href="/bookmarks">see more →</a></p>
                 </div>
             </section>
+            <section class="col col-bookmarks"></section>
         </div>
     </div>
 </Baz>
@@ -243,7 +293,8 @@ const links = await fetchLinks();
                     new Date(b.dataset[field]!).getTime() -
                     new Date(a.dataset[field]!).getTime(),
             );
-            items.forEach((item) => list.appendChild(item));
+            const seeMore = list.querySelector(".see-more");
+            items.forEach((item) => list.insertBefore(item, seeMore));
         });
     });
 </script>
@@ -256,11 +307,10 @@ const links = await fetchLinks();
 
     /* ── Hero ── */
     .hero {
-        height: 560px;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
+        height: 420px;
         overflow: hidden;
-        margin-bottom: 0;
+        border-radius: var(--border-s);
+        margin-bottom: 1rem;
     }
 
     .hero-video {
@@ -272,14 +322,13 @@ const links = await fetchLinks();
 
     .intro-header {
         padding: calc(var(--q) * 8) 0 calc(var(--q) * 4);
+        margin-top: 5vh;
     }
 
     .hero-name {
         font-size: clamp(1.5rem, 3vw, 2.5rem);
-        font-weight: 400;
-        color: var(--accent);
-        margin: 0 0 calc(var(--q) * 2);
-        line-height: 1.1;
+        font-weight: 600;
+        font-feature-settings: normal;
     }
 
     .role {
@@ -292,19 +341,9 @@ const links = await fetchLinks();
 
     .intro-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: calc(var(--q) * 12);
-        padding-bottom: calc(var(--q) * 10);
+        grid-template-columns: 1fr;
+        gap: calc(var(--q) * 6);
         margin-bottom: calc(var(--q) * 8);
-    }
-
-    .intro-row::after {
-        content: "";
-        display: block;
-        grid-column: 1 / -1;
-        border-bottom: 1px solid var(--border-subtle);
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
     }
 
     .intro-col {
@@ -341,19 +380,21 @@ const links = await fetchLinks();
         background: none;
     }
 
-    /* ── 3-col grid ── */
+    /* ── Stacked sections ── */
     .grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: calc(var(--q) * 8);
-        margin-bottom: calc(var(--q) * 16);
+        grid-template-columns: 1fr 1fr;
+        gap: calc(var(--q) * 4) calc(var(--q) * 10);
+    }
+
+    .col-bookmarks {
+        grid-column: 1 / -1;
     }
 
     .col-header {
         display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 0.5rem;
+        align-items: center;
+        gap: 0.75rem;
         margin-bottom: calc(var(--q) * 4);
     }
 
@@ -365,6 +406,13 @@ const links = await fetchLinks();
         color: var(--accent);
         margin-top: 0;
         margin-bottom: 0;
+        white-space: nowrap;
+    }
+
+    .h-line {
+        flex: 1;
+        height: 1px;
+        background: var(--border-subtle);
     }
 
     .sort-label {
@@ -411,7 +459,7 @@ const links = await fetchLinks();
     }
 
     .post-title {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 0.4rem;
         font-size: var(--text-base);
@@ -432,39 +480,59 @@ const links = await fetchLinks();
         color: var(--fg-muted);
     }
 
+    .bookmark-date {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+        opacity: 0.6;
+        margin-left: auto;
+        white-space: nowrap;
+    }
+
     .post-title :global(svg) {
         opacity: 0.4;
         flex-shrink: 0;
     }
 
+    .post-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        padding-bottom: calc(var(--q) * 2);
+    }
+
+    .post-date {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+    }
+
+    .post-tag {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+        opacity: 0.6;
+    }
+
     .see-more {
         margin-top: calc(var(--q) * 3);
-        text-align: right;
+        text-align: left;
+        font-style: italic;
     }
 
     /* ── Responsive ── */
-    @media (max-width: 900px) {
-        .grid {
-            grid-template-columns: 1fr 1fr;
-        }
-        .col:last-child {
-            grid-column: 1 / -1;
-        }
-    }
-
     @media (max-width: 600px) {
         .hero {
-            height: 200px;
+            height: 180px;
         }
-        .intro-row {
-            grid-template-columns: 1fr;
-            gap: calc(var(--q) * 4);
-        }
+
         .grid {
             grid-template-columns: 1fr;
         }
-        .col:last-child {
-            grid-column: auto;
+
+        .col-bookmarks {
+            grid-column: 1;
         }
     }
 </style>

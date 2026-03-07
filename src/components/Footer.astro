@@ -6,25 +6,21 @@ const year = new Date().getFullYear();
 
 <footer>
     <div class="footer-top">
-        <span>2024-{year}</span>
-        <Icon name="ph:dot-duotone" size="20" />
         <a href="/" class="footer-logo"
             ><img src="/logo.svg" alt="kenan.fyi" /></a
         >
-        <Icon name="ph:dot-duotone" size="20" />
-        <span>v2</span>
     </div>
     <div class="footer-bottom">
+        <span>{year}</span>
+        <Icon name="ph:dot-duotone" size="20" />
+        <span>v2</span>
+        <Icon name="ph:dot-duotone" size="20" />
         <a
             href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
             target="_blank"
             rel="noopener"
         >
-            <img
-                class="cc-badge"
-                src="https://licensebuttons.net/i/l/by-nc-sa/transparent/00/00/00/76x22.png"
-                alt="CC BY-NC-SA 4.0"
-            />
+            CC BY-NC-SA 4.0
         </a>
         <!-- <a href="/">now</a>
         <a href="/">uses</a>
@@ -43,6 +39,7 @@ const year = new Date().getFullYear();
         padding-top: 1rem;
         display: flex;
         font-family: var(--font-mono);
+        color: var(--text-muted);
         flex-direction: column;
         gap: 4px;
     }
@@ -92,8 +89,8 @@ const year = new Date().getFullYear();
     .footer-top a,
     .footer-bottom a {
         text-decoration: none;
-        color: var(--text-muted);
         padding: 0 4px;
+        color: var(--text-muted);
         transition: color 0.2s ease;
     }
 

@@ -1,6 +1,6 @@
 ---
-import { getCollection } from "astro:content";
-import Baz from "../layouts/Baz.astro";
+import { getCollection, render } from "astro:content";
+import BazPages from "../layouts/BazPages.astro";
 import { Icon } from "astro-icon/components";
 import PostBadge from "../components/PostBadge.astro";
 
@@ -8,358 +8,265 @@ const allThoughts = await getCollection(
     "thoughts",
     ({ data }) => data.draft !== true,
 );
-
-allThoughts.sort((a: any, b: any) => b.data.published - a.data.published);
+allThoughts.sort(
+    (a, b) => b.data.published.getTime() - a.data.published.getTime(),
+);
 const pageTitle = "thoughts";
 
-const postsByYear = allThoughts.reduce(
-    (acc: Record<string, typeof allThoughts>, post) => {
-        const year = post.data.published.getFullYear().toString();
-        if (!acc[year]) acc[year] = [];
-        acc[year].push(post);
-        return acc;
-    },
-    {},
+const withReadingTime = await Promise.all(
+    allThoughts.map(async (post) => {
+        const { remarkPluginFrontmatter } = await render(post);
+        return {
+            post,
+            minutesRead: remarkPluginFrontmatter.minutesRead as string,
+        };
+    }),
 );
-const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 
-const sortedByUpdated = [...allThoughts].sort(
-    (a: any, b: any) => b.data.updated - a.data.updated,
-);
-const postsByUpdatedYear = sortedByUpdated.reduce(
-    (acc: Record<string, typeof allThoughts>, post) => {
-        const year = post.data.updated.getFullYear().toString();
-        if (!acc[year]) acc[year] = [];
-        acc[year].push(post);
-        return acc;
-    },
-    {},
-);
-const updatedYears = Object.keys(postsByUpdatedYear).sort(
-    (a, b) => Number(b) - Number(a),
-);
+const featured = withReadingTime[0];
+const rest = withReadingTime.slice(1);
+
+const postsByYear = rest.reduce((acc: Record<string, typeof rest>, item) => {
+    const year = item.post.data.published.getFullYear().toString();
+    if (!acc[year]) acc[year] = [];
+    acc[year].push(item);
+    return acc;
+}, {});
+const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 ---
 
-<Baz pageTitle={pageTitle} wide>
-    <div class="hero-section">
-        <div class="hero-image">
-            <!-- Image will go here -->
-        </div>
-        <h1 class="hero-text">THOUGHTS</h1>
-    </div>
-
-    <div class="content-section">
-        <div class="sort-controls">
-            <span class="sort-label">sort by</span>
-            <button class="sort-btn active" data-field="published"
-                >published ↓</button
-            >
-            <span class="sep">/</span>
-            <button class="sort-btn" data-field="updated">updated ↓</button>
-        </div>
-
-        <div class="posts-list">
-            <div class="sort-view sort-view-published">
-                {
-                    years.map((year) => (
-                        <>
-                            <div class="year-header">in {year}</div>
-                            {postsByYear[year].map((post) => (
-                                <a href={`${post.id}`} class="post-item">
-                                    <time class="post-date">
-                                        {post.data.published.toLocaleDateString(
-                                            "en-US",
-                                            { day: "2-digit", month: "short" },
-                                        )}
-                                    </time>
-                                    <div class="post-content">
-                                        <span class="title-text">
-                                            <span class="title-icon">
-                                                <Icon
-                                                    name="ph:feather-duotone"
-                                                    size="20"
-                                                />
-                                            </span>
-                                            {post.data.title}
-                                            <PostBadge
-                                                published={post.data.published}
-                                                updated={post.data.updated}
-                                            />
-                                        </span>
-                                        <div class="post-description">
-                                            {post.data.description.toLowerCase()}
-                                        </div>
-                                    </div>
-                                </a>
-                            ))}
-                        </>
-                    ))
-                }
+<BazPages
+    pageTitle={pageTitle}
+    heroText="THOUGHTS"
+    heroImage="/heros/hero-thoughts.png"
+>
+    {
+        featured && (
+            <div class="featured">
+                <div class="featured-meta">
+                    <span class="meta-label">Latest</span>
+                    <span class="meta-sep">—</span>
+                    <time class="meta-item">
+                        {featured.post.data.published.toLocaleDateString(
+                            "en-US",
+                            {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                            },
+                        )}
+                    </time>
+                    <span class="meta-sep">
+                        <Icon name="ph:dot-duotone" size="28" />
+                    </span>
+                    <span class="meta-item">{featured.minutesRead}</span>
+                </div>
+                <a
+                    href={`/thoughts/${featured.post.id}/`}
+                    class="featured-title"
+                >
+                    {featured.post.data.title}
+                </a>
+                <p class="featured-desc">{featured.post.data.description}</p>
+                {featured.post.data.tags.length > 0 && (
+                    <div class="featured-tags">
+                        {featured.post.data.tags.map((tag: string) => (
+                            <span class="tag">#{tag}</span>
+                        ))}
+                    </div>
+                )}
             </div>
+        )
+    }
 
-            <div class="sort-view sort-view-updated">
-                {
-                    updatedYears.map((year) => (
-                        <>
-                            <div class="year-header">in {year}</div>
-                            {postsByUpdatedYear[year].map((post) => (
-                                <a href={`${post.id}`} class="post-item">
-                                    <time class="post-date">
-                                        {post.data.updated.toLocaleDateString(
-                                            "en-US",
-                                            { day: "2-digit", month: "short" },
-                                        )}
-                                    </time>
-                                    <div class="post-content">
-                                        <span class="title-text">
-                                            <span class="title-icon">
-                                                <Icon
-                                                    name="ph:feather-duotone"
-                                                    size="20"
-                                                />
-                                            </span>
-                                            {post.data.title}
-                                            <PostBadge
-                                                published={post.data.published}
-                                                updated={post.data.updated}
-                                            />
-                                        </span>
-                                        <div class="post-description">
-                                            {post.data.description.toLowerCase()}
-                                        </div>
-                                    </div>
-                                </a>
-                            ))}
-                        </>
-                    ))
-                }
-            </div>
-        </div>
+    <div class="archive">
+        <div class="archive-label">Archive</div>
+        {
+            years.map((year) => (
+                <div class="year-group">
+                    <div class="year-label">{year}</div>
+                    {postsByYear[year].map(({ post, minutesRead }) => (
+                        <a href={`/thoughts/${post.id}/`} class="post-row">
+                            <time class="post-date">
+                                {post.data.published.toLocaleDateString(
+                                    "en-US",
+                                    {
+                                        day: "2-digit",
+                                        month: "short",
+                                    },
+                                )}
+                            </time>
+                            <span class="post-title">
+                                <Icon name="ph:feather-duotone" size="13" />
+                                <span>{post.data.title}</span>
+                                <PostBadge published={post.data.published} updated={post.data.updated} />
+                            </span>
+                            <span class="post-read">{minutesRead}</span>
+                        </a>
+                    ))}
+                </div>
+            ))
+        }
     </div>
-</Baz>
-
-<script>
-    const btns = document.querySelectorAll<HTMLButtonElement>(".sort-btn");
-    const publishedView = document.querySelector<HTMLElement>(
-        ".sort-view-published",
-    );
-    const updatedView =
-        document.querySelector<HTMLElement>(".sort-view-updated");
-
-    btns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const field = btn.dataset.field;
-            btns.forEach((b) =>
-                b.classList.toggle("active", b.dataset.field === field),
-            );
-            publishedView!.style.display =
-                field === "published" ? "block" : "none";
-            updatedView!.style.display = field === "updated" ? "block" : "none";
-        });
-    });
-</script>
+</BazPages>
 
 <style>
-    .hero-section {
-        position: relative;
-        height: 40vh;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        overflow: hidden;
+    /* Featured post */
+    .featured {
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--border-s);
     }
 
-    .hero-image {
-        width: 100%;
-        height: 100%;
-        background-color: var(--rams-black);
-        background-image: url("/heros/hero-thoughts.png");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        opacity: 1;
-    }
-
-    .hero-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 6rem;
-        font-weight: 400;
-        margin: 0;
-        z-index: 10;
-    }
-
-    .content-section {
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-    }
-
-    .sort-controls {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 0.5rem 4vw;
-        font-family: var(--font-mono);
-        font-size: 0.75rem;
-        color: var(--text-muted);
-    }
-
-    .sort-label {
-        opacity: 0.5;
-    }
-
-    .sep {
-        opacity: 0.3;
-    }
-
-    .sort-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        padding: 0;
-        letter-spacing: 0.05em;
-        opacity: 0.5;
-    }
-
-    .sort-btn.active {
-        color: var(--accent);
-        opacity: 1;
-    }
-
-    .sort-btn:hover:not(.active) {
-        opacity: 1;
-    }
-
-    .sort-view-updated {
-        display: none;
-    }
-
-    .posts-list {
-        display: flex;
-        flex-direction: column;
-        border-top: 1px solid var(--panel-border);
-    }
-
-    .year-header {
-        padding: 0.5rem 4vw;
-        font-family: var(--font-mono);
-        font-size: clamp(1.1rem, 2vw, 2rem);
-        color: var(--text-muted);
-        opacity: 1;
-        letter-spacing: 0.15em;
-        border-bottom: 1px solid var(--panel-border);
-        background: color-mix(in srgb, var(--text) 3%, transparent);
-    }
-
-    .post-item {
-        display: flex;
-        align-items: baseline;
-        gap: 2rem;
-        padding: 1rem 4vw;
-        border-bottom: 1px solid var(--panel-border);
-        transition: background 0.15s ease;
-    }
-
-    .post-item:hover {
-        background: color-mix(in srgb, var(--accent) 5%, transparent);
-    }
-
-    .post-date {
-        color: var(--text-muted);
-        opacity: 0.5;
-        font-size: 0.8rem;
-        font-family: var(--font-mono);
-        flex-shrink: 0;
-        min-width: 8ch;
-    }
-
-    .post-content {
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-        flex: 1;
-    }
-
-    .post-item {
-        text-decoration: none;
-    }
-
-    .title-text {
+    .featured-meta {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: var(--text);
-        font-size: clamp(1.1rem, 2vw, 2rem);
-        font-family: var(--font-display);
-        line-height: 1.2;
+        margin-bottom: 0.75rem;
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
     }
 
-    .title-icon {
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        opacity: 0.5;
-    }
-
-    .post-item:hover .title-icon {
-        opacity: 1;
-    }
-
-    .post-item:hover .title-text {
+    .meta-label {
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
         color: var(--accent);
     }
 
-    .title-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+    .meta-sep {
+        color: var(--border-default);
     }
 
-    .title-icon :global(svg) {
+    .meta-item {
+        color: var(--fg-muted);
+    }
+
+    .featured-title {
         display: block;
-        opacity: 0.6;
+        font-family: var(--font-display);
+        font-size: 2rem;
+        font-weight: 400;
+        color: var(--fg-bright);
+        text-decoration: none;
+        margin-bottom: 0.75rem;
+        line-height: 1.2;
+        transition: color 0.15s ease;
+
+        &:hover {
+            color: var(--accent);
+        }
     }
 
-    .post-item:hover .title-icon :global(svg) {
-        opacity: 1;
+    .featured-desc {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--fg-muted);
+        line-height: 1.6;
+        margin: 0 0 0.75rem;
     }
 
-    .post-description {
+    .featured-tags {
         display: flex;
         gap: 0.75rem;
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        opacity: 0.6;
+        flex-wrap: wrap;
+    }
+
+    .tag {
         font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+        letter-spacing: 0.05em;
+    }
+
+    /* Archive */
+    .archive {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .archive-label {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
         text-transform: uppercase;
-        transition: all 0.2s ease;
+        letter-spacing: 0.1em;
+        color: var(--fg-muted);
+        margin-bottom: 1.25rem;
     }
 
-    .tag:hover {
+    .year-group {
+        margin-bottom: 1.75rem;
+    }
+
+    .year-label {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
         color: var(--accent);
-        opacity: 1;
+        padding-bottom: 2px;
+        margin-bottom: 4px;
+        border-bottom: 1px solid var(--border-subtle);
     }
 
-    @media (max-width: 768px) {
-        .hero-text {
-            font-size: 2.5rem;
+    .post-row {
+        display: grid;
+        grid-template-columns: 7ch 1fr auto;
+        align-items: baseline;
+        padding: 2px 0;
+        text-decoration: none;
+
+        &:hover .post-title {
+            color: var(--accent);
+        }
+    }
+
+    .post-date {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+    }
+
+    .post-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-family: var(--font-base);
+        font-size: var(--text-base);
+        color: var(--fg-primary);
+        transition: color 0.15s ease;
+    }
+
+    .post-title :global(svg) {
+        opacity: 0.4;
+        flex-shrink: 0;
+    }
+
+    .post-title span {
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-decoration-color: var(--accent);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
+    }
+
+    .post-read {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+        text-align: right;
+    }
+
+    @media (max-width: 600px) {
+        .featured-title {
+            font-size: 1.5rem;
         }
 
-        .hero-section {
-            height: 30vh;
-            margin-top: -10px;
-            min-height: 300px;
-        }
-
-        .post-item {
-            gap: 1rem;
-            padding: 0.75rem 1rem;
+        .post-row {
+            grid-template-columns: 6ch 1fr auto;
+            gap: 0.5rem;
         }
     }
 </style>

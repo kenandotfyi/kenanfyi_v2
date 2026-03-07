@@ -57,8 +57,8 @@ export default defineConfig({
           : ':not([data-theme="light"])',
       styleOverrides: {
         borderRadius: "0px",
-        codeFontFamily: "IBM Plex Mono",
-        uiFontFamily: "IBM Plex Mono",
+        codeFontFamily: "JetBrains Mono",
+        uiFontFamily: "JetBrains Mono",
         codeFontSize: "14px",
         uiFontSize: "13px",
         uiFontWeight: "bold",

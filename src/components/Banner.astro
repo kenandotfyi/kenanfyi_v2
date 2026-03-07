@@ -23,37 +23,45 @@ const isStale = lastRelevantDate < oneYearAgo;
 ---
 
 <div class="banner">
-    <a href={`/${collection}/`} class="back-button">
-        <Icon name="ph:arrow-left-bold" />
-        <span class="back-text">Back to {collection}</span>
-    </a>
+    <div class="banner-top">
+        <a href={`/${collection}/`} class="back-button">
+            <Icon name="ph:arrow-left-bold" />
+            <span class="back-text">Back to {collection}</span>
+        </a>
+        <span class="collection-label">// {collection}</span>
+    </div>
+    <div class="banner-rule"></div>
     <div class="header-row">
         <div class="pubDate" id="pubDate">
             {
                 isStale && (
                     <span
                         class="stale-icon"
-                        data-tooltip="Old post. Behold the wisdom within!"
+                        data-tooltip="OLD POST. BEHOLD THE WISDOM WITHIN!"
                     >
                         <Icon name="ph:hourglass-medium-duotone" size="20" />
                     </span>
                 )
             }
+            <span class="meta-chip meta-label-pub">pub</span>
             <span>{formatDate(published)}</span>
-            <span class="sep-icon">
-                <Icon name="ph:dot-duotone" size="28" />
-            </span>
             {
                 updated && updated.getTime() !== published.getTime() && (
                     <>
-                        <span>UPDATE: {formatDate(updated)}</span>
-                        <span class="sep-icon">
-                            <Icon name="ph:dot-duotone" size="28" />
-                        </span>
+                        <span class="meta-sep">/</span>
+                        <span class="meta-chip meta-label-upd">upd</span>
+                        <span>{formatDate(updated)}</span>
                     </>
                 )
             }
-            <span>{metadata.tags.join(", ")}</span>
+            {metadata.tags.length > 0 && (
+                <>
+                    <span class="meta-sep">/</span>
+                    {metadata.tags.map((tag: string) => (
+                        <span class="meta-chip meta-tag">#{tag}</span>
+                    ))}
+                </>
+            )}
         </div>
         <div>
             <h1 class="displayTitle exclude-from-panel">{metadata.title}</h1>
@@ -61,7 +69,7 @@ const isStale = lastRelevantDate < oneYearAgo;
                 metadata.description && (
                     <div>
                         <span class="excerpt exclude-from-panel">
-                            {metadata.description} ~ <span>{minutes}</span>
+                            // {metadata.description} ~ <span>{minutes}</span>
                         </span>
                     </div>
                 )
@@ -76,6 +84,26 @@ const isStale = lastRelevantDate < oneYearAgo;
         margin-top: calc(var(--q) * 8);
     }
 
+    .banner-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .collection-label {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--fg-muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .banner-rule {
+        height: 1px;
+        background: var(--border-subtle);
+        margin: 0.75rem 0;
+    }
+
     .header-row {
         display: flex;
         flex-direction: column;
@@ -83,9 +111,9 @@ const isStale = lastRelevantDate < oneYearAgo;
     }
 
     h1.displayTitle {
-        font-family: var(--font-display);
+        font-family: var(--font-sans);
         font-size: 2.25rem;
-        font-weight: 700;
+        font-weight: 600;
         text-wrap: balance;
         line-height: 1.2;
         letter-spacing: 0;
@@ -110,6 +138,7 @@ const isStale = lastRelevantDate < oneYearAgo;
         border: none;
         border-radius: var(--border-s);
         color: var(--text-muted);
+        font-family: var(--font-mono);
         font-size: 12px;
         font-weight: bold;
         text-decoration: none;
@@ -150,14 +179,41 @@ const isStale = lastRelevantDate < oneYearAgo;
         line-height: 1.2;
         gap: 0.5rem;
         color: var(--text-muted);
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         margin-top: 12px;
         font-family: var(--font-mono);
         text-transform: uppercase;
     }
 
-    .sep-icon {
-        display: flex;
+    .meta-chip {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        padding: 2px 4px;
+        line-height: 1;
+        align-self: center;
+    }
+
+    .meta-label-pub {
+        color: var(--bg-raised);
+        background-color: var(--green);
+        border: 1px solid var(--green-dim);
+    }
+
+    .meta-label-upd {
+        color: white;
+        background-color: var(--red);
+        border: 1px solid var(--red-dim);
+    }
+
+    .meta-tag {
+        color: var(--fg-primary);
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-default);
+    }
+
+    .meta-sep {
+        color: var(--border-default);
     }
 
     .stale-icon {
@@ -192,12 +248,8 @@ const isStale = lastRelevantDate < oneYearAgo;
 
     @media (max-width: 768px) {
         div.pubDate {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .sep-icon {
-            display: none;
+            flex-wrap: wrap;
+            row-gap: 0.25rem;
         }
     }
 </style>

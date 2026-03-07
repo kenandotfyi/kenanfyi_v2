@@ -1,5 +1,5 @@
 ---
-import Baz from "../layouts/Baz.astro";
+import BazPages from "../layouts/BazPages.astro";
 import { Icon } from "astro-icon/components";
 import { createHash } from "crypto";
 import { writeFileSync, existsSync, mkdirSync } from "fs";
@@ -9,21 +9,7 @@ import sharp from "sharp";
 const RDAPIKEY = import.meta.env.RDAPIKEY;
 const collectionId = import.meta.env.RDCOLLECTIONID;
 
-var bearer = "Bearer " + RDAPIKEY;
-var rdUrl = `https://api.raindrop.io/rest/v1/raindrops/${collectionId}?perpage=200`;
-
-async function fetchLinks() {
-    const resp = await fetch(rdUrl, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-            Authorization: bearer,
-            "Content-Type": "application/json",
-        },
-    });
-    const data = await resp.json();
-    return data;
-}
+const bearer = "Bearer " + RDAPIKEY;
 
 interface RaindropItem {
     link: string;
@@ -32,6 +18,28 @@ interface RaindropItem {
     excerpt: string;
     created: string;
     cover: string;
+    domain: string;
+}
+
+async function fetchAllLinks() {
+    const items: RaindropItem[] = [];
+    let page = 0;
+    while (true) {
+        const data = await fetch(
+            `https://api.raindrop.io/rest/v1/raindrops/${collectionId}?perpage=50&page=${page}`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: bearer,
+                    "Content-Type": "application/json",
+                },
+            },
+        ).then((r) => r.json());
+        items.push(...data.items);
+        if (items.length >= data.count) break;
+        page++;
+    }
+    return items;
 }
 
 // get the images from the raindrop API, resize + compress to webp, and cache locally.
@@ -64,9 +72,9 @@ async function downloadCover(url: string): Promise<string> {
 }
 
 // fetch links from Raindrop first and then put them in the items[], with downloaded covers.
-const links = await fetchLinks();
+const rawItems = await fetchAllLinks();
 const items: RaindropItem[] = await Promise.all(
-    links.items.map(async (item: RaindropItem) => ({
+    rawItems.map(async (item: RaindropItem) => ({
         ...item,
         cover: item.cover ? await downloadCover(item.cover) : "",
     })),
@@ -84,43 +92,60 @@ function getDomain(url: string) {
 const pageTitle = "bookmarks";
 ---
 
-<Baz pageTitle={pageTitle} wide>
+<BazPages
+    pageTitle={pageTitle}
+    heroText="BOOKMARKS"
+    heroImage="/heros/hero-bookmarks.png"
+>
     <div id="preview" class="preview">
         <img id="preview-img" src="" alt="" />
     </div>
 
-    <div class="hero-section">
-        <div class="hero-image">
-            <!-- Image will go here -->
-        </div>
-        <h1 class="hero-text">BOOKMARKS</h1>
+    <div class="list-header">
+        <span class="list-count">{items.length} links</span>
+        <span class="list-date-label">Bookmarked at</span>
     </div>
-    <div class="links-list">
+
+    <ol class="links-list">
         {
-            items.map((item: RaindropItem) => (
-                <a
-                    href={item.link}
-                    target="_blank"
-                    class="link-item"
-                    data-cover={item.cover || ""}
-                    style={item.cover ? `--cover: url('${item.cover}')` : ""}
-                >
-                    {item.cover && <div class="link-bg" />}
-                    <span class="link-domain">
-                        <Icon name="ph:bookmark-duotone" size="14" />
-                        {getDomain(item.link)}
-                    </span>
-                    <div class="link-content">
-                        <span class="link-title">{item.title}</span>
-                        {item.note && (
-                            <span class="link-note">{item.note}</span>
-                        )}
-                    </div>
-                </a>
+            items.map((item: RaindropItem, i: number) => (
+                <li>
+                    <a
+                        href={item.link}
+                        target="_blank"
+                        class="link-item"
+                        data-cover={item.cover || ""}
+                    >
+                        <span class="link-index">
+                            {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div class="link-content">
+                            <span class="link-title">{item.title}</span>
+                            <span class="link-meta">
+                                <span class="link-domain">
+                                    {getDomain(item.link)}
+                                </span>
+                                {item.note && (
+                                    <span class="link-note">{item.note}</span>
+                                )}
+                            </span>
+                        </div>
+                        <time class="link-date">
+                            {new Date(item.created).toLocaleDateString(
+                                "en-US",
+                                {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                },
+                            )}
+                        </time>
+                    </a>
+                </li>
             ))
         }
-    </div>
-</Baz>
+    </ol>
+</BazPages>
 
 <script>
     const preview = document.getElementById("preview") as HTMLElement;
@@ -165,14 +190,13 @@ const pageTitle = "bookmarks";
         position: fixed;
         width: 380px;
         aspect-ratio: 16 / 9;
-        border: 1px solid var(--panel-border);
-        border-radius: var(--border-s);
+        border: 1px solid var(--border-subtle);
         overflow: hidden;
         pointer-events: none;
         opacity: 0;
         z-index: 9999;
         transition: opacity 0.15s ease;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        box-shadow: var(--shadow-lg);
     }
 
     .preview.visible {
@@ -183,172 +207,119 @@ const pageTitle = "bookmarks";
         width: 100%;
         height: 100%;
         object-fit: cover;
-        filter: brightness(1.05) saturate(1.1);
     }
 
-    .preview::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-            ellipse at 30% 20%,
-            rgba(255, 255, 255, 0.12) 0%,
-            transparent 60%
-        );
-        pointer-events: none;
+    .list-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-subtle);
+        margin-top: 1.5rem;
     }
 
-    .hero-section {
-        position: relative;
-        height: 40vh;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        overflow: hidden;
-    }
-
-    .hero-image {
-        width: 100%;
-        height: 100%;
-        background-color: var(--rams-black);
-        background-image: url("/heros/hero-bookmarks.png");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        opacity: 1;
-    }
-
-    .hero-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 6rem;
-        font-weight: 400;
-        margin: 0;
-        z-index: 10;
-    }
-
-    .section-heading {
-        font-size: 2rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--text-muted);
-        margin-bottom: 2rem;
+    .list-count {
         font-family: var(--font-mono);
-        font-weight: 400;
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .list-date-label {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.5;
     }
 
     .links-list {
-        display: flex;
-        flex-direction: column;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        border-top: 1px solid var(--panel-border);
+        list-style: none;
+        margin: 0;
+        padding: 0;
     }
 
     .link-item {
-        position: relative;
-        display: flex;
-        align-items: baseline;
-        gap: 2rem;
-        padding: 1rem 4vw;
-        border-bottom: 1px solid var(--panel-border);
+        display: grid;
+        grid-template-columns: 3ch 1fr auto;
+        gap: 0.75rem;
+        align-items: start;
+        padding: 0.7rem 0;
+        border-bottom: 1px solid var(--border-subtle);
         text-decoration: none;
-        transition: background 0.15s ease;
-        overflow: hidden;
+        color: inherit;
     }
 
-    .link-item:hover {
-        background: color-mix(in srgb, var(--accent) 5%, transparent);
-    }
-
-    .link-bg {
-        position: absolute;
-        inset: 0;
-        background-image: var(--cover);
-        background-size: cover;
-        background-position: center;
-        opacity: 0.3;
-        mask-image: linear-gradient(to left, black, transparent 70%);
-        -webkit-mask-image: linear-gradient(to left, black, transparent 70%);
-        z-index: 0;
-        transition:
-            opacity 0.2s ease,
-            filter 0.2s ease;
-    }
-
-    .link-item:hover .link-bg {
-        opacity: 0.8;
-        filter: brightness(1.15) saturate(1.1);
-    }
-
-    .link-domain {
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-        font-size: 0.75rem;
+    .link-index {
         font-family: var(--font-mono);
-        color: var(--text-muted);
-        opacity: 0.5;
-        flex-shrink: 0;
-        min-width: 16ch;
-        position: relative;
-        z-index: 1;
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+        padding-top: 0.15rem;
+        letter-spacing: 0.04em;
     }
 
     .link-content {
         display: flex;
         flex-direction: column;
-        gap: 0.3rem;
-        flex: 1;
-        position: relative;
-        z-index: 1;
+        gap: 0.15rem;
     }
 
     .link-title {
         font-family: var(--font-display);
-        font-size: clamp(1rem, 2vw, 1.6rem);
-        color: var(--text);
-        line-height: 1.2;
+        font-size: var(--text-base);
+        color: var(--fg-primary);
+        line-height: 1.3;
+        transition: color 0.15s ease;
     }
 
     .link-item:hover .link-title {
         color: var(--accent);
     }
 
-    .link-note {
-        font-size: 0.8rem;
-        font-family: var(--font-mono);
-        font-style: italic;
-        color: var(--text-muted);
-        opacity: 0.6;
+    .link-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
     }
 
-    @media (max-width: 768px) {
+    .link-domain {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+    }
+
+    .link-note {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+        font-style: italic;
+        opacity: 0.7;
+    }
+
+    .link-note::before {
+        content: "— ";
+    }
+
+    .link-date {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        color: var(--fg-muted);
+        opacity: 0.5;
+        white-space: nowrap;
+        padding-top: 0.2rem;
+        text-align: right;
+    }
+
+    @media (max-width: 600px) {
         .link-item {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.25rem;
-            padding: 0.75rem 1rem;
+            grid-template-columns: 3ch 1fr;
         }
 
-        .link-domain {
-            min-width: unset;
-        }
-
-        .link-note {
-            font-size: 0.75rem;
-        }
-
-        .hero-text {
-            font-size: 2.5rem;
-        }
-
-        .hero-section {
-            height: 30vh;
-            margin-top: -10px;
-            min-height: 300px;
+        .link-date {
+            display: none;
         }
     }
 </style>

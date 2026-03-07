@@ -18,21 +18,22 @@ html {
     color: var(--fg-bright);
     position: relative;
     overflow-x: hidden;
-    scrollbar-gutter: auto;
+    scrollbar-gutter: stable;
 }
 
 body {
     font-family: var(--font-sans);
+    font-feature-settings: "zero", "calt", "dlig", "ss01", "ss02", "ss07", "cv01", "cv06", "cv07", "cv12";
     font-size: var(--text-base);
     line-height: 1.6;
-    max-width: 65ch;
+    max-width: 95ch;
     margin: 0 auto;
+    padding-left: calc(var(--q) * 4);
+    padding-right: calc(var(--q) * 4);
 }
 
 body.wide {
     max-width: clamp(600px, 88vw, 1280px);
-    padding-left: 0;
-    padding-right: 0;
 }
 
 
@@ -45,7 +46,7 @@ h6 {
     text-wrap: stable;
     margin-bottom: 12px;
     margin-top: 24px;
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     font-weight: 400;
 }
 

@@ -1,18 +1,17 @@
 ---
-import Baz from "../layouts/Baz.astro";
+import BazPages from "../layouts/BazPages.astro";
 
 const pageTitle = "about";
 ---
 
-<Baz pageTitle={pageTitle} wide>
-    <div class="hero-section">
-        <div class="hero-image"></div>
-        <h1 class="hero-text">ABOUT</h1>
-    </div>
-
+<BazPages
+    pageTitle={pageTitle}
+    heroText="ABOUT"
+    heroImage="/heros/hero-about.png"
+>
     <section class="intro">
-        Hey again! Kenan here and below are some personal and professional
-        information about me.
+        Hey again! Below are some personal and professional information about
+        me.
     </section>
 
     <section class="experience">
@@ -80,40 +79,9 @@ const pageTitle = "about";
             ><br /><span class="tenure">June 2015 - ISITES</span>
         </p>
     </section>
-</Baz>
+</BazPages>
 
 <style>
-    .hero-section {
-        position: relative;
-        height: 40vh;
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        overflow: hidden;
-    }
-
-    .hero-image {
-        width: 100%;
-        height: 100%;
-        background-color: var(--rams-black);
-        background-image: url("/heros/hero-about.png");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        opacity: 1;
-    }
-
-    .hero-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 6rem;
-        font-weight: 400;
-        margin: 0;
-        z-index: 10;
-    }
-
     .section-heading {
         text-transform: uppercase;
         letter-spacing: 0.08em;
@@ -188,17 +156,5 @@ const pageTitle = "about";
 
     .disclaimer p {
         margin: 0;
-    }
-
-    @media (max-width: 768px) {
-        .hero-text {
-            font-size: 2.5rem;
-        }
-
-        .hero-section {
-            height: 30vh;
-            margin-top: -10px;
-            min-height: 300px;
-        }
     }
 </style>
