@@ -99,7 +99,10 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
                             <span class="post-title">
                                 <Icon name="ph:feather-duotone" size="13" />
                                 <span>{post.data.title}</span>
-                                <PostBadge published={post.data.published} updated={post.data.updated} />
+                                <PostBadge
+                                    published={post.data.published}
+                                    updated={post.data.updated}
+                                />
                             </span>
                             <span class="post-read">{minutesRead}</span>
                         </a>
@@ -144,7 +147,7 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
 
     .featured-title {
         display: block;
-        font-family: var(--font-display);
+        font-family: var(--font-sans);
         font-size: 2rem;
         font-weight: 400;
         color: var(--fg-bright);

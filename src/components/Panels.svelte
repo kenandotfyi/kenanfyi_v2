@@ -462,7 +462,7 @@
     }
 
     .win-title {
-        font-family: var(--font-display);
+        font-family: var(--font-sans);
         font-weight: 700;
         color: var(--text);
         overflow: hidden;

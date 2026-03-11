@@ -1,4 +1,5 @@
 ---
+import { Font } from "astro:assets";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
@@ -18,6 +19,8 @@ const ogImageUrl = ogImage
 <!doctype html>
 <html lang="en">
     <head>
+        <Font cssVariable="--font-sans" preload />
+        <Font cssVariable="--font-mono" preload />
         <script is:inline>
             (function () {
                 const stored = localStorage.getItem("theme");
@@ -90,11 +93,24 @@ const ogImageUrl = ogImage
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        font-family: var(--font-sans);
+        font-feature-settings:
+            "zero", "calt", "dlig", "ss01", "ss02", "ss07", "cv01", "cv06",
+            "cv07", "cv12";
+        font-size: var(--text-base);
+        line-height: 1.6;
+        max-width: 95ch;
+        margin: 0 auto;
+        padding-left: calc(var(--q) * 4);
+        padding-right: calc(var(--q) * 4);
+    }
+
+    body.wide {
+        max-width: clamp(600px, 88vw, 1280px);
     }
 
     main {
         flex: 1;
         padding-bottom: calc(var(--q) * 12);
-    }
     }
 </style>

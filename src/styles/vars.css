@@ -1,22 +1,3 @@
-@font-face {
-    font-family: 'Inter Variable';
-    src: url('/fonts/InterVariable.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'JetBrains Mono';
-    src: url('/fonts/JetBrainsMono-Regular.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-}
-
-
-
-
 :root {
 
     /* scales */
@@ -29,19 +10,6 @@
     --space-8: 2rem;
     --space-12: 3rem;
     --space-16: 4rem;
-
-
-    --font-mono: JetBrains Mono,
-        ui-monospace,
-        monospace;
-    --font-sans: Inter Variable,
-        system-ui,
-        -apple-system,
-        sans-serif;
-
-    --font-display: Inter Variable,
-        sans-serif;
-
 
     /* text sizes */
 

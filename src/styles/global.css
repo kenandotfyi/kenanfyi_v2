@@ -21,21 +21,6 @@ html {
     scrollbar-gutter: stable;
 }
 
-body {
-    font-family: var(--font-sans);
-    font-feature-settings: "zero", "calt", "dlig", "ss01", "ss02", "ss07", "cv01", "cv06", "cv07", "cv12";
-    font-size: var(--text-base);
-    line-height: 1.6;
-    max-width: 95ch;
-    margin: 0 auto;
-    padding-left: calc(var(--q) * 4);
-    padding-right: calc(var(--q) * 4);
-}
-
-body.wide {
-    max-width: clamp(600px, 88vw, 1280px);
-}
-
 
 h1,
 h2,
@@ -86,22 +71,17 @@ a:hover {
 }
 
 a.external-link::after {
-    content: "☄︎";
+    content: "↗";
     vertical-align: super;
     font-size: 0.75rem;
+    font-family: var(--font-mono);
 }
 
 .expressive-code {
     margin-bottom: 10px;
 }
 
-.expressive-code pre>code {
-    border-top: 1px solid var(--ec-brdCol) !important;
-}
 
-.expressive-code figure.is-terminal pre>code {
-    border-top: 0px !important;
-}
 
 .expandable-text {
     position: relative;
