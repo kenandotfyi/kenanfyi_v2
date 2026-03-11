@@ -1,6 +1,9 @@
 name: Deploy to Bunny
 
 on:
+  schedule:
+    - cron: '0 0 * * *' # daily builds
+  workflow_dispatch:
   push:
     branches: [main]
 
