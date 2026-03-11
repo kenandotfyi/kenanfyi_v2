@@ -42,14 +42,14 @@ all active windows first with:
 
 
 
-```bash
+```bash frame="none"
 wmctrl -lx
 ```
 
 an example output would be:
 
 
-```bash
+```bash frame="none"
 0x03a00004  2 obsidian.obsidian     capsule-arch 8.2 Strings - haupt - Obsidian v1.9.2
 0x00e0000b  0 kitty.kitty           capsule-arch nvim
 0x00e0001c  0 kitty.kitty           capsule-arch wmctrl -lx
@@ -70,7 +70,7 @@ basic script where I can use inside the keybinding assignment setting in GNOME, 
 
 
 
-```bash title="fl.sh"
+```bash frame="none"
 #!/bin/bash
 
 if [ $# -lt 2 ]; then
@@ -98,7 +98,7 @@ fi
 
 After that, we need to first make the script executable and use it in our GNOME
 setting when assigning custom keybindings. 
-```shell
+```bash frame="none"
 chmod +x fl.sh
 ```
 
@@ -112,7 +112,7 @@ We have couple of things to understand here. First we check if our script got 2
 arguments passed to it and if not, we exit with status code 1:
 
 
-```shell title="shell"
+```bash frame="none"
 if [ $# -lt 2 ]; then
   exit 1
 fi
@@ -124,7 +124,7 @@ argument into `WM_CLASS` and then remove it with `shift` and then collect the re
 arguments when starting. [^1]
 
 
-```shell title="shell"
+```bash frame="none"
 WM_CLASS="$1"
 shift
 APP_CMD=("$@")
@@ -132,7 +132,7 @@ APP_CMD=("$@")
 
 Now we can use `wmctrl`, process the result and store it in `WIN_ID`:
 
-```shell title="shell"
+```bash frame="none"
 WIN_ID=$(wmctrl -lx | grep -i "$WM_CLASS" | awk '{print $1}' | head -n1)
 ```
 
@@ -144,7 +144,7 @@ the first one with `head -n1`.
 Rest is straigtforward. We check if a window with that id exists and based on
 that, we either "activate" it again with `wmctrl` or launch it.
 
-```shell title="shell"
+```bash frame="none"
 if [ -n "$WIN_ID" ]; then
   # Activate the running window
   wmctrl -ia "$WIN_ID"

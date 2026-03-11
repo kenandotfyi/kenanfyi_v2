@@ -20,7 +20,7 @@ instances.
 Serving a PHP application through Caddy is straightforward, but I wanted to configure my
 installation with the so-called ShortURLs. This requires some setup in the Caddyfile:
 
-```nginx title="Caddyfile" 
+```nginx 
 your.domain{
     @title {
         not file {
@@ -42,7 +42,7 @@ Further explanations are [here](https://www.mediawiki.org/wiki/Manual:Short_URL)
 
 After that you need to edit the LocalSettings.php too:
 
-```php title="LocalSettings.php"
+```php 
 $wgScriptPath = "";
 $wgArticlePath = "/wiki/$1"; #for redirecting to /wiki/
 $wgUsePathInfo = true;
