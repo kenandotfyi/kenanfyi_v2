@@ -24,12 +24,10 @@ const ogImageUrl = ogImage
         <script is:inline>
             (function () {
                 const stored = localStorage.getItem("theme");
-                if (stored === "light") {
-                    document.documentElement.setAttribute(
-                        "data-theme",
-                        "light",
-                    );
-                }
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    stored === "light" ? "light" : "dark",
+                );
             })();
         </script>
         <meta charset="utf-8" />

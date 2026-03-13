@@ -79,7 +79,7 @@ export default defineConfig({
       },
       themes: [darkTheme, lightTheme],
       themeCssSelector: (theme) =>
-        `[data-theme='${theme.type}']`,
+        theme.type === 'dark' ? '' : `[data-theme='light']`,
       styleOverrides: {
         borderRadius: "0px",
         codeFontFamily: "var(--font-mono)",
