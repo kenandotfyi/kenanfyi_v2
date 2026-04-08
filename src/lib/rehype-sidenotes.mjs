@@ -16,7 +16,9 @@ export default function rehypeSidenotes() {
 
         if (notes.size === 0) return;
 
-        // Transform each <sup> reference into an inline sidenote
+        const footnoteItems = [];
+
+        // Transform each footnote reference into an inline sidenote
         let counter = 0;
         visit(tree, "element", (node, index, parent) => {
             if (node.tagName !== "sup") return;
@@ -41,6 +43,10 @@ export default function rehypeSidenotes() {
                         ),
                 );
 
+            const noteId = `note-${counter}`;
+            const refId = `note-ref-${counter}`;
+
+            // Inline sidenote for desktop
             const sidenote = {
                 type: "element",
                 tagName: "span",
@@ -48,8 +54,8 @@ export default function rehypeSidenotes() {
                 children: [
                     {
                         type: "element",
-                        tagName: "sup",
-                        properties: {},
+                        tagName: "label",
+                        properties: { className: ["sidenote-inner-number"] },
                         children: [{ type: "text", value: String(counter) }],
                     },
                     { type: "text", value: " " },
@@ -57,8 +63,63 @@ export default function rehypeSidenotes() {
                 ],
             };
 
-            node.properties = { className: ["sidenote-number"] };
+            // The clickable number in the text
+            node.tagName = "label";
+            node.properties = { className: ["sidenote-number"], id: refId };
+            node.children = [
+                {
+                    type: "element",
+                    tagName: "a",
+                    properties: { href: `#${noteId}` },
+                    children: [{ type: "text", value: String(counter) }],
+                },
+            ];
             parent.children.splice(index + 1, 0, sidenote);
+
+            // Collect footnote item for the footer
+            footnoteItems.push({
+                type: "element",
+                tagName: "li",
+                properties: { id: noteId },
+                children: [
+                    ...stripped.map((n) => structuredClone(n)),
+                    { type: "text", value: " " },
+                    {
+                        type: "element",
+                        tagName: "a",
+                        properties: {
+                            href: `#${refId}`,
+                            className: ["footnote-backref"],
+                        },
+                        children: [{ type: "text", value: "↩" }],
+                    },
+                ],
+            });
         });
+
+        // Remove the original [data-footnotes] section
+        visit(tree, "element", (node, index, parent) => {
+            if (node.properties?.dataFootnotes != null && parent) {
+                parent.children.splice(index, 1);
+                return index; // revisit this index since we removed a node
+            }
+        });
+
+        // Append a footnotes footer to the tree
+        const footer = {
+            type: "element",
+            tagName: "footer",
+            properties: { className: ["mobile-footnotes"] },
+            children: [
+                {
+                    type: "element",
+                    tagName: "ol",
+                    properties: {},
+                    children: footnoteItems,
+                },
+            ],
+        };
+
+        tree.children.push(footer);
     };
 }

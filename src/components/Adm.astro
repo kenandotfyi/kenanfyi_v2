@@ -1,0 +1,76 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+    type?: "info" | "warning";
+}
+
+const { type = "info" } = Astro.props;
+
+const config = {
+    info: {
+        icon: "ph:info-duotone",
+        label: "Info",
+    },
+    warning: {
+        icon: "ph:warning-duotone",
+        label: "Warning",
+    },
+};
+
+const { icon, label } = config[type];
+---
+
+<div class={`adm adm-${type}`}>
+    <div class="adm-header">
+        <Icon name={icon} size="18" />
+        <span>{label}</span>
+    </div>
+    <div class="adm-body">
+        <slot />
+    </div>
+</div>
+
+<style>
+    .adm {
+        border: none;
+        border-top: 1px dotted var(--border-subtle);
+        border-bottom: 1px dotted var(--border-subtle);
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .adm-header {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.4rem;
+    }
+
+    .adm-body :global(p:last-child) {
+        margin-bottom: 0;
+    }
+
+    /* Info */
+    .adm-info {
+        border-color: var(--accent);
+    }
+
+    .adm-info .adm-header {
+        color: var(--accent);
+    }
+
+    /* Warning */
+    .adm-warning {
+        border-color: #c9a227;
+    }
+
+    .adm-warning .adm-header {
+        color: #c9a227;
+    }
+</style>

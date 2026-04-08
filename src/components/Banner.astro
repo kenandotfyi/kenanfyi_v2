@@ -54,14 +54,16 @@ const isStale = lastRelevantDate < oneYearAgo;
                     </>
                 )
             }
-            {metadata.tags.length > 0 && (
-                <>
-                    <span class="meta-sep">/</span>
-                    {metadata.tags.map((tag: string) => (
-                        <span class="meta-chip meta-tag">#{tag}</span>
-                    ))}
-                </>
-            )}
+            {
+                metadata.tags.length > 0 && (
+                    <>
+                        <span class="meta-sep">/</span>
+                        {metadata.tags.map((tag: string) => (
+                            <span class="meta-chip meta-tag">#{tag}</span>
+                        ))}
+                    </>
+                )
+            }
         </div>
         <div>
             <h1 class="displayTitle exclude-from-panel">{metadata.title}</h1>
@@ -92,9 +94,8 @@ const isStale = lastRelevantDate < oneYearAgo;
 
     .collection-label {
         font-family: var(--font-mono);
-        font-size: 0.75rem;
+        font-size: var(--text-sm);
         color: var(--fg-muted);
-        letter-spacing: 0.08em;
         text-transform: uppercase;
     }
 
@@ -112,11 +113,10 @@ const isStale = lastRelevantDate < oneYearAgo;
 
     h1.displayTitle {
         font-family: var(--font-sans);
-        font-size: 2.25rem;
+        font-size: var(--text-2xl);
         font-weight: 600;
-        text-wrap: balance;
+        text-wrap: pretty;
         line-height: 1.2;
-        letter-spacing: 0;
         padding: 0;
         margin-top: calc(var(--q) * 2);
         margin-bottom: 0;
@@ -188,7 +188,6 @@ const isStale = lastRelevantDate < oneYearAgo;
     .meta-chip {
         font-family: var(--font-mono);
         font-size: 0.75rem;
-        letter-spacing: 0.12em;
         padding: 2px 4px;
         line-height: 1;
         align-self: center;

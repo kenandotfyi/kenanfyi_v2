@@ -336,7 +336,6 @@ const links = await fetchLinks();
         font-size: clamp(0.75rem, 1.5vw, 1rem);
         color: var(--fg-muted);
         margin: 0;
-        letter-spacing: 0.05em;
     }
 
     .intro-row {
@@ -344,6 +343,7 @@ const links = await fetchLinks();
         grid-template-columns: 1fr;
         gap: calc(var(--q) * 6);
         margin-bottom: calc(var(--q) * 8);
+        text-wrap: stable;
     }
 
     .intro-col {
@@ -402,7 +402,6 @@ const links = await fetchLinks();
         font-family: var(--font-mono);
         font-size: var(--text-base);
         text-transform: uppercase;
-        letter-spacing: 0.1em;
         color: var(--accent);
         margin-top: 0;
         margin-bottom: 0;
@@ -440,7 +439,6 @@ const links = await fetchLinks();
         font-size: inherit;
         color: inherit;
         padding: 0;
-        letter-spacing: 0.04em;
         opacity: 0.5;
     }
 
@@ -466,6 +464,7 @@ const links = await fetchLinks();
         line-height: 1.4;
         padding: calc(var(--q) * 1) 0;
         text-decoration: none;
+        color: var(--fg-bright);
     }
 
     .post-title span {

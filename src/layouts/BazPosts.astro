@@ -6,7 +6,8 @@ import Panels from "../components/Panels.svelte";
 import "../styles/global.css";
 import { generateOgImage } from "../lib/generate-og";
 
-const { frontmatter, minutes } = Astro.props;
+const { frontmatter, minutes, headings = [] } = Astro.props;
+const tocItems = headings.filter((h: any) => h.depth <= 2);
 
 const ogImage = await generateOgImage({
     title: frontmatter.data.title,
@@ -27,11 +28,36 @@ const ogImage = await generateOgImage({
             collection={frontmatter.collection}
         />
         <article class="post-body">
+            {
+                tocItems.length > 0 && (
+                    <nav class="toc" id="toc" aria-label="Table of contents">
+                        <span class="toc-title">Table of Contents</span>
+                        <button
+                            class="toc-toggle"
+                            id="toc-toggle"
+                            aria-expanded="false"
+                        >
+                            Table of Contents
+                        </button>
+                        <ol id="toc-list">
+                            {tocItems.map((h: any) => (
+                                <li class={`toc-item toc-h${h.depth}`}>
+                                    <a href={`#${h.slug}`}>{h.text}</a>
+                                </li>
+                            ))}
+                        </ol>
+                    </nav>
+                )
+            }
             <slot />
         </article>
         <Backlinks id={frontmatter.id} />
     </div>
     <Panels client:load slot="panels-outside-main" />
+    <dialog id="lightbox">
+        <img />
+        <p id="lightbox-caption"></p>
+    </dialog>
 </Baz>
 
 <script>
@@ -116,6 +142,101 @@ const ogImage = await generateOgImage({
         if (activeSidenote) showArrow(activeSidenote);
     }
 
+    // ── Lightbox ──────────────────────────────────────────────
+    const lightbox = document.getElementById("lightbox") as HTMLDialogElement;
+    const lightboxImg = lightbox.querySelector("img") as HTMLImageElement;
+    const lightboxCaption = document.getElementById(
+        "lightbox-caption",
+    ) as HTMLParagraphElement;
+
+    document
+        .querySelectorAll<HTMLImageElement>(".post-body img")
+        .forEach((img) => {
+            img.style.cursor = "zoom-in";
+            img.addEventListener("click", () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                if (img.alt) {
+                    lightboxCaption.textContent = img.alt;
+                    lightboxCaption.style.display = "block";
+                } else {
+                    lightboxCaption.style.display = "none";
+                }
+                lightbox.showModal();
+            });
+        });
+
+    lightbox.addEventListener("click", () => lightbox.close());
+    lightbox.addEventListener("close", () => {
+        lightboxImg.src = "";
+    });
+
+    // ── Table of Contents ──────────────────────────────────
+    const toc = document.getElementById("toc");
+    const tocToggle = document.getElementById("toc-toggle");
+    const tocList = document.getElementById("toc-list");
+
+    if (toc && tocToggle && tocList) {
+        // Show TOC after scrolling past the banner
+        const showThreshold = 300;
+        let tocVisible = false;
+
+        function updateTocVisibility() {
+            const shouldShow = window.scrollY > showThreshold;
+            if (shouldShow !== tocVisible) {
+                tocVisible = shouldShow;
+                toc.classList.toggle("visible", shouldShow);
+            }
+        }
+
+        window.addEventListener("scroll", updateTocVisibility, {
+            passive: true,
+        });
+        updateTocVisibility();
+
+        // Mobile toggle
+        tocToggle.addEventListener("click", () => {
+            const expanded = tocToggle.getAttribute("aria-expanded") === "true";
+            tocToggle.setAttribute("aria-expanded", String(!expanded));
+            tocList.classList.toggle("open", !expanded);
+        });
+
+        // Close mobile TOC when a link is clicked
+        tocList.addEventListener("click", (e) => {
+            if ((e.target as HTMLElement).tagName === "A") {
+                tocToggle.setAttribute("aria-expanded", "false");
+                tocList.classList.remove("open");
+            }
+        });
+
+        // Active heading tracking
+        const tocLinks = tocList.querySelectorAll("a");
+        const headingEls = Array.from(tocLinks)
+            .map((a) => {
+                const id = a.getAttribute("href")?.slice(1);
+                return id ? document.getElementById(id) : null;
+            })
+            .filter(Boolean) as HTMLElement[];
+
+        function updateActiveHeading() {
+            let activeIndex = 0;
+            for (let i = 0; i < headingEls.length; i++) {
+                if (headingEls[i].getBoundingClientRect().top <= 100) {
+                    activeIndex = i;
+                }
+            }
+            tocLinks.forEach((link, i) => {
+                link.classList.toggle("active", i === activeIndex);
+            });
+        }
+
+        window.addEventListener("scroll", updateActiveHeading, {
+            passive: true,
+        });
+        updateActiveHeading();
+    }
+
+    // ── Sidenote arrows (desktop) ───────────────────────────
     document.querySelectorAll(".sidenote").forEach((sidenote) => {
         sidenote.addEventListener("mouseenter", () => {
             activeSidenote = sidenote;
@@ -148,36 +269,152 @@ const ogImage = await generateOgImage({
         max-width: calc(100vw - 2rem);
     }
 
+    /* Lightbox */
+    #lightbox {
+        border: none;
+        outline: none;
+        background: none;
+        padding: 0;
+        margin: auto;
+        max-width: 90vw;
+        max-height: 90vh;
+        cursor: zoom-out;
+    }
+
+    #lightbox::backdrop {
+        background: rgba(0, 0, 0, 0.85);
+    }
+
+    #lightbox img {
+        max-width: 90vw;
+        max-height: 85vh;
+        object-fit: contain;
+        display: block;
+    }
+
+    #lightbox-caption {
+        font-family: var(--font-mono);
+        color: rgba(255, 255, 255, 0.5);
+        text-align: center;
+        font-size: 0.75rem;
+        margin: 0.5rem 0 0;
+    }
+
+    :global(.post-body figure) {
+        margin: 0;
+        width: 75ch;
+        max-width: calc(100vw - 2rem);
+    }
+
+    :global(.post-body figcaption) {
+        font-family: var(--font-mono);
+        color: var(--fg-muted);
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+        text-align: right;
+    }
+
+    /* Table of Contents */
+    .toc {
+        float: right;
+        clear: right;
+        margin-right: -38ch;
+        width: 35ch;
+        background: var(--bg-base);
+        border: 1px solid var(--border-subtle);
+        position: sticky;
+        top: 4rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 20;
+        padding-bottom: 0.15rem;
+    }
+
+    .toc.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .toc-title {
+        display: block;
+        color: var(--fg-secondary);
+        font-size: 0.7rem;
+        margin-bottom: 0.5rem;
+        padding-left: 0.5rem;
+        padding-top: 0.3rem;
+        text-transform: uppercase;
+    }
+
+    .toc-toggle {
+        display: none;
+    }
+
+    .toc ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-item a {
+        color: var(--fg-muted);
+        text-decoration: none;
+        display: block;
+        padding: 0.2rem 0;
+        transition: color 0.2s ease;
+    }
+
+    .toc-item a:hover {
+        color: white;
+    }
+
+    .toc-item a.active {
+        color: var(--accent);
+    }
+
+    .toc-h1 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .toc-h2 {
+        padding-left: 1rem;
+        padding-right: 0.5rem;
+    }
+
     /* Desktop: float sidenotes into right margin */
     :global(.sidenote) {
         float: right;
         clear: right;
         margin-right: -38ch;
         width: 35ch;
-        font-size: 0.8rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
         color: var(--fg-muted);
         padding: 0.6rem 1rem;
         background: var(--bg-raised);
         position: relative;
     }
 
-    :global(sup.sidenote-number a) {
+    :global(label.sidenote-number) {
         font-size: 0.75em;
-        vertical-align: 10%;
+        vertical-align: super;
+        line-height: 0;
+    }
+
+    :global(label.sidenote-number a) {
+        font-family: var(--font-mono);
         text-decoration: none;
         color: var(--accent);
         margin: 0 1px;
     }
 
-    :global(.sidenote > sup) {
+    :global(.sidenote-inner-number) {
+        font-family: var(--font-mono);
         color: var(--accent);
-        font-size: 0.75em;
         margin-right: 3px;
-    }
-
-    /* Always hide the footnotes section */
-    :global([data-footnotes]) {
-        display: none;
     }
 
     :global(.post-divider) {
@@ -193,7 +430,28 @@ const ogImage = await generateOgImage({
         margin-bottom: calc(var(--q) * 4);
     }
 
-    /* Mobile: sidenotes become inline blocks below the text */
+    /* Mobile footnotes footer (generated by rehype, hidden on desktop) */
+    :global(.mobile-footnotes) {
+        display: none;
+    }
+
+    :global(.mobile-footnotes ol) {
+        padding-left: 1.2rem;
+        font-size: 0.85rem;
+        color: var(--fg-muted);
+        margin: 0;
+    }
+
+    :global(.mobile-footnotes li::marker) {
+        font-family: var(--font-mono);
+    }
+
+    :global(.footnote-backref) {
+        text-decoration: none;
+        color: var(--accent);
+    }
+
+    /* Mobile */
     @media (max-width: 1050px) {
         :global(.post-body ul),
         :global(.post-body ol) {
@@ -201,16 +459,61 @@ const ogImage = await generateOgImage({
         }
 
         :global(.sidenote) {
-            float: none;
-            clear: both;
+            display: none;
+        }
+
+        :global(.mobile-footnotes) {
             display: block;
-            width: auto;
-            margin-right: 0;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            padding: 0.6rem 1rem;
             background: var(--bg-raised);
-            padding-top: 0.6rem;
+            padding: 0.6rem 1rem;
+        }
+
+        .toc {
+            float: none;
+            margin-right: 0;
+            width: 100%;
+            top: 3rem;
+            padding: 0;
+            box-sizing: border-box;
+            z-index: 25;
+            border: none;
+            border-bottom: 1px dotted var(--border-subtle);
+        }
+
+        .toc-title {
+            display: none;
+        }
+
+        .toc-toggle {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--fg-muted);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .toc ol {
+            display: none;
+            border-left: none;
+            padding: 0 1rem 0.6rem;
+            background: var(--bg-base);
+            position: absolute;
+            left: 0;
+            right: 0;
+            border-bottom: 1px dotted var(--border-subtle);
+        }
+
+        .toc ol.open {
+            display: block;
+        }
+
+        .toc-h2 {
+            padding-left: 1rem;
         }
     }
 </style>

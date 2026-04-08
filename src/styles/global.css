@@ -31,8 +31,10 @@ h6 {
     text-wrap: stable;
     margin-bottom: 12px;
     margin-top: 24px;
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     font-weight: 400;
+    letter-spacing: -0.02em;
+    scroll-margin-top: 6rem;
 }
 
 img {
@@ -57,17 +59,26 @@ blockquote {
 }
 
 a {
-    color: var(--fg-bright);
+    display: inline-block;
+    color: var(--accent);
     text-decoration: underline;
     text-decoration-style: dotted;
     text-decoration-color: var(--accent);
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    border-radius: 2px;
+    padding: 0 4px;
+    margin: 0 -0.15em;
 }
 
 a:hover {
     color: var(--accent-hover);
+}
+
+.post-body a:hover {
+    color: white;
+    background-color: black;
 }
 
 a.external-link::after {

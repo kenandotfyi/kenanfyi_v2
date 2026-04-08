@@ -8,6 +8,7 @@ import rehypeKatex from "rehype-katex";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeSidenotes from "./src/lib/rehype-sidenotes.mjs";
 import rehypeHrDivider from "./src/lib/rehype-hr-divider.mjs";
+import rehypeFigure from "./src/lib/rehype-figure.mjs";
 import expressiveCode, { ExpressiveCodeTheme } from "astro-expressive-code";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import mdx from "@astrojs/mdx";
@@ -107,6 +108,7 @@ export default defineConfig({
     remarkPlugins: [remarkReadingTime],
     rehypePlugins: [
       rehypeSidenotes,
+      rehypeFigure,
       rehypeHrDivider,
       [
         rehypeExternalLinks,

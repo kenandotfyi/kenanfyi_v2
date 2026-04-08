@@ -26,7 +26,7 @@
 
     /*colors — dark (black & white tones)*/
     --bg-deep: #000000;
-    --bg-base: #0d0d0d;
+    --bg-base: #111;
     --bg-raised: #161616;
     --bg-surface: #1e1e1e;
     --bg-hover: #262626;
@@ -124,4 +124,15 @@ html[data-theme="light"] {
     --surface-hover: #e0e0e0;
     --rams-black: #ebebeb;
     --rams-gray: #888888;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --text-xs: 0.65rem;
+        --text-sm: 0.775rem;
+        --text-base: 0.90rem;
+        --text-lg: 1.125rem;
+        --text-xl: 1.4rem;
+        --text-2xl: 1.75rem;
+    }
 }

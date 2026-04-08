@@ -221,9 +221,9 @@
             const metaHTML = pubDateEl ? pubDateEl.innerHTML : null;
             metaHTML;
 
-            tmp.querySelectorAll(".exclude-from-panel, .banner, hr").forEach(
-                (el) => el.remove(),
-            );
+            tmp.querySelectorAll(
+                ".exclude-from-panel, .banner, .toc, hr",
+            ).forEach((el) => el.remove());
 
             if (metaHTML) {
                 const meta = document.createElement("div");
@@ -469,7 +469,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         flex: 1;
-        letter-spacing: 0.03em;
     }
 
     .actions {
