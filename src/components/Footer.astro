@@ -5,106 +5,104 @@ const year = new Date().getFullYear();
 ---
 
 <footer>
-    <div class="footer-top">
-        <a href="/" class="footer-logo"
-            ><img src="/logo.svg" alt="kenan.fyi" /></a
-        >
-    </div>
-    <div class="footer-bottom">
-        <span>{year}</span>
-        <Icon name="ph:dot-duotone" size="20" />
-        <span>v2</span>
-        <Icon name="ph:dot-duotone" size="20" />
-        <a
-            href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
-            target="_blank"
-            rel="noopener"
-        >
-            CC BY-NC-SA 4.0
-        </a>
-        <!-- <a href="/">now</a>
+  <div class="footer-top">
+    <a href="/" class="footer-logo"><img src="/logo.svg" alt="kenan.fyi" /></a>
+  </div>
+  <div class="footer-bottom">
+    <span>{year}</span>
+    <Icon name="ph:dot-duotone" size="20" />
+    <span>v2</span>
+    <Icon name="ph:dot-duotone" size="20" />
+    <a
+      href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+      target="_blank"
+      rel="noopener"
+    >
+      CC BY-NC-SA 4.0
+    </a>
+    <!-- <a href="/">now</a>
         <a href="/">uses</a>
         <a href="/">colophon</a> -->
-    </div>
-    <div class="footer-middle">
-        The views and opinions expressed on this website are my own and do not
-        represent those of my employer in any way.
-    </div>
+  </div>
+  <div class="footer-middle">
+    The views and opinions expressed on this website are my own and do not
+    represent those of my employer in any way.
+  </div>
 </footer>
 
 <style>
-    footer {
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-        padding-top: 1rem;
-        display: flex;
-        font-family: var(--font-mono);
-        color: var(--text-muted);
-        flex-direction: column;
-        gap: 4px;
-    }
+  footer {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+    display: flex;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    flex-direction: column;
+    gap: 4px;
+  }
 
-    footer::before {
-        content: "";
-        display: block;
-        border-top: 1px solid var(--border-subtle);
-        margin-left: calc(50% - 50vw);
-        margin-right: calc(50% - 50vw);
-        margin-bottom: 1rem;
-    }
+  footer::before {
+    content: "";
+    display: block;
+    border-top: 1px solid var(--border-subtle);
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    margin-bottom: 1rem;
+  }
 
-    .footer-top,
-    .footer-bottom,
-    .footer-middle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 4px;
-        font-size: 0.8rem;
-    }
+  .footer-top,
+  .footer-bottom,
+  .footer-middle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: 0.8rem;
+  }
 
-    .footer-middle {
-        font-size: 0.65rem;
-        color: var(--fg-muted);
-    }
+  .footer-middle {
+    font-size: 0.65rem;
+    color: var(--fg-muted);
+  }
 
-    .footer-logo img {
-        display: block;
-        height: 48px;
-        width: auto;
-    }
+  .footer-logo img {
+    display: block;
+    height: 48px;
+    width: auto;
+  }
 
-    .cc-badge {
-        display: block;
-        height: 16px;
-        width: auto;
-        filter: invert(1) opacity(0.3);
-    }
+  .cc-badge {
+    display: block;
+    height: 16px;
+    width: auto;
+    filter: invert(1) opacity(0.3);
+  }
 
-    :global(html[data-theme="light"]) .cc-badge {
-        filter: opacity(0.5);
-    }
+  :global(html[data-theme="light"]) .cc-badge {
+    filter: opacity(0.5);
+  }
 
-    .footer-top a,
-    .footer-bottom a {
-        text-decoration: none;
-        padding: 0 4px;
-        color: var(--text-muted);
-        transition: color 0.2s ease;
-    }
+  .footer-top a,
+  .footer-bottom a {
+    text-decoration: none;
+    padding: 0 4px;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+  }
 
-    .footer-top a:first-child {
-        padding-left: 0;
-    }
+  .footer-top a:first-child {
+    padding-left: 0;
+  }
 
-    .footer-top a:hover,
-    .footer-bottom a:hover {
-        color: var(--red-dim);
-        background: unset;
-    }
+  .footer-top a:hover,
+  .footer-bottom a:hover {
+    color: var(--red-dim);
+    background: unset;
+  }
 
-    .sep {
-        opacity: 0.3;
-    }
+  .sep {
+    opacity: 0.3;
+  }
 </style>

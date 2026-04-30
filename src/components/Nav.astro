@@ -183,20 +183,20 @@ const isActive = (href: string) => {
       </div>
 
       {
-        recentLinks.length > 0 && (
+        recentBookmarks.length > 0 && (
           <div class="menu-section">
             <div class="menu-label">Recently Bookmarked</div>
             <p class="menu-items">
-              {recentLinks.map((link, i) => (
+              {recentBookmarks.map((bookmark, i) => (
                 <a
-                  href={link.link}
+                  href={bookmark.link}
                   target="_blank"
                   class:list={["menu-link", "menu-link--muted"]}
                 >
                   <span class="menu-item-icon">
                     <Icon name="ph:bookmarks-duotone" size="12" />
                   </span>
-                  {link.title}
+                  {bookmark.title}
                 </a>
               ))}
             </p>

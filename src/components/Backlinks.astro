@@ -3,7 +3,7 @@ import { getBacklinks } from "../lib/backlinks.ts";
 import { Icon } from "astro-icon/components";
 
 interface Props {
-    id: string;
+  id: string;
 }
 
 const { id } = Astro.props;
@@ -11,67 +11,65 @@ const backlinks = await getBacklinks(id);
 ---
 
 {
-    backlinks.length > 0 && (
-        <div class="backlinks">
-            <div class="backlinks-label">
-                <span class="backlinks-heading">
-                    <Icon name="ph:graph-duotone" size="20" />
-                    Backlinks
-                </span>
-            </div>
-            <ul>
-                {backlinks.map((post) => (
-                    <li>
-                        <a href={`/${post.collection}/${post.id}`}>
-                            {post.data.title}
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    )
+  backlinks.length > 0 && (
+    <div class="backlinks">
+      <div class="backlinks-label">
+        <span class="backlinks-heading">
+          <Icon name="ph:graph-duotone" size="20" />
+          Backlinks
+        </span>
+      </div>
+      <ul>
+        {backlinks.map((post) => (
+          <li>
+            <a href={`/${post.collection}/${post.id}`}>{post.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 
 <style>
-    .backlinks {
-        display: flex;
-        flex-direction: column;
-        border-top: 1px dotted var(--accent-hover);
-        border-bottom: 1px dotted var(--accent-hover);
-        padding-bottom: calc(var(--q) * 2);
-        max-width: 65ch;
-    }
+  .backlinks {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px dotted var(--accent-hover);
+    border-bottom: 1px dotted var(--accent-hover);
+    padding-bottom: calc(var(--q) * 2);
+    max-width: 65ch;
+  }
 
-    .backlinks-label {
-        flex-shrink: 0;
-    }
+  .backlinks-label {
+    flex-shrink: 0;
+  }
 
-    .backlinks-heading {
-        display: flex;
-        padding-top: calc(var(--q) * 2);
-        gap: 4px;
-        font-family: var(--font-mono);
-        font-size: var(--text-sm);
-        color: var(--text-muted);
-        text-transform: uppercase;
-        white-space: nowrap;
-    }
+  .backlinks-heading {
+    display: flex;
+    padding-top: calc(var(--q) * 2);
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
 
-    .backlinks ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-    }
+  .backlinks ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
 
-    .backlinks li a {
-        font-size: var(--text-sm);
-        color: var(--fg-secondary);
-        text-decoration-color: var(--border-default);
-    }
+  .backlinks li a {
+    font-size: var(--text-sm);
+    color: var(--fg-secondary);
+    text-decoration-color: var(--border-default);
+  }
 
-    .backlinks li a:hover {
-        color: var(--accent-hover);
-    }
+  .backlinks li a:hover {
+    color: var(--accent-hover);
+  }
 </style>

@@ -16,7 +16,7 @@ interface Props {
   type?: keyof typeof config;
 }
 
-const { type = "info" } = Astro.props;
+const { type = "info" } = Astro.props; //default type is info admonition.
 const { icon, label } = config[type];
 ---
 
