@@ -3,17 +3,24 @@ import { getCollection, render } from "astro:content";
 import BazPosts from "../../layouts/BazPosts.astro";
 
 export async function getStaticPaths() {
-    const posts = await getCollection("thoughts");
-    return posts.map((post) => ({
-        params: { slug: post.id },
-        props: { post },
-    }));
+  const posts = await getCollection(
+    "thoughts",
+    ({ data }) => data.draft !== true,
+  );
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
 }
 
 const { post } = Astro.props;
 const { Content, remarkPluginFrontmatter, headings } = await render(post);
 ---
 
-<BazPosts frontmatter={post} minutes={remarkPluginFrontmatter.minutesRead} headings={headings}>
-    <Content />
+<BazPosts
+  frontmatter={post}
+  minutes={remarkPluginFrontmatter.minutesRead}
+  headings={headings}
+>
+  <Content />
 </BazPosts>

@@ -1,8 +1,7 @@
 // src/lib/backlinks.ts
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from "astro:content";
 
-type Post = CollectionEntry<'thoughts'> | CollectionEntry<'bits'>;
-type CollectionName = 'thoughts' | 'bits' | 'electronics';
+type Post = CollectionEntry<"thoughts"> | CollectionEntry<"bits">;
 
 let backlinksMap: Map<string, Post[]> | null = null;
 
@@ -15,11 +14,11 @@ export async function getBacklinks(targetId: string): Promise<Post[]> {
 
 async function buildBacklinksMap(): Promise<Map<string, Post[]>> {
   const [thoughts, bits] = await Promise.all([
-    getCollection('thoughts'),
-    getCollection('bits'),
+    getCollection("thoughts", ({ data }) => data.draft !== true),
+    getCollection("bits", ({ data }) => data.draft !== true),
   ]);
 
-  const allPosts: Post[] = [...thoughts, ...bits,];
+  const allPosts: Post[] = [...thoughts, ...bits];
 
   // Build a set of valid paths for link validation
   const validPaths = new Set<string>();
@@ -44,7 +43,7 @@ async function buildBacklinksMap(): Promise<Map<string, Post[]>> {
       if (linkedId === post.id) continue; // skip self-links
 
       const existing = map.get(linkedId) || [];
-      if (!existing.some(p => p.id === post.id)) {
+      if (!existing.some((p) => p.id === post.id)) {
         existing.push(post);
         map.set(linkedId, existing);
       }
@@ -54,11 +53,15 @@ async function buildBacklinksMap(): Promise<Map<string, Post[]>> {
   return map;
 }
 
-function extractInternalLinks(markdown: string, validPaths: Set<string>): string[] {
+function extractInternalLinks(
+  markdown: string,
+  validPaths: Set<string>,
+): string[] {
   const ids: string[] = [];
 
   // Match markdown links: [text](/thoughts/slug) or [text](/bits/slug/) etc.
-  const linkPattern = /\[.*?\]\(\/(thoughts|bits)\/([a-z0-9-]+)\/?(?:#[^\)]+)?\)/gi;
+  const linkPattern =
+    /\[.*?\]\(\/(thoughts|bits)\/([a-z0-9-]+)\/?(?:#[^\)]+)?\)/gi;
 
   let match;
   while ((match = linkPattern.exec(markdown)) !== null) {
